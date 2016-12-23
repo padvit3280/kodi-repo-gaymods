@@ -4,7 +4,8 @@ import re
 import urllib
 import urllib2
 import ssl
-from xbmcswift2 import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod
+from kodiswift import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod
+#from xbmcswift2 import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod
 
 ssl._create_default_https_context = ssl._create_unverified_context
 plugin = Plugin()
@@ -213,10 +214,10 @@ def episode(name, url):
         for name, link in linklist:
             itempath = plugin.url_for(play, url=link)
             item = ListItem(label=name, label2=link, icon='DefaultFolder.png', thumbnail='DefaultFolder.png', path=itempath)
-            item.set_info(type='video', info_labels={'Title': name})
-            item.set_is_playable(True)
+            #item.set_info(type='video', info_labels={'Title': name})
+            #item.set_is_playable(True)
             litems.append(item)
-        litems.sort(key=lambda litems: litems.label)
+        litems.sort(key=lambda litems: litems.label, reverse=True)
     else:
         plugin.notify(msg="Failed to find vid links", title="Len {0}".format(str(len(linklist))))
     return litems
@@ -224,7 +225,10 @@ def episode(name, url):
 
 @plugin.route('/play/<url>')
 def play(url):
-    xbmc.executebuiltin('RunPlugin(plugin://plugin.video.hubgay/playmovie/%s)' % urllib.quote_plus(url))
+    plugin.set_view_mode(0)
+    plugin.redirect('plugin://plugin.video.hubgay/playmovie/{0}'.format(urllib.quote_plus(url)))
+    plugin.set_view_mode(0)
+    #xbmc.executebuiltin('RunPlugin(plugin://plugin.video.hubgay/playmovie/%s)' % urllib.quote_plus(url))
     #return [plugin.set_resolved_url(url)]
 
 
