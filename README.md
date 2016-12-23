@@ -1,6 +1,18 @@
 ## repository.gaymods
-###  A Collection of Gay Adult addons for ~~XBMC~~ Kodi *(Jarvis 16.0+)* all in one place 
+###  Gay SAddons Repo for Kodi/XBMC 
+## An in development collection of Gay Adult addons for ~~XBMC~~ Kodi *(Jarvis 16.0+/Krypton 17)* all in one place 
 Intended to be the one stop place for the latest addons and most up to date code for addons that will display gay content from adult websites typically forked addons already written for many straight sites but modified slightly to filter out content that is not GAY 
+
+*Christmas Update 2016*
+
+I have finally fixed the problem with the repo not allowing addon's to update or install from within Kodi so this should make everyones life easier!
+
+plugin.video.hubGAY is the most completed addon that I have developed. It is not perfect, it has bugs, etc but it was built from the ground up by myself to use the publically available HUB Traffic API's for video listings and searching rather than relying on traditional scraping of websites for the content. This can be tedious and break if they change any little parts of the site. Instead this uses the data published in XML/JSON to build the listings of video's for all the sites in the HUB trafffic network. It then tries to make a gay catagories/content seperate from the normal straight content. This can be set in the settings to allow straight content if you actually like the way the addon works. In addition to all the Porn Hub family of sites I was so happy with the structure I had created in the addon I found that adding some other sites to the addon was very easy which is why it is expanded to cover more than just the HUB traffic owned sites. Basic Motherless functionality has been added. Porky Tube has been added. And version 1.0.5 brings the first testing of scraping video's from Tumblr Blogs. Right now it just looks at one blog but it should be easy to modify this to present a list of blogs from Tumblr and view the video's from each of these. The other cool thing this addon does is attempts to have global categories and global searching so you can see in one aggregate list all video's in a category that exists on all the sites, or all search results for a keyword on each site in one list with various sorting options.
+ 
+ plugin.video.wsonline is not porn or gay but it's an addon I developed for a website I tended to frequently end up copying links from to play directly in Kodi and figured why not just write an addon for the site. This is the addon. It's basic and shows the latest 250 episodes from the site, or supports searching and displaying the results. It scrapes the sources from the site and attempts to use the URLResolver plugin to play the media file so you must have URLRESOLVER installed. This is true of HUBGAY as well as I use it to search for video file sources from URLS.
+ 
+ Every other addons in this repo I can speak less confidentaly on how well it will work but I wanted them to be available in one easy place so if anyone ever does get motivated to help with KODI gay porn addon's they will easily see what is out there and what needs work etc. Please if anyone wants to help on any of these I welcome it. I have seen lots of forks lately as I think the repo got picked up on a larger list of repo's which wasn't good as I never intended anyone other than some programmer geeks to see and play with these. Luckily now the addon's appear to install and update correctly so the general public that want to have a play this should be much easier to do now! 
+
 #### STATUS OF PLUGINS
 *updated 13 March 2016*
 
@@ -121,5 +133,6 @@ This is where I haven't gotten past yet, need to handle anywhere pdsection is ch
 
 ## ABOUT ME
 - Author: Jeremy j@alljer.com
-- Founder: [CryptoCoins.Com](http://www.cryptocoins.com/) Physical CryptoCurrency Worth Holding Onto
+- http://www.2my.cc/ 
+- Founder: [CryptoCoins.Com] Physical CryptoCurrency Worth Holding Onto
 
