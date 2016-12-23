@@ -191,7 +191,7 @@ REQUIRED [B]Script.Module.URLResolver, Simple.Downloader, YouTubeDL, and KODIswi
   </extension>
 </addon>
 
-<addon id="plugin.video.wsonline" name="WatchSeries-Online" version="0.8" provider-name="moedje">
+<addon id="plugin.video.wsonline" name="WatchSeries-Online" version="0.9" provider-name="moedje">
     <requires>
         <import addon="xbmc.python" version="2.24.0"/>
         <import addon="script.module.xbmcswift2"/>
@@ -202,15 +202,15 @@ REQUIRED [B]Script.Module.URLResolver, Simple.Downloader, YouTubeDL, and KODIswi
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
-        <language>EN</language>
-        <summary>Watchseries-online.nl TV Plugin</summary>
+        <language>en</language>
+        <summary>Watchseries-online TV Plugin</summary>
         <description>Get the latest TV episodes on Watchseries-Online.la and search for a series, list all online
             episodes in that series, and play them from Openload.Co or VODlocker
         </description>
     </extension>
 </addon>
 
-<addon id="repository.kodi-repo-gaymods" name="Gay Mods of KODI addons various sources ie agx" version="0.0.2" provider-name="moedje">
+<addon id="repository.kodi-repo-gaymods" name="Gay Addons Repo" version="1.0.0" provider-name="moedje">
         <extension point="xbmc.addon.repository" name="Kodi Repo Gay Mods">
                 <info compressed="false">https://raw.githubusercontent.com/moedje/kodi-repo-gaymods/master/addons.xml</info>
                 <checksum>https://raw.githubusercontent.com/moedje/kodi-repo-gaymods/master/addons.xml.md5</checksum>

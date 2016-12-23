@@ -1,10 +1,10 @@
-from xbmcswift2 import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod
 import os.path as path
 import json
 import re
 import urllib
 import urllib2
 import ssl
+from xbmcswift2 import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod
 
 ssl._create_default_https_context = ssl._create_unverified_context
 plugin = Plugin()
