@@ -5,5 +5,6 @@
                  visible="true"/>
         <setting id="downloadpath" label="Download Path" values="" default="" type="folder" visible="true"/>
         <setting id="debugon" label="DEBUG MODE ON" values="false" default="false" type="bool" visible="true"/>
+        <setting id="savedshows" label="Saved Shows" values="" default="[]" type="text" visible="true"/>
     </category>
 </settings>

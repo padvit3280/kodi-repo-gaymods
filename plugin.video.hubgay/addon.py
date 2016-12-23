@@ -4,8 +4,10 @@ import os.path as path
 import re
 import urllib
 import urllib2
-
 from kodiswift import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod
+import ssl
+
+ssl._create_default_https_context = ssl._create_unverified_context
 
 plugin = Plugin()
 __addondir__ = xbmc.translatePath(plugin.addon.getAddonInfo('path'))
@@ -171,7 +173,6 @@ def makeVideoItems(itemlist, sitename=None):
                 xli.thumbnail = thumb
                 xli.icon = thumb
                 xli.poster = thumb
-                xli.add_context_menu_items([('Download', 'RunPlugin("{0}")'.format(plugin.url_for(download, name=lbl, url=vurl)),)])
                 infolbl = {'Duration': lengthnum, 'Genre': SITE, 'Plot': plotstring + tagstring, 'Rating': views, 'Premiered': reldate, 'Year': reldate, 'Title': title}
                 xli.set_info(info_type='video', info_labels=infolbl)
                 if thumb2 != '':
@@ -692,11 +693,11 @@ def index():
             sitem = {'label': sitename.title(), 'icon': sicon, 'thumb': sicon, 'path': spath}
             sitem.setdefault(sitem.keys()[0])
             litems.append(sitem)
-    if not DOSTR8:
-        igayp = __imgsearch__.replace('search.', 'fgaypower.')
-        item = {'label': 'GayPower (DVD STREAMS)', 'icon': igayp, 'thumb': igayp, 'path': plugin.url_for(gaypower, page=1)}
-        item.setdefault(item.keys()[0])
-        litems.append(item)
+    #if not DOSTR8:
+    #    igayp = __imgsearch__.replace('search.', 'fgaypower.')
+    #    item = {'label': 'GayPower (DVD STREAMS)', 'icon': igayp, 'thumb': igayp, 'path': plugin.url_for(gaypower, page=1)}
+    #    item.setdefault(item.keys()[0])
+    #    litems.append(item)
     allitems = sorted(litems, key=lambda litems: litems['label'])
     ifolder = __imgsearch__.replace('search.', 'folder.')
     itemallcats = {'label': 'Global Category List', 'path': plugin.url_for(allcats), 'icon': ifolder,
@@ -1136,21 +1137,22 @@ def playmovie(url):
         try:
             resolved = urlresolver.HostedMediaFile(url).resolve()
             if not resolved:
-                resolved = urlresolver.HostedMediaFile("http://www.flashx.tv/embed.php?c={0}".format(mid)).resolve()
+                resolved = urlresolver.resolve(url) #resolved = urlresolver.HostedMediaFile("http://www.flashx.tv/embed.php?c={0}".format(mid)).resolve()
                 if resolved is None or len(resolved) < 1:
-                    resolved = urlresolver.resolve("http://www.flashx.tv/{0}.html".format(mid))
-                if resolved is None or resolved == False or len(resolved) < 1:
-                    resolved = urlresolver.resolve("http://www.flashx.tv/{0}.htm".format(mid))
-                if resolved is None or resolved == False or len(resolved) < 1:
-                    resolved = urlresolver.resolve(url)
+                    resolved = urlresolver.resolve(urllib.unquote(url))
+                    #resolved = urlresolver.resolve("http://www.flashx.tv/{0}.html".format(mid))
+                #if resolved is None or resolved == False or len(resolved) < 1:
+                #    resolved = urlresolver.resolve("http://www.flashx.tv/{0}.htm".format(mid))
+                #if resolved is None or resolved == False or len(resolved) < 1:
+                    
         except:
             xbmc.log("\n****Resolve attempts all failed Failed to use URL Resolver to play video {0}".format(url))
         vli = ListItem(label='Gaypower', label2=url, path=resolved.encode('utf-8'))
         vli.playable = True
         vli.thumbnail = 'DefaultVideo.png'
         vli.icon = 'DefaultVideo.png'
-        xbmc.log("\n****URL RESOLVER RESULT = {0}".format(str(repr(vli))))
-        plugin.play_video(vli)
+        #xbmc.log("\n****URL RESOLVER RESULT = {0}".format(str(repr(vli))))
+        #plugin.play_video(vli)
         xbmc.executebuiltin('PlayMedia(%s)' % resolved.decode('utf-8', 'ignore'))
         # return plugin.end_of_directory()
     except:
@@ -1163,9 +1165,7 @@ def playmovie(url):
                 livestreamerurl = 'plugin://plugin.video.livestreamerkodi/play/{0}'.format(urllib.quote_plus(url))
                 xbmc.executebuiltin('RunPlugin({0})'.format(livestreamerurl))
             except:
-                livestreamerurl = 'plugin://plugin.video.livestreamer/play/?url={0}'.format(urllib.quote_plus(url))
-                xbmc.executebuiltin('RunPlugin({0})'.format(livestreamerurl))
-            xbmc.log("\n****Failed to use URL Resolver to play video {0}".format(url))
+                xbmc.log("\n****Failed to use URL Resolver to play video {0}".format(url))
 
 
 @plugin.route('/play/<url>/<video>/<title>')
