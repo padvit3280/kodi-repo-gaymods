@@ -226,8 +226,9 @@ def episode(name, url):
 @plugin.route('/play/<url>')
 def play(url):
     plugin.set_view_mode(0)
-    plugin.redirect('plugin://plugin.video.hubgay/playmovie/{0}'.format(urllib.quote_plus(url)))
-    plugin.set_view_mode(0)
+    plugurl = 'plugin://plugin.video.hubgay/playmovie/{0}'.format(urllib.quote_plus(url))
+    plugin.play_video(plugurl)
+    return plugin.end_of_directory()
     #xbmc.executebuiltin('RunPlugin(plugin://plugin.video.hubgay/playmovie/%s)' % urllib.quote_plus(url))
     #return [plugin.set_resolved_url(url)]
 
