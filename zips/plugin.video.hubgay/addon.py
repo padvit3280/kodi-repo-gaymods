@@ -548,7 +548,7 @@ def getAPIURLS(sitename=None):
     :param sitename:
     :return: URL of API for sitename specified or DICT(sitename: URL, sitename2: URL)
     """
-    b = "http://"
+    b = "http://www."
     sitecatsapis = dict(spankwire=b+"spankwire.com/api/HubTrafficApiCall?data=getCategoriesList&output=json&segment=gay",
                         xtube=b+"xtube.com/webmaster/api.php?action=getCategoryList",
                         youporn=b+"youporn.com/api/webmasters/categories/",
@@ -559,9 +559,9 @@ def getAPIURLS(sitename=None):
     siteapis = dict(
         gaytube=b+"gaytube.com/api/webmasters/search/?ordering=newest&period=alltime&thumbsize=preview&category=&page=1&search=&tags[]=&count=250",
         pornhub=b+"pornhub.com/webmasters/search?id=44bc40f3bc04f65b7a35&category=gay&ordering=newest&tags[]=&search=&page=1&thumbsize=large",
-        redtube=b+"api.redtube.com/?data=redtube.Videos.searchVideos&output=json&thumbsize=big&ordering=newest&page=1&search=&tags[]=gay&category=&period=alltime",
+        redtube="http://api.redtube.com/?data=redtube.Videos.searchVideos&output=json&thumbsize=big&ordering=newest&page=1&search=&tags[]=gay&category=&period=alltime",
         spankwire=b + "spankwire.com/api/HubTrafficApiCall?data=searchVideos&output=json&ordering=newest&page=1&segment=gay&count=100&search=&tags=gay&thumbsize=big",
-        tube8=b+"api.tube8.com/api.php?action=searchVideos&output=json&ordering=newest&search=gay&thumbsize=big&page=1&orientation=gay",
+        tube8="http://api.tube8.com/api.php?action=searchVideos&output=json&ordering=newest&search=gay&thumbsize=big&page=1&orientation=gay",
         xtube=b+"xtube.com/webmaster/api.php?action=getVideosBySearchParams&tags=&ordering=newest&thumbsize=400x300&fields=title,tags,duration,thumbnail,url,embed,categories&search=gay&category=&page=1&count=100",
         youporn=b+"youporn.com/api/webmasters/search?search=&page=1&ordering=newest&tags[]=gay&category=&thumbsize=big",
         motherless=b+"motherless.com/feeds/tags/gay/videos?format=json&limit=250&offset=0",
@@ -1292,11 +1292,11 @@ def play(url='', video='DefaultVideo.png', title=''):
     try:
         vidurl = find_video(url)
         if vidurl is not None:
-            #xbmc.executebuiltin('PlayMedia(%s)' % vidurl.decode('utf-8', 'ignore'))
+            xbmc.executebuiltin('PlayMedia(%s)' % vidurl.decode('utf-8', 'ignore'))
             #plugin.clear_added_items()
             #return plugin.finish(items=[plugin.set_resolved_url(vidurl)], succeeded=True, update_listing=False, cache_to_disc=False)
             #return []
-            plugin.play_video(vidurl)
+            #plugin.play_video(vidurl)
     except:
         xbmc.log("\n***FLASHVAR SCRAPE FAILED TO PLAY SCRAPED SOURCE {0}".format(url))
     try:
