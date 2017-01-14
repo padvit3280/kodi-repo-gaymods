@@ -229,10 +229,10 @@ def parseVideosUrl(url):
     try:
         if len(obj.keys()) == 1:
             return obj.get(obj.keys()[0])
-        elif obj.has_key('data'):
-            return obj.get('data')
         elif obj.has_key('videos'):
             return obj.get('videos')
+        elif obj.has_key('data'):
+            return obj.get('data')
         else:
             return obj
     except:
@@ -706,53 +706,29 @@ def tumblrplay(url=''):
 
 @plugin.route('/tumblr/<blogname>/<pagestart>')
 def tumblrindex(blogname='', pagestart=1):
-    blogurl = "http://{0}.tumblr.com/page/".format(blogname) + "{0}"
-    html = ''
-    lastpage = False
-    pagenext = int(pagestart) + 10
-    for page in range(int(pagestart), int(pagenext)):
-        try:
-            html += download_page(blogurl.format(page))
-            lastpage = False
-        except:
-            lastpage = True
+    blogurl = "http://{0}.tumblr.com".format(blogname)
+    tumburl = blogurl + "/archive/filter-by/video"
     vids = []
     posts = []
-    posts = re.compile(r'<div class="post-background">(.*?)<!-- captions -->(.*?)<!-- captions -->', re.DOTALL).findall(html)
-    vids = []
     caps = []
     imgs = []
     links = []
     details = []
     url = ''
     link = ''
-    for v, c in posts:
-        if v.find('img src="') != -1:
-            thumb1 = str(v).split('img src="', 1)
-            if thumb1 is not None and len(thumb1) > 0:
-                thumbnail = str(str(thumb1[1]).partition('.jpg')[0]) + ".jpg"
-                imgs.append(thumbnail)
-        if c.find('window.open(') != -1:
-            link = c.split("window.open('", 1)[1].partition("')")[0]
-            if len(link) > 0: url = link
-        li = {'label': url.rpartition('/')[-1], 'thumbnail': thumbnail, 'icon': thumbnail, 'label2': url, 'path': plugin.url_for(tumblrplay, url=url), 'is_folder': False, 'info_type': 'video', 'info_labels': {}}
+    html = ''
+    pubdate = ''
+    lastpage = False
+    fal = re.compile(ur'class="post_thumb.+data-imageurl="(http://media.tumblr.com/tumblr.+frame1.jpg)".*?href="(http://.+tumblr.com/post/.+)".+data-peepr=.*?<span class="post_date">(.+)</span>', re.M + re.I)
+    html = download_page(tumburl).decode('utf-8', 'ignore').split('<!-- START CONTENT -->', 1)[1]
+    html = html.split('<!-- END CONTENT -->', 1)[0]
+    matches = fal.findall(html)
+    for thumbnail, url, dateof in matches:
+        #itemdata = json.loads(str(data).replace('&quot;', '"'))
+        putdate = str(dateof).strip()
+        li = {'label': url.rpartition('/')[-1], 'thumbnail': thumbnail, 'icon': thumbnail, 'label2': '{0} - {1}'.format(blogname, dateof), 'path': plugin.url_for(tumblrplay, url=url), 'is_folder': False, 'is_playable': True, 'info_type': 'video', 'info_labels': {'Date': dateof, 'DateAdded': dateof}}
         li.setdefault(li.keys()[0])
         vids.append(li)
-        #item = ListItem.from_dict(**li)
-        #infolbl = {'Genre': blogname, 'Title': url}
-        #item.set_info(info_type='video', info_labels=infolbl)
-        #item.add_context_menu_items([('Download', 'RunPlugin("{0}")'.format(plugin.url_for(tumblrplay, save=True, url=url,)),)])
-        #item.set_is_playable(True)
-        #vids.append(item)
-    if not lastpage:
-        __imgnext__ = __imgsearch__.replace('search.png', 'next.png')
-        pageend = pagenext + 10
-        itemtumblr = {'label': 'Pages [COLOR green]{0} to {1}[/COLOR] ->'.format(pagenext, pageend), 'path': plugin.url_for(tumblrindex, blogname=blogname, pagestart=pagenext), 'icon': __imgnext__, 'thumb': __imgnext__}
-        itemtumblr.setdefault(itemtumblr.keys()[0])
-        #vids.append(ListItem.from_dict(**itemtumblr))
-        vids.append(itemtumblr)
-    #return plugin.end_of_directory(items=vids, sort_methods=None, succeeded= True, update_listing=True, cache_to_disc=True)
-    #plugin.finish(items=vids)
     return vids
 
 
@@ -777,11 +753,6 @@ def index():
             sitem = {'label': sitename.title(), 'icon': sicon, 'thumb': sicon, 'path': spath}
             sitem.setdefault(sitem.keys()[0])
             litems.append(sitem)
-    #if not DOSTR8:
-    #    igayp = __imgsearch__.replace('search.', 'fgaypower.')
-    #    item = {'label': 'GayPower (DVD STREAMS)', 'icon': igayp, 'thumb': igayp, 'path': plugin.url_for(gaypower, page=1)}
-    #    item.setdefault(item.keys()[0])
-    #    litems.append(item)
     allitems = sorted(litems, key=lambda litems: litems['label'])
     ifolder = __imgsearch__.replace('search.', 'folder.')
     itemallcats = {'label': 'Global Category List', 'path': plugin.url_for(allcats), 'icon': ifolder,

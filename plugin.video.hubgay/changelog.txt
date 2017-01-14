@@ -1,3 +1,6 @@
+v 0.9.7
+- Improving the Tumblr function now to work for any blog specified in the settings. It uses the Tumblr Archive to request only video's from the blog. Next feature once this works well will be to allow for multiple tumblr sites to be displayed and browsed.
+
 v 0.9.6
 - Fixed bug in playing of video files
 
