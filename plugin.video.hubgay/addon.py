@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-import json
+import json, datetime
+import calendar
+from calendar import month_name, month_abbr
 import os.path as path
 import re
 import urllib
@@ -672,9 +674,8 @@ def find_video(url):
         return matches
 
 
-@plugin.route('/tumblr/play/<url>')
-def tumblrplay(url=''):
-    #url = urllib.unquote(url.decode('utf-8', 'ignore'))
+@plugin.route('/playtumblr/<url>')
+def playtumblr(url):
     vidurl = None
     try:
         import YDStreamExtractor
@@ -683,52 +684,69 @@ def tumblrplay(url=''):
     except:
         vidurl = url
     if vidurl is not None:
-        #xbmc.executebuiltin('PlayMedia("{0}")'.format(vidurl))
-        #xbmc.executebuiltin('PlayMedia(%s)' % vidurl.decode('utf-8', 'ignore'))
-        #plugin.play_video(item=vidurl)
-        #plugin.set_resolved_url(vidurl)
-        #plugin.add_items(items=[plugin.set_resolved_url(vidurl)])
         xbmc.Player().play(vidurl)
-        #plugin.end_of_directory(True, True, False)
-        #return plugin.clear_added_items()
-        #return []
-        #return
-        #vitem = ListItem(label=vidurl, label2='Tumblr', icon='DefaultVideo.png', thumbnail='DefaultVideo.png', path=vidurl)
-        #vitem.playable = True
-        #vitem.set_info(info_type='video', info_labels={'Genre': 'Tumblr'})
-        #plugin.play_video(vitem)
-        #return plugin.finish([plugin.set_resolved_url(vitem)], None, True,True, False)
-        #plugin.clear_added_items()
-        #plugin.set_resolved_url(vitem)
-        #plugin.redirect(plugin.url_for(tumblrindex, blogname=plugin.get_setting('tumblrblog'), pagestart=1))
-        #return plugin.finish(None, None, True, False, False, viewmode)
+    return None
 
 
-@plugin.route('/tumblr/<blogname>/<pagestart>')
-def tumblrindex(blogname='', pagestart=1):
+@plugin.route('/tumblr/<blogname>/<year>/<month>/<mostrecent>')
+def tumblr(blogname, year, month, mostrecent):
+    fal = re.compile(r'class="post_thumb.+data-imageurl="(http://media.tumblr.com/tumblr.+frame1.jpg)".*?href="(http://.+tumblr.com/post/.+)".+data-peepr=".*?post_date">([^<]*)<', re.M+re.I)
+    months = {v: k for k, v in enumerate(calendar.month_abbr)}
     blogurl = "http://{0}.tumblr.com".format(blogname)
-    tumburl = blogurl + "/archive/filter-by/video"
+    dateurl = blogurl + "/archive/{0}/{1}"
+    recenturl = blogurl + "/archive/filter-by/video"
     vids = []
-    posts = []
-    caps = []
-    imgs = []
-    links = []
-    details = []
+    lyear = ''
+    lmonth = ''
     url = ''
     link = ''
     html = ''
     pubdate = ''
-    lastpage = False
-    fal = re.compile(ur'class="post_thumb.+data-imageurl="(http://media.tumblr.com/tumblr.+frame1.jpg)".*?href="(http://.+tumblr.com/post/.+)".+data-peepr=.*?<span class="post_date">(.+)</span>', re.M + re.I)
-    html = download_page(tumburl).decode('utf-8', 'ignore').split('<!-- START CONTENT -->', 1)[1]
-    html = html.split('<!-- END CONTENT -->', 1)[0]
+    if bool(mostrecent):
+        html = download_page(recenturl).split('<!-- START CONTENT -->', 1)[1]
+        html = html.split('<!-- END CONTENT -->', 1)[0]
+    else:
+        for monthnum in range(month,month-3,-1):
+            if monthnum > 0:
+                url = dateurl.format(year, monthnum)
+                htmlbit = download_page(url).split('<!-- START CONTENT -->', 1)[1]
+                htmlbit = htmlbit.split('<!-- END CONTENT -->', 1)[0]
+                html += htmlbit
     matches = fal.findall(html)
     for thumbnail, url, dateof in matches:
-        #itemdata = json.loads(str(data).replace('&quot;', '"'))
-        putdate = str(dateof).strip()
-        li = {'label': url.rpartition('/')[-1], 'thumbnail': thumbnail, 'icon': thumbnail, 'label2': '{0} - {1}'.format(blogname, dateof), 'path': plugin.url_for(tumblrplay, url=url), 'is_folder': False, 'is_playable': True, 'info_type': 'video', 'info_labels': {'Date': dateof, 'DateAdded': dateof}}
-        li.setdefault(li.keys()[0])
-        vids.append(li)
+        try:
+            putdate = dateof.strip()
+            monthstring, yearstr  = putdate.split(',', 1)
+            lyear = int(x=yearstr.strip())
+            lmonths, ldays = monthstring.strip().split(' ', 1)
+            lday = int(x=ldays.strip())
+            shortmonth = lmonths.strip()[0:3]
+            lmonth = months.get(shortmonth.title())
+            #numberdate = datetime.date(lyear, lmonth, lday)
+            itemname = url.rpartition('/')[-1]
+            if itemname.isdigit(): itemname = blogname
+            itemname = itemname.replace('-', ' ').title()
+            #lbl2 = '{0} | {1}'.format(putdate, blogname)
+            lbl = "{0} [COLOR yellow]({1})[/COLOR]".format(itemname, putdate)
+            plugpath = plugin.url_for(playtumblr, url=url)
+            li = {'label': lbl, 'thumbnail': thumbnail, 'icon': thumbnail, 'path': plugpath, 'is_folder': False, 'info_type': 'video', 'info_labels': {}} #'is_playable': True,
+            li.setdefault(li.keys()[0])
+            vids.append(li)
+        except:
+            plugin.log.error("Failed to add item")
+    imgnext = __imgsearch__.replace("search.", "next.")
+    lbl = 'Before {0} {1}'.format(month_abbr[lmonth], lyear)
+    nextyear = lyear
+    if lmonth > 1:
+        nextmonth = lmonth - 1
+    else:
+        nextyear = nextyear - 1
+        nextmonth = 12
+    urlnext = plugin.url_for(tumblr, blogname=blogname, year=nextyear, month=nextmonth, mostrecent=False)
+    nextitem = {'label': lbl, 'thumbnail': imgnext, 'icon': imgnext, 'path': urlnext}
+    nextitem.setdefault(nextitem.keys()[0])
+    vids.append(nextitem)
+    #return plugin.finish(items=vids, sort_methods=None, succeeded=True, update_listing=True)
     return vids
 
 
@@ -768,7 +786,8 @@ def index():
         blogname = "exhibing"
         plugin.set_setting('tumblrblog', blogname)
 
-    itemtumblr = {'label': 'Tumblr', 'path': plugin.url_for(tumblrindex, blogname=blogname, pagestart=1), 'icon': timg, 'thumb': timg}
+    bname = blogname.replace('-',' ').title()
+    itemtumblr = {'label': 'Tumblr - {0}'.format(bname), 'icon': timg, 'thumb': timg, 'path': plugin.url_for(endpoint=tumblr, blogname=blogname, year=2016, month=12, mostrecent=False), 'is_folder': True}
     itemtumblr.setdefault(itemtumblr.keys()[0])
     itemallcats.setdefault(itemallcats.keys()[0])
     itemstream.setdefault(itemstream.keys()[0])
@@ -852,8 +871,7 @@ def site(sitename, section, url):
     mlabel = 'Next --> {0}'.format(pagenum)
     if url.find('motherless') != -1:
         mlabel = 'Next 250 to {0}'.format(pagenum+250)
-    itemnext = {'label': mlabel, 'path': plugin.url_for(site, sitename=sitename, section='next', url=nurl), 'icon': __imgnext__,
-                'thumb': __imgnext__}
+    itemnext = {'label': mlabel, 'path': plugin.url_for(site, sitename=sitename, section='next', url=nurl), 'icon': __imgnext__, 'thumb': __imgnext__}
     itemnext.setdefault(itemnext.keys()[0])
     if section.lower() == "index":
         if sitename.lower() == "spankwire" and not (DOSTR8 == True or DOSTR8 == 'true'):
