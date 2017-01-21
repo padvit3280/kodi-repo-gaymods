@@ -689,7 +689,7 @@ def tumblrhome():
         blogthumb = 'DefaultFolder.png'
         if len(matches) > 0:
             blogthumb = matches.pop()
-        li = {'label': blog, 'icon': blogthumb, 'thumbnail': blogthumb, 'path': plugin.url_for(endpoint=tumblr, blogname=blog, year=int(nowd.year), month=int(nowd.month), mostrecent=False)}
+        li = {'label': blog, 'icon': blogthumb, 'thumbnail': blogthumb, 'path': plugin.url_for(endpoint=tumblr, blogname=blog, year=nowd.year.numerator, month=nowd.month.numerator, mostrecent=False)}
         li.setdefault(li.keys()[0])
         litems.append(li)
     return litems
@@ -715,7 +715,7 @@ def playtumblr(url):
     plugin.clear_added_items()
 
 def tumblrhtml(url):
-    htmlbit = download_page(url).split('<!-- START CONTENT -->', 1)[1]
+    htmlbit = download_page(url).split('<!-- START CONTENT -->', 1)[-1]
     htmlbit = htmlbit.split('<!-- END CONTENT -->', 1)[0]
     return htmlbit
 
@@ -743,13 +743,9 @@ def tumblr(blogname, year, month, mostrecent):
             url = dateurl.format(nowd.year, monthnum)
             html += tumblrhtml(url)
             numpages += 1
-        #if numpages < 6:
-        #    endmonth = 0
-        #else:
-        #    endmonth = 6
         endmonth = numpages
+        year = nowd.year - 1
         for monthnum in range(12, endmonth, -1):
-            year = nowd.year - 1
             url = dateurl.format(year, monthnum)
             htmlbit = tumblrhtml(url)
             numpages += 1
@@ -762,13 +758,9 @@ def tumblr(blogname, year, month, mostrecent):
             url = dateurl.format(year, monthnum)
             html += tumblrhtml(url)
             numpages += 1
-        #if numpages < 6:
-        #    endmonth = 0
-        #else:
-        #    endmonth = 6
         endmonth = numpages
+        year -= 1
         for monthnum in range(12, endmonth, -1):
-            year -= 1
             url = dateurl.format(year, monthnum)
             htmlbit = tumblrhtml(url)
             numpages += 1

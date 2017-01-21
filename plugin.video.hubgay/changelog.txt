@@ -1,3 +1,6 @@
+ v 0.9.10
+ - Fixed a list index error in tumblr
+
  v 0.9.9
  - Tumblr updates
  - Support multiple blogs displayed as list in Tumblr folder
