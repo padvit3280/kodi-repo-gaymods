@@ -125,8 +125,8 @@ Fork of Adulthideout by Vashiel https://github.com/Vashiel/repository.adulthideo
         <import addon="script.module.kodiswift"/>
         <import addon="script.module.urlresolver"/>
         <import addon="script.module.youtube.dl"/>
-        <import addon="script.module.simple.downloader" optional="True"/>
-        <import addon="script.module.axel.downloader" optional="True" />
+        <import addon="script.module.simple.downloader" optional="true"/>
+        <import addon="script.module.axel.downloader" optional="true" />
     </requires>
     <extension point="xbmc.python.pluginsource" library="addon.py">
         <provides>video</provides>
