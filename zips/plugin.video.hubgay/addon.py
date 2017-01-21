@@ -692,40 +692,47 @@ def tumblrhome():
     thre = re.compile(r'link rel=.+icon.+href="(http://68.media.tumblr.com/avatar_.+)"')
     titlere = re.compile(r'property="og:title" content="(.+[^"])" />')
     aboutre = re.compile(r'property="og:description" content="(.+[^"])" />')
-    #if len(bloglist) > 200:
-    #    bloglist = bloglist[0:200]
-    for blog in bloglist:
-        html = urllib.urlopen(blogurlbase.format(blog)).read().decode('utf-8')
-        matchest = titlere.findall(html)
-        matchesd = aboutre.findall(html)
-        blogtitle = u''
-        blogabout = u''
-        bloglabel = blog.title()
-        if len(matchest) > 0:
-            blogtitle = matchest.pop().split('"',1)[0]
-            if len(matchesd) > 0:
-                blogabout = matchesd.pop().split('"',1)[0]
-                if len(blogabout) > 22:
-                    blogabout = blogabout[:22].strip() + ".."
-            if HTML is not None:
-                blogtitle = HTML.unescape(blogtitle).title()
-                blogabout = HTML.unescape(blogabout).title()
-            if len(blogtitle) < 2:
-                blogtitle = blog
-            if blogtitle.lower().find('untitled') != -1:
-                blogtitle = blog
-            bloglabel = blogtitle + "\n" + blogabout
-        matches = thre.findall(html)
-        blogthumb = 'DefaultFolder.png'
-        if len(matches) > 0:
-            blogthumb = matches.pop().split('"',1)[0]
-        li = {'label': bloglabel, 'label2': blogabout, 'icon': blogthumb, 'thumbnail': blogthumb, 'path': plugin.url_for(endpoint=tumblr, blogname=blog, year=nowd.year.numerator, month=nowd.month.numerator, mostrecent=False), 'properties': {'genre': blog, 'year': blogabout}}
-        li.setdefault(li.keys()[0])
-        item = ListItem.from_dict(**li)
-        item.set_info('video', {'genre': blog, 'year': blogabout})
-        item.set_property('genre', blog)
-        item.set_property('year', blogabout)
-        litems.append(item)
+    DEBUG = bool(plugin.get_setting('debugon'))
+    if DEBUG:
+        for blog in bloglist:
+            path = plugin.url_for(endpoint=tumblr, blogname=blog, year=nowd.year.numerator, month=nowd.month.numerator, mostrecent=False)
+            li = ListItem(label=blogname, icon='DefaultFolder.png', thumbnail='DefaultFolder.png', path=path)
+            litems.append(li)
+    else:
+        if len(bloglist) > 50:
+            bloglist = bloglist[0:50]
+        for blog in bloglist:
+            html = urllib.urlopen(blogurlbase.format(blog)).read().decode('utf-8')
+            matchest = titlere.findall(html)
+            matchesd = aboutre.findall(html)
+            blogtitle = u''
+            blogabout = u''
+            bloglabel = blog.title()
+            if len(matchest) > 0:
+                blogtitle = matchest.pop().split('"',1)[0]
+                if len(matchesd) > 0:
+                    blogabout = matchesd.pop().split('"',1)[0]
+                    if len(blogabout) > 22:
+                        blogabout = blogabout[:22].strip() + ".."
+                if HTML is not None:
+                    blogtitle = HTML.unescape(blogtitle).title()
+                    blogabout = HTML.unescape(blogabout).title()
+                if len(blogtitle) < 2:
+                    blogtitle = blog
+                if blogtitle.lower().find('untitled') != -1:
+                    blogtitle = blog
+                bloglabel = blogtitle + "\n" + blogabout
+            matches = thre.findall(html)
+            blogthumb = 'DefaultFolder.png'
+            if len(matches) > 0:
+                blogthumb = matches.pop().split('"',1)[0]
+            li = {'label': bloglabel, 'label2': blogabout, 'icon': blogthumb, 'thumbnail': blogthumb, 'path': plugin.url_for(endpoint=tumblr, blogname=blog, year=nowd.year.numerator, month=nowd.month.numerator, mostrecent=False), 'properties': {'genre': blog, 'year': blogabout}}
+            li.setdefault(li.keys()[0])
+            item = ListItem.from_dict(**li)
+            item.set_info('video', {'genre': blog, 'year': blogabout})
+            item.set_property('genre', blog)
+            item.set_property('year', blogabout)
+            litems.append(item)
     plugin.add_items(items=litems)
     finish(None)
 
