@@ -1,7 +1,12 @@
- v 0.9.10
+v 0.9.11
+- Added Download to Tumblr videos
+- Tried to add sort methods to tumblr blog list of videos
+- A step closer to v1.0
+
+v 0.9.10
  - Fixed a list index error in tumblr
 
- v 0.9.9
+v 0.9.9
  - Tumblr updates
  - Support multiple blogs displayed as list in Tumblr folder
  - Add blogs to list in settings seperate each tumblr blog name with a "|"

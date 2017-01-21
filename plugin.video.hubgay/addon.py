@@ -15,6 +15,13 @@ plugin = Plugin()
 __addondir__ = xbmc.translatePath(plugin.addon.getAddonInfo('path'))
 __resdir__ = path.join(__addondir__, 'resources')
 __imgsearch__ = path.join(__resdir__, 'search.png')
+lstSorts = [SortMethod.UNSORTED, SortMethod.LABEL]
+HTML = None
+try:
+    from HTMLParser import HTMLParser
+    HTML = HTMLParser()
+except:
+    HTML = None
 
 def makeVideoItems(itemlist, sitename=None):
     """
@@ -683,16 +690,44 @@ def tumblrhome():
     nowd = datetime.datetime.now()
     litems = []
     thre = re.compile(r'link rel=.+icon.+href="(http://68.media.tumblr.com/avatar_.+)"')
+    titlere = re.compile(r'property="og:title" content="(.+[^"])" />')
+    aboutre = re.compile(r'property="og:description" content="(.+[^"])" />')
+    #if len(bloglist) > 200:
+    #    bloglist = bloglist[0:200]
     for blog in bloglist:
-        html = download_page(blogurlbase.format(blog))
+        html = urllib.urlopen(blogurlbase.format(blog)).read().decode('utf-8')
+        matchest = titlere.findall(html)
+        matchesd = aboutre.findall(html)
+        blogtitle = u''
+        blogabout = u''
+        bloglabel = blog.title()
+        if len(matchest) > 0:
+            blogtitle = matchest.pop().split('"',1)[0]
+            if len(matchesd) > 0:
+                blogabout = matchesd.pop().split('"',1)[0]
+                if len(blogabout) > 22:
+                    blogabout = blogabout[:22].strip() + ".."
+            if HTML is not None:
+                blogtitle = HTML.unescape(blogtitle).title()
+                blogabout = HTML.unescape(blogabout).title()
+            if len(blogtitle) < 2:
+                blogtitle = blog
+            if blogtitle.lower().find('untitled') != -1:
+                blogtitle = blog
+            bloglabel = blogtitle + "\n" + blogabout
         matches = thre.findall(html)
         blogthumb = 'DefaultFolder.png'
         if len(matches) > 0:
-            blogthumb = matches.pop()
-        li = {'label': blog, 'icon': blogthumb, 'thumbnail': blogthumb, 'path': plugin.url_for(endpoint=tumblr, blogname=blog, year=nowd.year.numerator, month=nowd.month.numerator, mostrecent=False)}
+            blogthumb = matches.pop().split('"',1)[0]
+        li = {'label': bloglabel, 'label2': blogabout, 'icon': blogthumb, 'thumbnail': blogthumb, 'path': plugin.url_for(endpoint=tumblr, blogname=blog, year=nowd.year.numerator, month=nowd.month.numerator, mostrecent=False), 'properties': {'genre': blog, 'year': blogabout}}
         li.setdefault(li.keys()[0])
-        litems.append(li)
-    return litems
+        item = ListItem.from_dict(**li)
+        item.set_info('video', {'genre': blog, 'year': blogabout})
+        item.set_property('genre', blog)
+        item.set_property('year', blogabout)
+        litems.append(item)
+    plugin.add_items(items=litems)
+    finish(None)
 
 
 @plugin.route('/playtumblr/<url>')
@@ -714,10 +749,22 @@ def playtumblr(url):
         #return plugin.set_resolved_url(item=vitem)
     plugin.clear_added_items()
 
-def tumblrhtml(url):
-    htmlbit = download_page(url).split('<!-- START CONTENT -->', 1)[-1]
-    htmlbit = htmlbit.split('<!-- END CONTENT -->', 1)[0]
+
+def tumblrhtml(url, section="START CONTENT", sectionend="END CONTENT"):
+    # section="Following"
+    htmlbit = download_page(url).split('<!-- {0} -->'.format(section), 1)[-1]
+    htmlbit = htmlbit.split('<!-- {0} -->'.format(sectionend), 1)[0]
     return htmlbit
+
+
+def tumblrfollows():
+    fre = re.compile(r'<a href="https://(.+)\.tumblr.com/".*?data-tumblelog-popover="(.*?)"', re.M)
+    furl = "https://api.tumblr.com/v2/user/following"
+    tumblrauth = { 'consumer_key': '5wEwFCF0rbiHXYZQQeQnNetuwZMmIyrUxIePLqUMcZlheVXwc4', 'consumer_secret': 'GCLMI2LnMZqO2b5QheRvUSYY51Ujk7nWG2sYroqozW06x4hWch', 'token': '7IuPrj2L6cfxMwOdbWV8yYYFafopwrYR3RYSdIc8YxMKJc8Dl5', 'token_secret': 'WSnl65etymR8m5KuK3rAX67emMCYzASpLrzIHQ2SKejYSqZmmh'}
+    urlfollows = "https://api.tumblr.com/v2/user/following?limit=250"
+    headers = {'Authorization': 'OAuth oauth_consumer_key = "5wEwFCF0rbiHXYZQQeQnNetuwZMmIyrUxIePLqUMcZlheVXwc4", oauth_nonce = "XiuBW4", oauth_signature = "N2hLobvUJd%2BK8OMZKr2YLlLC99M%3D", oauth_signature_method = "HMAC-SHA1", oauth_timestamp = "1485035014", oauth_token = "7IuPrj2L6cfxMwOdbWV8yYYFafopwrYR3RYSdIc8YxMKJc8Dl5", oauth_version = "1.0"'}
+    req = urllib2.Request(url=urlfollows, headers=headers)
+
 
 @plugin.route('/tumblr/<blogname>/<year>/<month>/<mostrecent>')
 def tumblr(blogname, year, month, mostrecent):
@@ -778,20 +825,22 @@ def tumblr(blogname, year, month, mostrecent):
             lday = int(x=ldays.strip())
             shortmonth = lmonths.strip()[0:3]
             lmonth = months.get(shortmonth.title())
-            #numberdate = datetime.date(lyear, lmonth, lday)
+            numberdate = datetime.date(lyear, lmonth, lday)
             itemname = url.rpartition('/')[-1]
             if itemname.isdigit(): itemname = blogname
             itemname = itemname.replace('-', ' ').title()
             #lbl2 = '{0} | {1}'.format(putdate, blogname)
-            lbl = "{0} [COLOR yellow]({1})[/COLOR]".format(itemname, putdate)
+            lbl = "{0}\n[COLOR yellow]({1})[/COLOR]".format(itemname, putdate)
             plugpath = plugin.url_for(playtumblr, url=url)
-            li = {'label': lbl, 'thumbnail': thumbnail, 'icon': thumbnail, 'path': plugpath, 'is_playable': True,'is_folder': False, 'info_type': 'video', 'info_labels': {'Title': itemname,'Date': putdate}}
+            li = {'label': lbl, 'label2': url, 'thumbnail': thumbnail, 'icon': thumbnail, 'path': plugpath, 'is_playable': True,'is_folder': False, 'info_type': 'video', 'info_labels': {}}
             li.setdefault(li.keys()[0])
+            item = ListItem.from_dict(**li)
+
             vids.append(li)
         except:
             plugin.log.error("Failed to add item")
     imgnext = __imgsearch__.replace("search.", "next.")
-    lbl = 'Before {0} {1}'.format(month_abbr[lmonth], lyear)
+    lbl = '-> Before {0} {1} ->'.format(month_abbr[lmonth], lyear)
     nextyear = lyear
     if lmonth > 1:
         nextmonth = lmonth - 1
@@ -799,10 +848,17 @@ def tumblr(blogname, year, month, mostrecent):
         nextyear = nextyear - 1
         nextmonth = 12
     urlnext = plugin.url_for(endpoint=tumblr, blogname=blogname, year=int(nextyear), month=int(nextmonth), mostrecent=False)
-    nextitem = {'label': lbl, 'thumbnail': imgnext, 'icon': imgnext, 'path': urlnext}
+    nextitem = {'label': lbl, 'label2': 'ZZZ next', 'thumbnail': imgnext, 'icon': imgnext, 'path': urlnext}
     nextitem.setdefault(nextitem.keys()[0])
     vids.append(nextitem)
-    return plugin.finish(items=vids, sort_methods=None, succeeded=True, update_listing=True, cache_to_disc=True)
+    litems = []
+    for item in vids:
+        litem = ListItem.from_dict(**item)
+        if litem.label2 != 'ZZZ next':
+            litem.add_context_menu_items([('Download', 'RunPlugin("{0}")'.format(
+                plugin.url_for(download, name=item.get('label'), url=item.get('label2'))),)])
+        litems.append(litem)
+    finish(litems)
 
 
 @plugin.route('/')
@@ -835,7 +891,7 @@ def index():
     itemstream = {'label': 'Play Web URL', 'path': plugin.url_for(resolver), 'icon': 'DefaultFolder.png',
                   'thumb': 'DefaultFolder.png'}
     timg = __imgsearch__.replace('search.', 'ftumblr.')
-    itemtumblr = {'label': 'Tumblr', 'icon': timg, 'thumb': timg, 'path': plugin.url_for(endpoint=tumblrhome)}
+    itemtumblr = {'label': 'Tumblr', 'icon': timg, 'thumb': timg, 'path': plugin.url_for(tumblrhome)}
     itemtumblr.setdefault(itemtumblr.keys()[0])
     itemallcats.setdefault(itemallcats.keys()[0])
     itemstream.setdefault(itemstream.keys()[0])
@@ -1390,12 +1446,15 @@ def download(name='', url=''):
         pass
     #return plugin.finish(items=[])
 
+def finish(items=[]):
+    plugin.set_content('movies')
+    #for sort in lstSorts: plugin.add_sort_method(sort_method=sort)
+    viewmode = int(plugin.get_setting('viewmode'))
+    if viewmode is None: viewmode = 500
+    #plugin.set_view_mode(viewmode)
+    return plugin.finish(items=items, sort_methods=lstSorts, succeeded=True, update_listing=True, cache_to_disc=True, view_mode=viewmode)
+
 
 if __name__ == '__main__':
     plugin.run()
-    #plugin.set_content('movies')
-    viewmode = int(plugin.get_setting('viewmode'))
-    if viewmode is None: viewmode = 500
-    plugin.set_view_mode(viewmode)
-    plugin.set_content('movies')
-
+    #plugin.finish(items=plugin.added_items, sort_methods=lstSorts, succeeded=True, update_listing=True, cache_to_disc=True, view_mode=viewmode)
