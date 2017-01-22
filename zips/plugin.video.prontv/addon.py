@@ -4,10 +4,16 @@ from resources.jsonpron import Result, PronApi, Metatags, Hosterurls,  Filedata
 from urllib import urlencode, quote_plus, quote, unquote_plus, unquote
 from xbmcswift2 import Plugin, xbmc, xbmcaddon, ListItem, download_page as DL
 from base64 import decodestring
-
+HTML = None
+try:
+    from HTMLParser import HTMLParser
+    HTML = HTMLParser()
+except:
+    HTML = None
 
 APIKEY = "be4548a385c354cc02ca6135ae57b65f"
-COUNT = 20
+COUNT = 50
+VIEWMODE = 500
 urlsearch = "http://pron.tv/api/search/stream/?apikey={0}&count={1}&from=0&getmeta=1&query=".format(APIKEY, COUNT)
 urlimages = "http://pron.tv/api/thumbnail/{0}?apikey=" + APIKEY
 plugin = Plugin()
@@ -16,15 +22,24 @@ __resdir__ = path.join(__addondir__, 'resources')
 __imgsearch__ = path.join(__resdir__, 'search.png')
 __imgnext__ = __imgsearch__.replace('search.png', 'next.png')
 
-def searchstreams(query='staxus', offset=0):
+def searchstreams(query='gay', offset=0):
     vids = []
     img = 'DefaultVideo.png'
-    apiurl = urlsearch.replace("from=0", "from={0}".format(offset)) + quote_plus(query)
+    fhosts = plugin.get_setting(key='filterhosts')
+    fwords = plugin.get_setting(key='filterwords')
+    fnames = plugin.get_setting(key='filternames')
+    addqs = ""
+    if len(fnames) > 0:
+        addqs += "name:{0} ".format(fnames)
+    if len(fhosts) > 0:
+        addqs += "host:{0} ".format(fhosts)
+    if len(fwords) > 0:
+        addqs += fwords + " "
+    apiurl = urlsearch.replace("from=0", "from={0}".format(offset))
+    apiurl += quote_plus(query + " " + addqs.strip())
     results = DL(apiurl).decode("utf-8")
     res = json.loads(results)
     pornresults = PronApi(**res)
-    #plugin.log.info("***{0} JSON {1}".format(apiurl, str(repr(pornresults))))
-    #plugin.log.info(json.dumps(res, sort_keys=True, indent=1))
     if isinstance(res, dict) and res.get('result'):
         items = res.get('result')
         for item in items:
@@ -43,17 +58,24 @@ def searchstreams(query='staxus', offset=0):
             filedata.filedata = filedatalist
             hoster.filedata = filedata
             mov = Result(**item)
-            #plugin.log.info("!! Before assign others " + str(mov))
             mov.hosterurls = hoster
             mov.metatags = meta
-            #plugin.log.info("--Assigned lower objects {0}\nImage found {1}".format(str(mov), img))
 
             datemod = mov.modified
-            title = mov.title
-            filename = mov.sourcetitle
+            title = unquote(HTML.unescape(mov.title))
+            filename = unquote(HTML.unescape(mov.sourcetitle))
             url = unquote(mov.hosterurls.url)
-            imgid = mov.imageid
+
+            hostname = mov.hosterurls.filedata.hosterurl
             lbl = "[COLOR white]" + filename + "[/COLOR]\n" + title
+            if len(hostname) > 0 and len(fhosts) < 2:
+                hostparts = urlparse.urlparse(hostname)
+                hostname = hostparts.hostname.replace("www.","")
+                if len(filename) > 20:
+                    filename = filename[:20].strip() + ".."
+                lbl = "[COLOR white]" + filename + "[/COLOR] ([COLOR yellow]" + hostname + ")[/COLOR]\n" + title
+            imgid = mov.imageid
+
             playpath = plugin.url_for(endpoint=play, url=url)
             litem = ListItem(label=lbl, label2=filename, icon=img, thumbnail=img, path=playpath)
             litem.set_info(type='video', info_labels={'Date': datemod, 'Title': title, 'Plot': mov.sourcetitle})
@@ -112,9 +134,11 @@ def nextpage(query, offset):
 @plugin.route('/search')
 def search():
     searchterm = ''
-    kb = plugin.keyboard(default=None, heading="Search pron.tv")
+    searchterm = unquote_plus(plugin.get_setting(key='lastsearch'))
+    kb = plugin.keyboard(default=searchterm, heading="Search Pron.TV")
     if kb is not None:
         searchterm = quote_plus(kb)
+        plugin.set_setting(key='lastsearch', val=searchterm)
         items = searchstreams(query=searchterm)
         return items
     else:
@@ -145,3 +169,7 @@ def play(url):
 
 if __name__ == '__main__':
     plugin.run()
+    mode = int(plugin.get_setting(key='viewmode'))
+    if mode is not None and mode >= 0:
+        VIEWMODE = mode
+    plugin.set_view_mode(view_mode_id=VIEWMODE)

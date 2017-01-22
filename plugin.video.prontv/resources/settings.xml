@@ -6,6 +6,7 @@
         <setting id="viewmode" label="Set View $INFO[Container.Viewmode]" values="500" default="500" type="number" visible="true" />
 		<setting id="downloadpath" label="Download Path" values="" default="" type="folder"  visible="true" />
 		<setting id="filterhosts" label="Only These Hosts" values="" default="" type="text" visible="true" />
+		<setting id="filternames" label="File Name Query" values="" default="" type="text" visible="true" />
 		<setting id="filterwords" label="Additional Query Terms" values="" default="#newlinks" type="text"  visible="true"  />
 		<setting id="debugon" label="DEBUG MODE ON" values="false" default="false" type="bool" visible="true" />
 	</category>

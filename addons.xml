@@ -191,7 +191,7 @@ REQUIRED [B]Script.Module.URLResolver, Simple.Downloader, YouTubeDL, and KODIswi
   </extension>
 </addon>
 
-<addon id="plugin.video.prontv" name="prontv" version="0.2" provider-name="moedje">
+<addon id="plugin.video.prontv" name="Pron.TV" version="0.3" provider-name="moedje">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
     <import addon="script.module.xbmcswift2" version="2.4.0"/>
@@ -204,7 +204,7 @@ REQUIRED [B]Script.Module.URLResolver, Simple.Downloader, YouTubeDL, and KODIswi
     <platform>all</platform>
     <language></language>
     <summary>Pron.TV Streaming Porn</summary>
-    <description>V 0.2 seems to search and play ok still struggles on some thumbnails. More to come soon! Just started this addon to bring up streams from pron.tv after playing with and registering for the API but have not started any of the addon just yet.</description>
+    <description>Search Pron.TV website for streaming porn from Kodi with this addon. ADULTS ONLY!! V 0.3 adds more features such as settings, set view mode, filter hosts, will be continuing to add basic features to this addon V 0.2 seems to search and play ok still struggles on some thumbnails. More to come soon! Just started this addon to bring up streams from pron.tv after playing with and registering for the API but have not started any of the addon just yet.</description>
   </extension>
 </addon>
 
