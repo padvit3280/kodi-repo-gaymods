@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-import json, urlparse, os.path as path
+import json, urlparse, urllib, os.path as path
 from resources.jsonpron import Result, PronApi, Metatags, Hosterurls,  Filedata
 from urllib import urlencode, quote_plus, quote, unquote_plus, unquote
-from xbmcswift2 import Plugin, xbmc, xbmcaddon, ListItem, download_page as DL
+from xbmcswift2 import Plugin, xbmc, xbmcaddon, ListItem, download_page
 from base64 import decodestring
 HTML = None
 try:
@@ -22,12 +22,16 @@ __resdir__ = path.join(__addondir__, 'resources')
 __imgsearch__ = path.join(__resdir__, 'search.png')
 __imgnext__ = __imgsearch__.replace('search.png', 'next.png')
 
+def DL(url):
+    return HTML.unescape(urllib.urlopen(url).read().decode('utf-8'))
+
 def searchstreams(query='gay', offset=0):
     vids = []
     img = 'DefaultVideo.png'
     fhosts = plugin.get_setting(key='filterhosts')
     fwords = plugin.get_setting(key='filterwords')
     fnames = plugin.get_setting(key='filternames')
+    newlinks = plugin.get_setting(key='newlinkson', converter=bool)
     addqs = ""
     if len(fnames) > 0:
         addqs += "name:{0} ".format(fnames)
@@ -35,10 +39,12 @@ def searchstreams(query='gay', offset=0):
         addqs += "host:{0} ".format(fhosts)
     if len(fwords) > 0:
         addqs += fwords + " "
+    if newlinks:
+        addqs += "#newlinks "
     apiurl = urlsearch.replace("from=0", "from={0}".format(offset))
     apiurl += quote_plus(query + " " + addqs.strip())
-    results = DL(apiurl).decode("utf-8")
-    res = json.loads(results)
+    results = DL(apiurl)
+    res = json.loads(results, encoding='utf-8')
     pornresults = PronApi(**res)
     if isinstance(res, dict) and res.get('result'):
         items = res.get('result')
@@ -46,27 +52,32 @@ def searchstreams(query='gay', offset=0):
             mov = Result()
             hoster = Hosterurls()
             filedata = Filedata()
-            meta = Metatags(**item.get('metatags'))
-            hoster = Hosterurls(**item.get('hosterurls')[0])
-            filedata = Filedata(**item.get('hosterurls')[0].get('filedata'))
-            filedatalist = []
-            img = ''
-            for fdata in item.get('hosterurls')[0].get('filedata').get('filedata'):
-                filedataitem = Filedata(**fdata)
-                if filedataitem.name == 'pic':
-                    img = filedataitem.value
-                filedatalist.append(filedataitem)
-            filedata.filedata = filedatalist
-            hoster.filedata = filedata
+            if item.get('metatags'):
+                meta = Metatags(**item.get('metatags'))
+            if item.get('hosterurls'):
+                hoster = Hosterurls(**item.get('hosterurls')[0])
+            if item.get('hosterurls')[0].get('filedata'):
+                filedata = Filedata(**item.get('hosterurls')[0].get('filedata'))
+                filedatalist = []
+                img = ''
+                for fdata in item.get('hosterurls')[0].get('filedata').get('filedata'):
+                    filedataitem = Filedata(**fdata)
+                    if filedataitem.name == 'pic':
+                        img = filedataitem.value
+                    filedatalist.append(filedataitem)
+                filedata.filedata = filedatalist
+                hoster.filedata = filedata
             mov = Result(**item)
             mov.hosterurls = hoster
             mov.metatags = meta
 
             datemod = mov.modified
             title = unquote(HTML.unescape(mov.title))
-            filename = str(mov.sourcetitle)
-            if len(filename) > 5:
-                filename = unquote(HTML.unescape(filename))
+            filename = mov.sourcetitle
+            if filename:
+                filename = unquote(filename)
+            else:
+                filename = ""
             url = mov.hosterurls.url
             hostname = mov.hosterurls.filedata.hosterurl
             lbl = "[COLOR white]" + filename + "[/COLOR]\n" + title
@@ -149,8 +160,8 @@ def search():
 
 @plugin.route('/play/<url>')
 def play(url):
-    url = HTML.unescape(url)
-    plugin.log.debug("---Play url: {0}".format(url))
+    #url = HTML.unescape(url)
+    xbmc.log("---Play url: {0}".format(url))
     try:
         import urlresolver
         HMF = urlresolver.HostedMediaFile
@@ -158,8 +169,14 @@ def play(url):
         if mediafile:
             resolved = mediafile.resolve()
         else:
-            resolved = url
-        plugin.log.debug("---Resolved url: {0}".format(resolved))
+            try:
+                import YDStreamExtractor
+                info = YDStreamExtractor.getVideoInfo(url)
+                resolved = info.streamURL()
+            except:
+                plugin.notify(msg="Failed to resolve {0} to a playable video.".format(url))
+                resolved = url
+        print "---Resolved url: {0}".format(resolved)
         vitem = ListItem(label=url, path=resolved)
         vitem.is_folder = False
         vitem.set_is_playable = True
