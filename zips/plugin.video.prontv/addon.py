@@ -50,6 +50,7 @@ def searchstreams(query='gay', offset=0):
             hoster = Hosterurls(**item.get('hosterurls')[0])
             filedata = Filedata(**item.get('hosterurls')[0].get('filedata'))
             filedatalist = []
+            img = ''
             for fdata in item.get('hosterurls')[0].get('filedata').get('filedata'):
                 filedataitem = Filedata(**fdata)
                 if filedataitem.name == 'pic':
@@ -63,9 +64,10 @@ def searchstreams(query='gay', offset=0):
 
             datemod = mov.modified
             title = unquote(HTML.unescape(mov.title))
-            filename = unquote(HTML.unescape(mov.sourcetitle))
-            url = unquote(mov.hosterurls.url)
-
+            filename = str(mov.sourcetitle)
+            if len(filename) > 5:
+                filename = unquote(HTML.unescape(filename))
+            url = mov.hosterurls.url
             hostname = mov.hosterurls.filedata.hosterurl
             lbl = "[COLOR white]" + filename + "[/COLOR]\n" + title
             if len(hostname) > 0 and len(fhosts) < 2:
@@ -75,7 +77,8 @@ def searchstreams(query='gay', offset=0):
                     filename = filename[:20].strip() + ".."
                 lbl = "[COLOR white]" + filename + "[/COLOR] ([COLOR yellow]" + hostname + ")[/COLOR]\n" + title
             imgid = mov.imageid
-
+            #if len(img) < 1 and len(imgid) > 0:
+            #    img = get_thumb(imgid)
             playpath = plugin.url_for(endpoint=play, url=url)
             litem = ListItem(label=lbl, label2=filename, icon=img, thumbnail=img, path=playpath)
             litem.set_info(type='video', info_labels={'Date': datemod, 'Title': title, 'Plot': mov.sourcetitle})
@@ -92,13 +95,14 @@ def searchstreams(query='gay', offset=0):
     vids.insert(1, nitem)
     return vids
 
+
 def get_thumb(imageid):
     filepath = ''
     url = urlimages.format(imageid)
-    datapath = path.abspath(xbmc.translatePath('special://profile/addon_data/plugin.video.prontv/'))
+    datapath = xbmc.translatePath('special://profile/addon_data/plugin.video.prontv/')
     imagename = "{0}.png".format(imageid)
     imagefile = path.join(datapath, imagename)
-    #plugin.log.info ("**GET THUMB: PluginID={0} Path={1} Imagefilename={2}".format(plugin.id, datapath, imagefile))
+    print "**GET THUMB: ImgID={0} Path={1} Imagefilename={2}".format(plugin.id, datapath, imagefile)
     if path.exists(imagefile) and path.isfile(imagefile):
         return imagefile
     else:
@@ -106,10 +110,8 @@ def get_thumb(imageid):
             results = DL(url).decode("utf-8")
             res = json.loads(results)
             plugin.log.debug(res)
-            #res = res.get('result')
             imagedata = res.get('result').get("thumbnail_base64").decode('base64')
-            #print("**IMAGE DATA**\n"+imagedata)
-            #plugin.log.debug("**IMAGE DATA**\n"+imagedata)
+            plugin.log.info("**IMAGE DATA**\n"+results + "\n*** LEN=" + str(len(imagedata)))
             fh = open(imagefile, "wb")
             fh.write(decodestring(imagedata))
             fh.close()
@@ -147,14 +149,17 @@ def search():
 
 @plugin.route('/play/<url>')
 def play(url):
-    url = unquote_plus(url)
+    url = HTML.unescape(url)
+    plugin.log.debug("---Play url: {0}".format(url))
     try:
         import urlresolver
         HMF = urlresolver.HostedMediaFile
-    except:
-        HMF = None
-    try:
-        resolved = HMF(url).resolve()
+        mediafile = HMF(url)
+        if mediafile:
+            resolved = mediafile.resolve()
+        else:
+            resolved = url
+        plugin.log.debug("---Resolved url: {0}".format(resolved))
         vitem = ListItem(label=url, path=resolved)
         vitem.is_folder = False
         vitem.set_is_playable = True
