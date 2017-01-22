@@ -1,3 +1,8 @@
+V 0.3.0
+- Settings added
+- Configure host to filter by
+- Set Viewmode
+
 V 0.2.0
 - First version that works to search and display results and some playable.
 - Resolver fails a lot and thumbnails failing
