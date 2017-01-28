@@ -696,7 +696,7 @@ def tumblrhome():
     if DEBUG:
         for blog in bloglist:
             path = plugin.url_for(endpoint=tumblr, blogname=blog, year=nowd.year.numerator, month=nowd.month.numerator, mostrecent=False)
-            li = ListItem(label=blogname, icon='DefaultFolder.png', thumbnail='DefaultFolder.png', path=path)
+            li = ListItem(label=blog, icon='DefaultFolder.png', thumbnail='DefaultFolder.png', path=path)
             litems.append(li)
     else:
         if len(bloglist) > 50:
@@ -733,8 +733,8 @@ def tumblrhome():
             item.set_property('genre', blog)
             item.set_property('year', blogabout)
             litems.append(item)
-    plugin.add_items(items=litems)
-    finish(None)
+    #plugin.add_items(items=litems)
+    finish(litems)
 
 
 @plugin.route('/playtumblr/<url>')
@@ -1458,8 +1458,9 @@ def finish(items=[]):
     #for sort in lstSorts: plugin.add_sort_method(sort_method=sort)
     viewmode = int(plugin.get_setting('viewmode'))
     if viewmode is None: viewmode = 500
-    #plugin.set_view_mode(viewmode)
-    return plugin.finish(items=items, sort_methods=lstSorts, succeeded=True, update_listing=True, cache_to_disc=True, view_mode=viewmode)
+    plugin.set_view_mode(viewmode)
+    return items
+    #return plugin.finish(items=items, sort_methods=lstSorts, succeeded=True, update_listing=True, cache_to_disc=True, view_mode=viewmode)
 
 
 if __name__ == '__main__':
