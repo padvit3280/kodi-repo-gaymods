@@ -892,19 +892,19 @@ def index():
         if sitename.find('_search') == -1:
             sicon = __imgsearch__.replace('search.', 'f{0}.'.format(sitename))
             spath = plugin.url_for(site, sitename=sitename, section='index', url='0')
-            sitem = {'label': sitename.title(), 'icon': sicon, 'thumb': sicon, 'path': spath}
+            sitem = {'label': sitename.title(), 'icon': sicon, 'thumbnail': sicon, 'path': spath}
             sitem.setdefault(sitem.keys()[0])
             litems.append(sitem)
     allitems = sorted(litems, key=lambda litems: litems['label'])
     ifolder = __imgsearch__.replace('search.', 'folder.')
     itemallcats = {'label': 'Global Category List', 'path': plugin.url_for(allcats), 'icon': ifolder,
-                  'thumb': ifolder}
+                  'thumbnail': ifolder}
     itemsearch = {'label': 'Search All Sites', 'path': plugin.url_for(search), 'icon': __imgsearch__,
-                  'thumb': __imgsearch__}
+                  'thumbnail': __imgsearch__}
     itemstream = {'label': 'Play Web URL', 'path': plugin.url_for(resolver), 'icon': 'DefaultFolder.png',
-                  'thumb': 'DefaultFolder.png'}
+                  'thumbnail': 'DefaultFolder.png'}
     timg = __imgsearch__.replace('search.', 'ftumblr.')
-    itemtumblr = {'label': 'Tumblr', 'icon': timg, 'thumb': timg, 'path': plugin.url_for(tumblrhome)}
+    itemtumblr = {'label': 'Tumblr', 'icon': timg, 'thumbnail': timg, 'path': plugin.url_for(tumblrhome)}
     itemtumblr.setdefault(itemtumblr.keys()[0])
     itemallcats.setdefault(itemallcats.keys()[0])
     itemstream.setdefault(itemstream.keys()[0])
@@ -950,7 +950,7 @@ def site(sitename, section, url):
         surl = siteurl.replace('search=', 'search={0}')
     itemsearch = {'label': 'Search {0}'.format(sitename.title()),
                   'path': plugin.url_for(site, sitename=sitename, section='search', url=surl), 'icon': __imgsearch__,
-                  'thumb': __imgsearch__}
+                  'thumbnail': __imgsearch__}
     itemsearch.setdefault(itemsearch.keys()[0])
     pagestr = ''
     pagenumcur = pagenum - 1
@@ -988,56 +988,56 @@ def site(sitename, section, url):
     mlabel = 'Next --> {0}'.format(pagenum)
     if url.find('motherless') != -1:
         mlabel = 'Next 250 to {0}'.format(pagenum+250)
-    itemnext = {'label': mlabel, 'path': plugin.url_for(site, sitename=sitename, section='next', url=nurl), 'icon': __imgnext__, 'thumb': __imgnext__}
+    itemnext = {'label': mlabel, 'path': plugin.url_for(site, sitename=sitename, section='next', url=nurl), 'icon': __imgnext__, 'thumbnail': __imgnext__}
     itemnext.setdefault(itemnext.keys()[0])
     if section.lower() == "index":
         if sitename.lower() == "spankwire" and not (DOSTR8 == True or DOSTR8 == 'true'):
             isw = __imgsearch__.replace('search.', 'fspankwire.')
             item = {'label': 'Spankwire Gay Categories',
                     'path': plugin.url_for(site, sitename='spankwire', section='category', url=siteurl), 'icon': isw,
-                    'thumb': isw}
+                    'thumbnail': isw}
             item.setdefault(item.keys()[0])
             litems = [item]
         elif sitename.lower() == "gaytube":
             igt = __imgsearch__.replace('search.', 'fgaytube.')
             item = {'label': 'GayTube Categories',
                     'path': plugin.url_for(site, sitename='gaytube', section='category', url=siteurl), 'icon': igt,
-                    'thumb': igt}
+                    'thumbnail': igt}
             item.setdefault(item.keys()[0])
             litems = [item]
         elif sitename.lower() == "pornhub":
             igt = __imgsearch__.replace('search.', 'fpornhub.')
             item = {'label': 'PornHub Categories',
                     'path': plugin.url_for(site, sitename='pornhub', section='category', url=siteurl), 'icon': igt,
-                    'thumb': igt}
+                    'thumbnail': igt}
             item.setdefault(item.keys()[0])
             litems = [item]
         elif sitename.lower() == "redtube":
             igt = __imgsearch__.replace('search.', 'fredtube.')
             item = {'label': 'RedTube Categories',
                     'path': plugin.url_for(site, sitename='redtube', section='category', url=siteurl), 'icon': igt,
-                    'thumb': igt}
+                    'thumbnail': igt}
             item.setdefault(item.keys()[0])
             litems = [item]
         elif sitename.lower() == "xtube":
             igt = __imgsearch__.replace('search.', 'fxtube.')
             item = {'label': 'XTube Categories',
                     'path': plugin.url_for(site, sitename='xtube', section='category', url=siteurl), 'icon': igt,
-                    'thumb': igt}
+                    'thumbnail': igt}
             item.setdefault(item.keys()[0])
             litems = [item]
         elif sitename.lower() == "tube8":
             igt = __imgsearch__.replace('search.', 'ftube8.')
             item = {'label': 'Tube8 Categories',
                     'path': plugin.url_for(site, sitename='tube8', section='category', url=siteurl), 'icon': igt,
-                    'thumb': igt}
+                    'thumbnail': igt}
             item.setdefault(item.keys()[0])
             litems = [item]
         elif sitename.lower() == "youporn":
             igt = __imgsearch__.replace('search.', 'fyouporn.')
             item = {'label': 'YouPorn Categories',
                     'path': plugin.url_for(site, sitename='youporn', section='category', url=siteurl), 'icon': igt,
-                    'thumb': igt}
+                    'thumbnail': igt}
             item.setdefault(item.keys()[0])
             litems = [item]
         if sitename.lower() == 'motherless':
@@ -1113,7 +1113,7 @@ def site(sitename, section, url):
         itemslist = litems
         itemslist.insert(0, itemsearch)
         itemnext = {'label': mlabel, 'path': plugin.url_for(site, sitename=sitename, section='next', url=nurl),
-                    'icon': __imgnext__, 'thumb': __imgnext__}
+                    'icon': __imgnext__, 'thumbnail': __imgnext__}
         itemnext.setdefault(itemnext.keys()[0])
         itemslist.append(itemnext)
         litems = itemslist
@@ -1131,7 +1131,7 @@ def gaypower(page=1):
     __imgnext__ = __imgsearch__.replace('search.png', 'next.png')
     page = int(page) + 1
     npath = plugin.url_for(gaypower, page=page)
-    itemnext = {'label': 'Next --> {0}'.format(page), 'path': npath, 'icon': __imgnext__, 'thumb': __imgnext__}
+    itemnext = {'label': 'Next --> {0}'.format(page), 'path': npath, 'icon': __imgnext__, 'thumbnail': __imgnext__}
     itemnext.setdefault(itemnext.keys()[0])
     bhtml = ''
     for p in range(1, 4):
