@@ -185,7 +185,7 @@ def makeVideoItems(itemlist, sitename=None):
                 xli.icon = thumb
                 xli.poster = thumb
                 infolbl = {'Duration': lengthnum, 'Genre': SITE, 'Plot': plotstring + tagstring, 'Rating': views, 'Premiered': reldate, 'Year': reldate, 'Title': title}
-                xli.set_info(info_type='video', info_labels=infolbl)
+                xli.set_info('video', info_labels=infolbl)
                 if thumb2 != '':
                     if len(thumbslist) > 0:
                         xli.poster = thumbslist[0]
@@ -294,7 +294,7 @@ def catlist_tube8(isGay=True):
             cimg = 'DefaultFolder.png'
             curl = turl.format(catname)
             cpath = plugin.url_for(site, sitename='tube8', section='index', url=curl)
-            citem = dict(label=cname, icon=cimg, thumb=cimg, path=cpath)
+            citem = dict(label=cname, icon=cimg, thumbnail=cimg, path=cpath)
             citem.setdefault(citem.keys()[0])
             allitems.append(citem)
         litems = sorted(allitems, key=lambda allitems: allitems['label'])
@@ -324,7 +324,7 @@ def catlist_xtube():
             cimg = 'DefaultFolder.png'
             curl = gturl.format(urllib.quote_plus(catname))
             cpath = plugin.url_for(site, sitename='xtube', section='index', url=curl)
-            citem = dict(label=catname.title(), icon=cimg, thumb=cimg, path=cpath)
+            citem = dict(label=catname.title(), icon=cimg, thumbnail=cimg, path=cpath)
             citem.setdefault(citem.keys()[0])
             allitems.append(citem)
         litems = sorted(allitems, key=lambda allitems: allitems['label'])
@@ -356,7 +356,7 @@ def catlist_youporn():
             cimg = 'DefaultFolder.png'
             curl = gturl.format(urllib.quote_plus(catname))
             cpath = plugin.url_for(site, sitename='youporn', section='index', url=curl)
-            citem = dict(label=catname.title(), icon=cimg, thumb=cimg, path=cpath)
+            citem = dict(label=catname.title(), icon=cimg, thumbnail=cimg, path=cpath)
             citem.setdefault(citem.keys()[0])
             allitems.append(citem)
         litems = sorted(allitems, key=lambda allitems: allitems['label'])
@@ -385,7 +385,7 @@ def catlist_gaytube():
             cimg = 'DefaultFolder.png'
             curl = gturl.format(urllib.quote_plus(cname))
             cpath = plugin.url_for(site, sitename='gaytube', section='index', url=curl)
-            citem = dict(label=cname.title(), icon=cimg, thumb=cimg, path=cpath)
+            citem = dict(label=cname.title(), icon=cimg, thumbnail=cimg, path=cpath)
             citem.setdefault(citem.keys()[0])
             allitems.append(citem)
         litems = sorted(allitems, key=lambda allitems: allitems['label'])
@@ -419,7 +419,7 @@ def catlist_pornhub():
             cimg = 'DefaultFolder.png'
             curl = gturl.format(urllib.quote_plus(cname))
             cpath = plugin.url_for(site, sitename='pornhub', section='index', url=curl)
-            citem = dict(label=cname.title(), icon=cimg, thumb=cimg, path=cpath)
+            citem = dict(label=cname.title(), icon=cimg, thumbnail=cimg, path=cpath)
             citem.setdefault(citem.keys()[0])
             if ISGAY and cname.find('gay') != -1:
                 allitems.append(citem)
@@ -450,7 +450,7 @@ def catlist_redtube():
             cimg = 'DefaultFolder.png'
             curl = gturl.format(urllib.quote_plus(cname))
             cpath = plugin.url_for(site, sitename='redtube', section='index', url=curl)
-            citem = dict(label=cname.title(), icon=cimg, thumb=cimg, path=cpath)
+            citem = dict(label=cname.title(), icon=cimg, thumbnail=cimg, path=cpath)
             citem.setdefault(citem.keys()[0])
             allitems.append(citem)
         litems = sorted(allitems, key=lambda allitems: allitems['label'])
@@ -548,7 +548,7 @@ def allcats_make():
             except:
                 cimg = 'DefaultFolder.png'
         cpath = plugin.url_for(category, catname=catname.title())
-        citem = dict(label=catname.title(), icon=cimg, thumb=cimg, path=cpath)
+        citem = dict(label=catname.title(), icon=cimg, thumbnail=cimg, path=cpath)
         citem.setdefault(citem.keys()[0])
         allitems.append(citem)
     savejson(allitems, __imgsearch__.replace('search.png', 'allcats.json'))
@@ -1172,7 +1172,7 @@ def gaypower(page=1):
                             vtitle = "{0} (GayPower.org - flashx)".format(str(title).title())
                             vpath = plugin.url_for(play, title=vtitle, video=thumb, url=vidurl.encode('utf-8'))
                             vpath2 = plugin.url_for(playmovie, url=vidurl)
-                            # item = dict(label=title, label2=link, icon=thumb, thumb=thumb, path=vpath)
+                            # item = dict(label=title, label2=link, icon=thumb, thumbnail=thumb, path=vpath)
                             # item.setdefault(item.keys()[0])
                             item = ListItem(label=title, icon=thumb, thumbnail=thumb, path=vpath2)
                             item.set_info(info_type='video', info_labels=dict(plot=vidurl))
