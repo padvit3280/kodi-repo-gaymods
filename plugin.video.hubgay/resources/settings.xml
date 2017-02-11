@@ -9,5 +9,7 @@
 		<setting id="dofilter" label="Enable Tags" values="false" default="false" type="bool" visible="false" />
 		<setting id="tags" label="Tags (Comma Seperated)" values="" default="" type="text"  visible="false"  />
 		<setting id="debugon" label="DEBUG MODE ON" values="false" default="false" type="bool" visible="true" />
+		<setting label="$ADDON[script.module.xbmcutil 32921]" type="action" action="RunScript(plugin.video.hubgay, setViewMode, folder)"/>
+		<setting label="$ADDON[script.module.xbmcutil 32922]" type="action" action="RunScript(plugin.video.hubgay, setViewMode, video)"/>
 	</category>
 </settings>

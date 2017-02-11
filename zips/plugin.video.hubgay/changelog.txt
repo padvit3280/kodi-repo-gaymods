@@ -1,3 +1,11 @@
+v 1.1.1
+- More bug fixes for ALL CATEGORIES
+- Play bug fix
+
+v 1.1.0
+- Fixed Pornhub and XTube which changed the API
+- Fixed XBMCSWIFT2 changes from Kodiswift
+
 v 1.0.3
 - bug fix
 

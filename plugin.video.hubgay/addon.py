@@ -6,9 +6,9 @@ import os.path as path
 import re
 import urllib
 import urllib2
+#from kodiswift import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod
 from xbmcswift2 import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod, common
 from xbmcswift2.common import download_page as DL
-#from kodiswift import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod
 
 import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -223,6 +223,10 @@ def parseVideosUrl(url):
         obj = json.loads(resp.decode('utf-8', 'ignore'))
         assert isinstance(obj, dict)
         obj = clean_dict(obj)
+        if url.find('xtube.com') != -1:
+            tlist = []
+            for i in obj.iterkeys(): tlist.append(obj.get(i))
+            return tlist
     except:
         pass
     try:
@@ -406,9 +410,11 @@ def catlist_pornhub():
     catlist = []
     litems = []
     allitems = []
-    resp = DL(urlapi)
+    resp = download_page(urlapi).decode('utf-8', 'ignore')
+    obj = json.loads(resp)
+    #resp = DL(urlapi)
     #resp = urllib2.urlopen(urlapi).read()
-    obj = json.loads(unicode(resp).decode('ascii'))
+    #obj = json.loads(unicode(resp).decode('ascii'))
     catlist = obj.get('categories')
     try:
         for catname in catlist:
@@ -572,7 +578,7 @@ def getAPIURLS(sitename=None):
                         tube8="http://api.tube8.com/api.php?action=getcategorieslist&output=json")
     siteapis = dict(
         gaytube=b+"gaytube.com/api/webmasters/search/?ordering=newest&period=alltime&thumbsize=preview&category=&page=1&search=&tags[]=&count=250",
-        pornhub=b+"pornhub.com/webmasters/search?id=44bc40f3bc04f65b7a35&category=gay&ordering=newest&tags[]=&search=&page=1&thumbsize=large",
+        pornhub=b+"pornhub.com/webmasters/search?id=44bc40f3bc04f65b7a35&category=gay&ordering=newest&tags[]=gay&search=&page=1&thumbsize=large",
         redtube="http://api.redtube.com/?data=redtube.Videos.searchVideos&output=json&thumbsize=big&ordering=newest&page=1&search=&tags[]=gay&category=&period=alltime",
         spankwire=b + "spankwire.com/api/HubTrafficApiCall?data=searchVideos&output=json&ordering=newest&page=1&segment=gay&count=100&search=&tags=gay&thumbsize=big",
         tube8="http://api.tube8.com/api.php?action=searchVideos&output=json&ordering=newest&search=gay&thumbsize=big&page=1&orientation=gay",
@@ -1118,7 +1124,7 @@ def site(sitename, section, url):
         itemslist.append(itemnext)
         litems = itemslist
     #return plugin.finish(items=litems)
-    return plugin.finish(items=litems, sort_methods=[SortMethod.LABEL_IGNORE_THE, SortMethod.GENRE, SortMethod.DURATION, SortMethod.VIDEO_YEAR, SortMethod.VIDEO_RATING])
+    return plugin.finish(items=litems, sort_methods=[SortMethod.LABEL, SortMethod.GENRE, SortMethod.DURATION, SortMethod.VIDEO_YEAR, SortMethod.VIDEO_RATING])
 
 
 @plugin.route('/gaypower/<page>')
@@ -1213,10 +1219,13 @@ def resolver():
 
 @plugin.route('/allcats')
 def allcats():
-    catlist = json.loads(file(__imgsearch__.replace('search.png', 'allcats.json')).read().decode('utf-8', 'ignore'))
+    rawjson = file(__imgsearch__.replace('search.png', 'allcats.json')).read().decode('utf-8', 'ignore')
+    rawjson = rawjson.replace('"thumb":', '"thumbnail":')
+    catlist = json.loads(rawjson)
     for item in catlist:
         item.setdefault(item.keys()[0])
-    return plugin.finish(items=catlist, succeeded=True, cache_to_disc=True)
+    return finish(catlist)
+    #return plugin.finish(items=catlist, succeeded=True, cache_to_disc=True)
 
 
 @plugin.route('/category/<catname>')
@@ -1400,8 +1409,8 @@ def play(url='', video='DefaultVideo.png', title=''):
     try:
         vidurl = find_video(url)
         if vidurl is not None:
-            plugin.play_video(vidurl.decode('utf-8', 'ignore'))
-            #xbmc.executebuiltin('PlayMedia(%s)' % vidurl.decode('utf-8', 'ignore'))
+            #plugin.play_video(vidurl.decode('utf-8', 'ignore'))
+            xbmc.executebuiltin('PlayMedia(%s)' % vidurl.decode('utf-8', 'ignore'))
             #plugin.clear_added_items()
             #return plugin.finish(items=[plugin.set_resolved_url(vidurl)], succeeded=True, update_listing=False, cache_to_disc=False)
             #return []
@@ -1411,12 +1420,12 @@ def play(url='', video='DefaultVideo.png', title=''):
     try:
         if vidurl is None:
             livestreamerurl = 'plugin://plugin.video.livestreamerkodi/play/{0}'.format(urllib.quote_plus(url))
-            plugin.play_video(url)
-            #xbmc.executebuiltin('RunPlugin({0})'.format(livestreamerurl))
+            #plugin.play_video(url)
+            xbmc.executebuiltin('RunPlugin({0})'.format(livestreamerurl))
     except:
-        #livestreamerurl = 'plugin://plugin.video.livestreamer/play/?url={0}'.format(urllib.quote_plus(url))
-        #xbmc.executebuiltin('RunPlugin({0})'.format(livestreamerurl))
-        plugin.set_resolved_url(url)
+        livestreamerurl = 'plugin://plugin.video.livestreamer/play/?url={0}'.format(urllib.quote_plus(url))
+        xbmc.executebuiltin('RunPlugin({0})'.format(livestreamerurl))
+        #plugin.set_resolved_url(url)
     # plugin.set_resolved_url(url)
     # plugin.clear_added_items()
     # return plugin.finish(items=None, update_listing=True, cache_to_disc=False)
@@ -1469,11 +1478,22 @@ def finish(items=[]):
     #for sort in lstSorts: plugin.add_sort_method(sort_method=sort)
     viewmode = int(plugin.get_setting('viewmode'))
     if viewmode is None: viewmode = 500
-    plugin.set_view_mode(viewmode)    
+    plugin.set_view_mode(viewmode)
     return items
     #return plugin.finish(items=items, sort_methods=lstSorts, succeeded=True, update_listing=True, cache_to_disc=True, view_mode=viewmode)
 
 
 if __name__ == '__main__':
-    plugin.run()
+    try:
+        import xbmcutil
+        action = xbmcutil.plugin.actions[0]
+        if action == u"system":
+            xbmcutil.sysCheck()
+        else:
+            # Call Function Based on Action Param
+            import main as plugin
+            getattr(plugin, action)()
+        plugin.run()
+    except:
+        plugin.run()
     #plugin.finish(items=plugin.added_items, sort_methods=lstSorts, succeeded=True, update_listing=True, cache_to_disc=True, view_mode=viewmode)
