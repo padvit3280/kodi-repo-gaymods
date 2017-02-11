@@ -46,7 +46,7 @@ def makeVideoItems(itemlist, sitename=None):
             vcats = ''
             tagstring = ''
             plotstring = ''
-            thumb = ''
+            thumbnail = ''
             thumb2 = ''
             thumbslist = []
             length = ''
@@ -86,17 +86,17 @@ def makeVideoItems(itemlist, sitename=None):
                         pass
                     SITE = sitename.lower()
                     if vid.has_key('default_thumb'):
-                        thumb = vid.get('default_thumb')
+                        thumbnail = vid.get('default_thumb')
                     elif vid.has_key('main_thumb'):
-                        thumb = vid.get('main_thumb') #.replace('http://','')
+                        thumbnail = vid.get('main_thumb') #.replace('http://','')
                     elif vid.has_key('thumbnail'):
-                        if thumb == '':
-                            thumb = vid.get('thumbnail')
+                        if thumbnail == '':
+                            thumbnail = vid.get('thumbnail')
                         else:
                             thumb2 = vid.get('thumbnail')
                     if vid.has_key('thumb'):
-                        if thumb == '':
-                            thumb = vid.get('thumb')
+                        if thumbnail == '':
+                            thumbnail = vid.get('thumb')
                         else:
                             thumb2 = vid.get('thumb')
                     if vid.has_key('views'):
@@ -175,15 +175,15 @@ def makeVideoItems(itemlist, sitename=None):
                 except:
                     xbmc.log("*****ERROR MAKING VIDEO ITEM PARSING FIELDS LOOPING TO NEXT ITEMS\n---- {0}\n".format(str(vid)))
                 lbl2 = "{0} * {1} * ID:{2}".format(plotstring, tagstring, vidid)
-                thumb = thumb.replace(' ', '%20')
+                thumbnail = thumbnail.replace(' ', '%20')
                 if len(vtitle) < 1:
                     vtitle = vurl.partition('.com')[0]
                     #vtitle = urllib2.unquote(vtitle).replace('http://', '').partition('.')[2]
-                vpath = plugin.url_for(play, title=vtitle, video=thumb, url=vurl) #.encode('utf-8', 'ignore'))
-                xli = ListItem(label=lbl, label2=lbl2, icon=thumb, thumbnail=thumb, path=vpath) #.encode('utf-8', 'ignore'))
-                xli.thumbnail = thumb
-                xli.icon = thumb
-                xli.poster = thumb
+                vpath = plugin.url_for(play, title=vtitle, video=thumbnail, url=vurl) #.encode('utf-8', 'ignore'))
+                xli = ListItem(label=lbl, label2=lbl2, icon=thumbnail, thumbnail=thumbnail, path=vpath) #.encode('utf-8', 'ignore'))
+                xli.thumbnail = thumbnail
+                xli.icon = thumbnail
+                xli.poster = thumbnail
                 infolbl = {'Duration': lengthnum, 'Genre': SITE, 'Plot': plotstring + tagstring, 'Rating': views, 'Premiered': reldate, 'Year': reldate, 'Title': title}
                 xli.set_info('video', info_labels=infolbl)
                 if thumb2 != '':
@@ -191,12 +191,10 @@ def makeVideoItems(itemlist, sitename=None):
                         xli.poster = thumbslist[0]
                         xli.thumbnail = thumbslist[1]
                         xli.icon = thumbslist[2]
-                        xli.set_art({'fanart': thumbslist[-1]})
+                        #xli.set_art({'fanart': thumbslist[-1]})
                     else:
                         xli.poster = thumb2
-                        xli.set_art({'fanart': thumb2})
-                else:
-                    xli.set_art({'fanart': thumb})
+                        #xli.set_art({'fanart': thumb2})
                 xli.playable = True
                 litems.append(xli)
     except:

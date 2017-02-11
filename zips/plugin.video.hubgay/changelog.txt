@@ -1,3 +1,9 @@
+v 1.0.2
+- bug fix
+
+v 1.0.1
+- bug fix
+
 v 1.0.0
 - First version trying xbmcswift2 framework instead of kodiswift for stability
 - removed urllib2 refs
