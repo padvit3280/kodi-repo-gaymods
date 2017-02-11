@@ -6,9 +6,11 @@ import os.path as path
 import re
 import urllib
 import urllib2
-from kodiswift import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod
-import ssl
+from xbmcswift2 import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod, common
+from xbmcswift2.common import download_page as DL
+#from kodiswift import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod
 
+import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
 plugin = Plugin()
@@ -279,7 +281,8 @@ def catlist_tube8(isGay=True):
     litems = []
     allitems = []
     catlist = []
-    resp = urllib2.urlopen(urlapi).read()
+    resp = DL(urlapi)
+    #resp = urllib2.urlopen(urlapi).read()
     obj = json.loads(unicode(resp).decode('ascii'))
     try:
         if isGay:
@@ -309,7 +312,8 @@ def catlist_xtube():
     catlist = []
     litems = []
     allitems = []
-    resp = urllib2.urlopen(urlapi).read()
+    resp = DL(urlapi)
+    #resp = urllib2.urlopen(urlapi).read()
     obj = json.loads(unicode(resp).decode('ascii'))
     try:
         assert isinstance(obj, list)
@@ -338,7 +342,8 @@ def catlist_youporn():
     catlist = []
     litems = []
     allitems = []
-    resp = urllib2.urlopen(urlapi).read()
+    resp = DL(urlapi)
+    #resp = urllib2.urlopen(urlapi).read()
     obj = json.loads(unicode(resp).decode('ascii'))
     try:
         assert isinstance(obj, list)
@@ -362,7 +367,6 @@ def catlist_youporn():
 
 def catlist_gaytube():
     # urlhtml = "http://www.gaytube.com/c/abc?m=azl"
-    # html = urllib2.urlopen(urlhtml).read()
     # Above is to try and scrape category pictures so defaultfolder doesn't have to be used but can't get a Regex to work
     urlapi = "http://www.gaytube.com/api/webmasters/categories/"
     gturl = getAPIURLS('gaytube').replace('&category=', '&category={0}')
@@ -404,7 +408,8 @@ def catlist_pornhub():
     catlist = []
     litems = []
     allitems = []
-    resp = urllib2.urlopen(urlapi).read()
+    resp = DL(urlapi)
+    #resp = urllib2.urlopen(urlapi).read()
     obj = json.loads(unicode(resp).decode('ascii'))
     catlist = obj.get('categories')
     try:
@@ -434,7 +439,8 @@ def catlist_redtube():
     catlist = []
     litems = []
     allitems = []
-    resp = urllib2.urlopen(urlapi).read()
+    resp = DL(urlapi)
+    #resp = urllib2.urlopen(urlapi).read()
     obj = json.loads(unicode(resp).decode('ascii'))
     catlist = obj.get('categories')
     try:
@@ -536,7 +542,8 @@ def allcats_make():
         if not (path.exists(cimg) and path.isfile(cimg)):
             cimg = "http://cdn2.static.spankwire.com/images/category/Gay/{0}.jpg".format(cimgname)
             try:
-                resp = urllib2.urlopen(cimg)
+                #resp = urllib2.urlopen(cimg)
+                resp = DL(cimg)
                 if resp.getcode() == 404: cimg = 'DefaultFolder.png'
             except:
                 cimg = 'DefaultFolder.png'
@@ -770,7 +777,8 @@ def tumblrfollows():
     tumblrauth = { 'consumer_key': '5wEwFCF0rbiHXYZQQeQnNetuwZMmIyrUxIePLqUMcZlheVXwc4', 'consumer_secret': 'GCLMI2LnMZqO2b5QheRvUSYY51Ujk7nWG2sYroqozW06x4hWch', 'token': '7IuPrj2L6cfxMwOdbWV8yYYFafopwrYR3RYSdIc8YxMKJc8Dl5', 'token_secret': 'WSnl65etymR8m5KuK3rAX67emMCYzASpLrzIHQ2SKejYSqZmmh'}
     urlfollows = "https://api.tumblr.com/v2/user/following?limit=250"
     headers = {'Authorization': 'OAuth oauth_consumer_key = "5wEwFCF0rbiHXYZQQeQnNetuwZMmIyrUxIePLqUMcZlheVXwc4", oauth_nonce = "XiuBW4", oauth_signature = "N2hLobvUJd%2BK8OMZKr2YLlLC99M%3D", oauth_signature_method = "HMAC-SHA1", oauth_timestamp = "1485035014", oauth_token = "7IuPrj2L6cfxMwOdbWV8yYYFafopwrYR3RYSdIc8YxMKJc8Dl5", oauth_version = "1.0"'}
-    req = urllib2.Request(url=urlfollows, headers=headers)
+    #req = urllib2.Request(url=urlfollows, headers=headers)
+    req = DL(urlfollows)
 
 
 @plugin.route('/tumblr/<blogname>/<year>/<month>/<mostrecent>')
@@ -1130,7 +1138,8 @@ def gaypower(page=1):
     bhtml = ''
     for p in range(1, 4):
         boardurl = "http://gaypower.org/index.php?page=Board&boardID=59&pageNo={0}".format(p)
-        bhtml += urllib2.urlopen(boardurl).read()
+        bhtml += DL(boardurl)
+        #bhtml += urllib2.urlopen(boardurl).read()
     # bhtml = urllib2.urlopen(boardurl).read()
     recol = 'class="columnTopic" title="(.+?)".+?<a href="(.+?)">(.+?)</a>'
     reflashx = re.compile('(http://www.flashx.tv\/[^\"\s]*).')
@@ -1382,8 +1391,9 @@ def play(url='', video='DefaultVideo.png', title=''):
     :return: ListItem of video with path = scraped url of the MP4/Video file hopefully
     """
     if len(title) < 1:
-        title = unicode(url.partition('.com')[0])
-        title = urllib2.unquote(title).replace('http://','').partition('.')[2]
+        title = str(url.partition('.com')[0])
+        title = urllib.unquote(title).replace('http://','').partition('.')[2]
+        #title = urllib2.unquote(
     resolved = None
     mediaurl = None
     vidhtml = ''
@@ -1392,7 +1402,8 @@ def play(url='', video='DefaultVideo.png', title=''):
     try:
         vidurl = find_video(url)
         if vidurl is not None:
-            xbmc.executebuiltin('PlayMedia(%s)' % vidurl.decode('utf-8', 'ignore'))
+            plugin.play_video(vidurl.decode('utf-8', 'ignore'))
+            #xbmc.executebuiltin('PlayMedia(%s)' % vidurl.decode('utf-8', 'ignore'))
             #plugin.clear_added_items()
             #return plugin.finish(items=[plugin.set_resolved_url(vidurl)], succeeded=True, update_listing=False, cache_to_disc=False)
             #return []
@@ -1402,10 +1413,12 @@ def play(url='', video='DefaultVideo.png', title=''):
     try:
         if vidurl is None:
             livestreamerurl = 'plugin://plugin.video.livestreamerkodi/play/{0}'.format(urllib.quote_plus(url))
-            xbmc.executebuiltin('RunPlugin({0})'.format(livestreamerurl))
+            plugin.play_video(url)
+            #xbmc.executebuiltin('RunPlugin({0})'.format(livestreamerurl))
     except:
-        livestreamerurl = 'plugin://plugin.video.livestreamer/play/?url={0}'.format(urllib.quote_plus(url))
-        xbmc.executebuiltin('RunPlugin({0})'.format(livestreamerurl))
+        #livestreamerurl = 'plugin://plugin.video.livestreamer/play/?url={0}'.format(urllib.quote_plus(url))
+        #xbmc.executebuiltin('RunPlugin({0})'.format(livestreamerurl))
+        plugin.set_resolved_url(url)
     # plugin.set_resolved_url(url)
     # plugin.clear_added_items()
     # return plugin.finish(items=None, update_listing=True, cache_to_disc=False)

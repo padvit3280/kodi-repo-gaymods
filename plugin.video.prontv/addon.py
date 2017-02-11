@@ -23,7 +23,7 @@ __imgsearch__ = path.join(__resdir__, 'search.png')
 __imgnext__ = __imgsearch__.replace('search.png', 'next.png')
 
 def DL(url):
-    return HTML.unescape(urllib.urlopen(url).read().decode('utf-8'))
+    return urllib.urlopen(url).read().decode('utf-8')
 
 def searchstreams(query='gay', offset=0):
     vids = []
@@ -92,9 +92,10 @@ def searchstreams(query='gay', offset=0):
             #    img = get_thumb(imgid)
             playpath = plugin.url_for(endpoint=play, url=url)
             litem = ListItem(label=lbl, label2=filename, icon=img, thumbnail=img, path=playpath)
-            litem.set_info(type='video', info_labels={'Date': datemod, 'Title': title, 'Plot': mov.sourcetitle})
+            litem.set_info(type='video', info_labels={'Date': datemod, 'Title': title, 'Plot': mov.sourcetitle, 'Genre': hostname})
             litem.set_property('genre', str(repr(mov.hosterurls)))
             litem.set_property('date', datemod)
+            litem.set_property('genre', hostname)
             litem.is_folder = False
             litem.playable = True
             litem.set_info(type='video', info_labels={'Title': title})
@@ -160,23 +161,11 @@ def search():
 
 @plugin.route('/play/<url>')
 def play(url):
-    #url = HTML.unescape(url)
-    xbmc.log("---Play url: {0}".format(url))
+    url = url.decode('utf-8','ignore')
+    resolved = u''
     try:
         import urlresolver
-        HMF = urlresolver.HostedMediaFile
-        mediafile = HMF(url)
-        if mediafile:
-            resolved = mediafile.resolve()
-        else:
-            try:
-                import YDStreamExtractor
-                info = YDStreamExtractor.getVideoInfo(url)
-                resolved = info.streamURL()
-            except:
-                plugin.notify(msg="Failed to resolve {0} to a playable video.".format(url))
-                resolved = url
-        print "---Resolved url: {0}".format(resolved)
+        resolved = urlresolver.HostedMediaFile(url).resolve()
         vitem = ListItem(label=url, path=resolved)
         vitem.is_folder = False
         vitem.set_is_playable = True
@@ -185,9 +174,23 @@ def play(url):
         plugin.set_resolved_url(resolved)
         return plugin.play_video(vitem)
     except:
-        vitem = {'path': url, 'is_playable': True}
-    #return plugin.set_resolved_url(vitem)
-
+        plugin.notify(msg="Failed to resolve {0} to a playable video.".format(url))
+    try:
+        if resolved is None or len(resolved) < 5:
+            import YoutubeDLWrapper
+            ytdl = YoutubeDLWrapper._getYTDL()
+            ytdl.clearDownloadParams()
+            resolved = ytdl.extract_info(url, download=False)
+            vitem = ListItem(label=url, path=resolved)
+            vitem.is_folder = False
+            vitem.set_is_playable = True
+            vitem.set_info(type='video', info_labels={'Title': url})
+            vitem.add_stream_info(stream_type='video', stream_values={})
+            plugin.set_resolved_url(resolved)
+            return plugin.play_video(vitem)
+    except:
+        plugin.notify(msg="Failed to resolve {0} to a playable video.".format(url))
+    return None
 
 if __name__ == '__main__':
     plugin.run()
@@ -195,3 +198,4 @@ if __name__ == '__main__':
     if mode is not None and mode >= 0:
         VIEWMODE = mode
     plugin.set_view_mode(view_mode_id=VIEWMODE)
+    plugin.set_content('movies')

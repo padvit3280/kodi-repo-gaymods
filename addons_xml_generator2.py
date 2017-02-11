@@ -165,8 +165,9 @@ if (__name__ == "__main__"):
                         print('Copying %s to %s' % (y, zipsfolder))                
                 # #check for and zip the folders
                 print('Zipping %s and moving to %s\n' % (x, zipsfolder))
+                zfilename = zipfilenamefirstpart + version + zipfilenamelastpart
                 try:
-                    zipfolder(zipfilenamefirstpart + version + zipfilenamelastpart, foldertozip, zipsfolder, x)
+                    zipfolder(zfilename, foldertozip, zipsfolder, x)                    
                     print('zipped with zipfolder\n')
                 except:
                     if os.path.exists(zipsfolder + x + version + '.zip'):
@@ -177,6 +178,10 @@ if (__name__ == "__main__"):
                         print('zipped with shutil\n')
                     except Exception as e:
                         print('Cannot create zip file\nshutil %s\n' % e)
+                fpath = os.path.join(rootdir, zipsfolder, zfilename)
+                shutil.copyfile(fpath, fpath.replace("zips/",""))
+                fpath = fpath.replace(rootdir, "")
+                print('Copying .{0} to .{1}'.format(fpath, fpath.replace("zips/","")))
     except Exception as e:
         print('Cannot create or move the needed files\n%s' % e)
     print('Done')

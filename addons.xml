@@ -119,10 +119,10 @@ Fork of Adulthideout by Vashiel https://github.com/Vashiel/repository.adulthideo
     </extension>
 </addon>
 
-<addon id="plugin.video.hubgay" name="HubGAY" version="0.9.11" provider-name="moedje">
+<addon id="plugin.video.hubgay" name="HubGAY" version="0.9.2" provider-name="moedje">
     <requires>
         <import addon="xbmc.python" version="2.24.0"/>
-        <import addon="script.module.kodiswift"/>
+        <import addon="script.module.xbmcswift2"/>
         <import addon="script.module.urlresolver"/>
         <import addon="script.module.youtube.dl"/>
         <import addon="script.module.simple.downloader" optional="true"/>
