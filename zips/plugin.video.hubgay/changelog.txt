@@ -1,3 +1,9 @@
+v 1.2.0
+- NEW PLAY FUNCTION
+- Total rewrite of the video play code to fix many bugs in playback
+- Fixes errors resolving and finding playable video files
+- Fixes playback bugs with start stop and looping and go back
+
 v 1.1.1
 - More bug fixes for ALL CATEGORIES
 - Play bug fix

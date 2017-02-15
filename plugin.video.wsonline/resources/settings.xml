@@ -1,5 +1,7 @@
 <settings>
     <category label="General">
+        <setting id="setHostname" label="Hostname: Watchseries-online.??" values="watchseries-online.pl" default="watchseries-online.pl" type="text" visible="true"/>
+        <setting id="topSources" label="Top Sources,Source2," values="streamcloud,vidto,openload,thevideo" default="" type="text" visible="true"/>
         <setting id="lastsearch" label="Last Search" values="" default="" type="text" visible="true"/>
         <setting id="viewmode" label="Set View $INFO[Container.Viewmode]" values="500" default="500" type="number"
                  visible="true"/>

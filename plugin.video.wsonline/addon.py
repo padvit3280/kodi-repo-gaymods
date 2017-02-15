@@ -1,36 +1,36 @@
+# -*- coding: utf-8 -*-
 import os.path as path
 import json
 import re
 import urllib
-import urllib2
 import ssl
-from kodiswift import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod
-#from xbmcswift2 import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod
-
+import requests
+import WebUtils
+from xbmcswift2 import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod
 ssl._create_default_https_context = ssl._create_unverified_context
+
 plugin = Plugin()
+__BASEURL__ = 'https://watchseries-online.pl'
 __addondir__ = xbmc.translatePath(plugin.addon.getAddonInfo('path'))
+__datadir__ = xbmc.translatePath('special://profile/addon_data/{0}/'.format(plugin.id))
 __resdir__ = path.join(__addondir__, 'resources')
 __imgsearch__ = path.join(__resdir__, 'search.png')
 __savedjson__ = path.join(xbmc.translatePath(plugin.addon.getAddonInfo('profile')), 'savedshows.json')
-__BASEURL__ = 'http://watchseries-online.nl'
+getWeb = WebUtils.BaseRequest(path.join(__datadir__, 'cookies.lwp'))
 
 
 @plugin.route('/')
 def index():
-    itemsearch = {'label': 'Search', 'path': plugin.url_for(search), 'icon': __imgsearch__,
-                  'thumbnail': __imgsearch__}
-    itemlatest = {'label': 'Latest Episodes',
-        'icon': 'DefaultFolder.png',
-        'path': plugin.url_for(latest)}
-    itemsaved = {'label': 'Saved Shows', 'path': plugin.url_for(saved), 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png'}
-    itemplay = {'label': 'Play URL (Only URLresolver: vodlocker/openload/thevideo...)', 'path': plugin.url_for(playurl), 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png'}
     litems = []
+    plugin.set_content('movies')
+    itemsaved = {'label': 'Saved Shows', 'path': plugin.url_for(saved), 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png'}
+    itemplay = {'label': 'Resolve URL and Play (URLresolver required)', 'path': plugin.url_for(playurl), 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png'}
+    itemlatest = {'label': 'Last 350 Episodes', 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png', 'path': plugin.url_for(latest)}
+    itemsearch = {'label': 'Search', 'icon': __imgsearch__, 'thumbnail': __imgsearch__, 'path': plugin.url_for(search)}
     litems.append(itemlatest)
     litems.append(itemsearch)
     litems.append(itemsaved)
     litems.append(itemplay)
-    plugin.set_content('movies')
     return litems
 
 
@@ -38,13 +38,22 @@ def loadsaved():
     sitems = []
     litems = []
     items = []
-    jsonin = plugin.addon.getSetting('savedshows') # file(__savedjson__, mode='r').read()
-    if len(jsonin) < 1:
-        items = []
-        plugin.addon.setSetting('savedshows', json.dumps(items))
-    else:
-        items = json.loads(jsonin)
-    return items
+    savedpath = ''
+    try:
+        savedpath = path.join(__datadir__, "saved.json")
+        if path.exists(savedpath):
+            fpin = file(savedpath)
+            rawjson = fpin.read()
+            sitems = json.loads(rawjson)
+            fpin.close()
+        else:
+            return []
+        for item in sitems:
+            li = ListItem.from_dict(**item)
+            litems.append(li)
+    except:
+        pass
+    return litems
 
 
 def makecatitem(name, link, removelink=False):
@@ -53,7 +62,7 @@ def makecatitem(name, link, removelink=False):
     itempath = plugin.url_for(category, name=name, url=link)
     item = {'label': name, 'label2': link, 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png', 'path': itempath}
     item.setdefault(item.keys()[0])
-    litem = ListItem(label=name, label2=link, icon='DefaultFolder.png', thumbnail='DefaultFolder.png', path=itempath)
+    litem = ListItem.from_dict(**item) #label=name, label2=link, icon='DefaultFolder.png', thumbnail='DefaultFolder.png', path=itempath)
     if removelink:
         litem.add_context_menu_items([('Remove Saved Show', 'RunPlugin("{0}")'.format(plugin.url_for(removeshow, name=name, link=link)),)])
     else:
@@ -66,7 +75,7 @@ def playurl():
     url = ''
     url = plugin.keyboard(default='', heading='Video Page URL')
     if url != '' and len(url) > 0:
-        play(url)
+        return play(url)
     else:
         return index()
 
@@ -87,6 +96,25 @@ def saved():
 def saveshow(name='', link=''):
     sitems = []
     litems = []
+    try:
+        savedpath = path.join(__datadir__, "saved.json")
+        if path.exists(savedpath):
+            fpin = file(savedpath)
+            rawjson = fpin.read()
+            sitems = json.loads(rawjson)
+            fpin.close()
+        saveitem = {'label': name, 'path': plugin.url_for(endpoint=category, name=name, url=link)}
+        saveitem.setdefault(saveitem.keys()[0])
+        sitems.insert(0, saveitem)
+        fpout = file(savedpath, mode='w')
+        json.dump(sitems, fpout)
+        fpout.close()
+        plugin.notify(msg="SAVED {0}".format(name), title=link)
+    except:
+        plugin.notify(msg="ERROR save failed for {0}".format(name), title=link)
+
+
+def oldsave(name='', link=''):
     try:
         sitems = loadsaved()
         item = makecatitem(name, link, True)
@@ -116,22 +144,22 @@ def removeshow(name='', link=''):
     plugin.addon.setSetting('savedshows', jsout)
     plugin.notify(title='Removed {0}'.format(name), msg='{0} Removed Show link: {1}'.format(name, link))
 
+def DL(url):
+    html = u''
+    html = getWeb.getSource(url, form_data=None, referer=__BASEURL__, xml=False, mobile=False).encode('latin', errors='ignore')
+    return html
+
 
 @plugin.route('/latest')
 def latest():
     url = __BASEURL__ + '/last-350-episodes'
-    headers = {}
-    headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.71 Safari/537.36'})
-    headers.update({'Accept': 'application/json,text/x-json,text/x-javascript,text/javascript,text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8;charset=utf-8'})
-    headers.update({'Accept-Language': 'en-US,en;q=0.5'})
-    req = urllib2.Request(url=url, data=None, headers=headers)
-    html = str(urllib2.urlopen(req).read())
-    matches = re.compile(ur'href="(http...watchseries-online.[a-z][a-z].episode.+?[^"])".+?</span>(.+?[^<])</a>', re.DOTALL + re.S + re.U).findall(html)
+    html = DL(url)
+    matches = re.compile(ur'href="(http.+watchseries-online.+/episode.+?[^"])".+?</span>(.+?[^<])</a>', re.DOTALL + re.S + re.U).findall(html)
     litems = []
     for eplink, epname in matches:
         epname = epname.replace('&#8211;', '-')
         spath = plugin.url_for(episode, name=epname, url=eplink)
-        item = {'label' : epname, 'icon':'DefaultVideoFolder.png', 'path':spath}
+        item = {'label' : epname, 'label2': eplink, 'icon':'DefaultVideoFolder.png', 'path':spath}
         item.setdefault(item.keys()[0])
         litems.append(item)
     return litems
@@ -145,14 +173,9 @@ def search():
     searchquery = searchtxt.replace(' ', '+')
     plugin.set_setting(key='lastsearch', val=searchtxt)
     urlsearch = __BASEURL__ + '/?s={0}&search='.format(searchquery)
-    headers = {}
-    headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.71 Safari/537.36'})
-    headers.update({'Accept': 'application/json,text/x-json,text/x-javascript,text/javascript,text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8;charset=utf-8'})
-    headers.update({'Accept-Language': 'en-US,en;q=0.5'})
-    req = urllib2.Request(url=urlsearch, data=None, headers=headers)
-    html = unicode(urllib2.urlopen(req).read())
-    htmlres = unicode(html.partition('<div class="ddmcc">')[2]).split('</div>',1)[0]
-    matches = re.compile(ur'href="(http...watchseries-online.[a-z][a-z].category.+?[^"])".+?[^>]>(.+?[^<])<.a>', re.DOTALL + re.S + re.U).findall(unicode(htmlres))
+    html = DL(urlsearch)
+    htmlres = html.partition('<div class="ddmcc">')[2].split('</div>',1)[0]
+    matches = re.compile(ur'href="(http.+watchseries-online.+/category.+?[^"])".+?[^>]>(.+?[^<])<.a>', re.DOTALL + re.S + re.U).findall(htmlres)
     litems = []
     for slink, sname in matches:
         litems.append(makecatitem(sname, slink))
@@ -161,12 +184,7 @@ def search():
 
 @plugin.route('/category/<name>/<url>')
 def category(name, url):
-    headers = {}
-    headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.71 Safari/537.36'})
-    headers.update({'Accept': 'application/json,text/x-json,text/x-javascript,text/javascript,text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8;charset=utf-8'})
-    headers.update({'Accept-Language': 'en-US,en;q=0.5'})
-    req = urllib2.Request(url=url, data=None, headers=headers)
-    html = str(urllib2.urlopen(req).read())
+    html = DL(url)
     banner = None
     try:
         banner = str(html.split('id="banner_single"', 1)[0].rpartition('src="')[2].split('"',1)[0])
@@ -174,12 +192,12 @@ def category(name, url):
     except:
         pass
     if banner is None: banner = 'DefaultVideoFolder.png'
-    matches = re.compile(ur"href='(http...watchseries-online.[a-z][a-z].episode.+?[^'])'.+?</span>(.+?[^<])</a>", re.DOTALL + re.S + re.U).findall(html)
+    matches = re.compile(ur"href='(http.+watchseries-online.+/episode.+?[^'])'.+?</span>(.+?[^<])</a>", re.DOTALL + re.S + re.U).findall(html)
     litems =[]
     for eplink, epname in matches:
         epname = epname.replace('&#8211;', '-')
         epath = plugin.url_for(episode, name=epname, url=eplink)
-        item = {'label' : epname, 'icon' : banner, 'thumbnail' : banner, 'path' : epath}
+        item = {'label' : epname, 'label2': eplink, 'icon' : banner, 'thumbnail' : banner, 'path' : epath}
         item.setdefault(item.keys()[0])
         litems.append(item)
     litems.sort(key=lambda litems : litems['label'])
@@ -195,46 +213,130 @@ def findvidlinks(html=''):
             host = str(url.lower().split('://', 1)[-1])
             host = host.replace('www.', '')
             host = str(host.split('.', 1)[0]).title()
-            label = "{0} [COLOR green]({1})[/COLOR]".format(host, url.rpartition('/')[-1])
+            label = "{0} [COLOR blue]{1}[/COLOR]".format(host, url.rpartition('/')[-1])
             vids.append((label, url,))
     return vids
 
 
+def sortSourceItems(litems=[]):
+    try:
+        litems.sort(key=lambda litems: litems['label'], reverse=False)
+        sourceslist = []
+        stext = plugin.get_setting('topSources')
+        if len(stext) < 1:
+            sourceslist.append('streamcloud')
+            sourceslist.append('vidto')
+            sourceslist.append('openload')
+            sourceslist.append('thevideo')
+        else:
+            sourceslist = stext.split(',')
+        sorteditems = []
+        for sortsource in sourceslist:
+            for item in litems:
+                if str(item['label2']).find(sortsource) != -1: sorteditems.append(item)
+        for item in sorteditems:
+            try:
+                litems.remove(item)
+            except:
+                pass
+        sorteditems.extend(litems)
+        return sorteditems
+    except:
+        plugin.notify(msg="ERROR SORTING: #{0}".format(str(len(litems))), title="Source Sorting", delay=20000)
+        return litems
+
+
 @plugin.route('/episode/<name>/<url>')
 def episode(name, url):
-    headers = {}
-    headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.71 Safari/537.36'})
-    headers.update({'Accept': 'application/json,text/x-json,text/x-javascript,text/javascript,text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8;charset=utf-8'})
-    headers.update({'Accept-Language': 'en-US,en;q=0.5'})
-    req = urllib2.Request(url=url, data=None, headers=headers)
-    html = str(urllib2.urlopen(req).read())
+    html = DL(url)
     litems = []
     linklist = findvidlinks(html)
     if len(linklist) > 0:
         for name, link in linklist:
             itempath = plugin.url_for(play, url=link)
-            item = ListItem(label=name, label2=link, icon='DefaultFolder.png', thumbnail='DefaultFolder.png', path=itempath)
-            #item.set_info(type='video', info_labels={'Title': name})
-            #item.set_is_playable(True)
+            item = dict(label=name, label2=link, icon='DefaultFolder.png', thumbnail='DefaultFolder.png', path=itempath)
+            item.setdefault(item.keys()[0])
             litems.append(item)
-        litems.sort(key=lambda litems: litems.label, reverse=True)
+        vitems = sortSourceItems(litems)
+        litems = []
+        for li in vitems:
+            item = ListItem.from_dict(**li)
+            item.set_is_playable(True)
+            item.set_info(type='video', info_labels={'Title': item.label, 'Plot': item.label2})
+            item.add_stream_info(stream_type='video', stream_values={})
+            litems.append(item)
     else:
-        plugin.notify(msg="Failed to find vid links", title="Len {0}".format(str(len(linklist))))
+        plugin.notify(msg="ERROR No links found for {0}".format(name), title=url)
     return litems
 
 
 @plugin.route('/play/<url>')
 def play(url):
-    plugin.set_view_mode(0)
-    plugurl = 'plugin://plugin.video.hubgay/playmovie/{0}'.format(urllib.quote_plus(url))
-    xbmc.executebuiltin('RunPlugin({0})'.format(plugurl))
-    #return plugin.end_of_directory()
-    #xbmc.executebuiltin('RunPlugin(plugin://plugin.video.hubgay/playmovie/%s)' % urllib.quote_plus(url))
-    #return [plugin.set_resolved_url(url)]
+    resolved = ''
+    stream_url = ''
+    item = None
+    try:
+        import urlresolver
+        resolved = urlresolver.HostedMediaFile(url).resolve()
+        if not resolved or resolved == False or len(resolved) < 1:
+            resolved = urlresolver.resolve(url)
+            if resolved is None or len(resolved) < 1:
+                resolved = urlresolver.resolve(urllib.unquote(url))
+        if len(resolved) > 1:
+            plugin.notify(msg="PLAY {0}".format(resolved.split('.',1)[-1]), title="URLRESOLVER {0}".format(url.split('.',1)[-1]), delay=2000)
+            plugin.set_resolved_url(resolved)
+            item = ListItem.from_dict(path=resolved)
+            item.add_stream_info('video', stream_values={})
+            item.set_is_playable(True)
+            return item
+    except:
+        resolved = ''
+        plugin.notify(msg="URLResolver Failed {0}".format(resolved.split('.',1)[-1]), title="Trying..YOUTUBE-DL {0}".format(url.split('.',1)[-1]), delay=2000)
+    try:
+        import YDStreamExtractor
+        info = YDStreamExtractor.getVideoInfo(url)
+        resolved = info.streamURL()
+        for s in info.streams():
+            try:
+                stream_url = s['xbmc_url'].encode('utf-8', 'ignore')
+                xbmc.log(msg="**YOUTUBE-DL Stream found: {0}".format(stream_url))
+            except:
+                pass
+        if len(stream_url) > 1:
+            resolved = stream_url
+        if len(resolved) > 1:
+            plugin.notify(msg="PLAY {0}".format(resolved.split('.',1)[-1]), title="YOUTUBE-DL {0}".format(url.split('.',1)[-1]), delay=2000)
+            plugin.set_resolved_url(resolved)
+            item = ListItem.from_dict(path=resolved)
+            item.add_stream_info('video', stream_values={})
+            item.set_is_playable(True)
+            return item
+    except:
+        plugin.notify(msg="YOUTUBE-DL Failed: {0}".format(resolved.split('.',1)[-1]), title="Can't play {0}".format(url.split('.',1)[-1]), delay=2000)
+
+    if len(resolved) > 1:
+        plugin.set_resolved_url(resolved)
+        item = ListItem.from_dict(path=resolved)
+    else:
+        plugin.set_resolved_url(url)
+        plugurl = 'plugin://plugin.video.live.streamspro/?url={0}'.format(urllib.quote_plus(url))
+        item = ListItem.from_dict(path=plugurl)
+    item.add_stream_info('video', stream_values={})
+    item.set_is_playable(True)
+    plugin.notify(msg="RESOLVE FAIL: {0}".format(url.split('.',1)[-1]), title="Trying {0}".format(item.path.split('.',1)[-1]), delay=2000)
+    return item
 
 
 if __name__ == '__main__':
+    hostname = ''
+    hostname = plugin.get_setting('setHostname')
+    if len(hostname) > 1:
+        hostname = hostname.strip()
+        hostname = hostname.strip('/')
+        if str(hostname).startswith('http'):
+            __BASEURL__ = hostname
+        else:
+            __BASEURL__ = 'https://' + hostname
     plugin.run()
     plugin.set_content('movies')
     plugin.set_view_mode(0)
-

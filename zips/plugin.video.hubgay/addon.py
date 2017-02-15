@@ -707,13 +707,13 @@ def tumblrhome():
     if DEBUG:
         for blog in bloglist:
             path = plugin.url_for(endpoint=tumblr, blogname=blog, year=nowd.year.numerator, month=nowd.month.numerator, mostrecent=False)
-            li = ListItem(label=blog, icon='DefaultFolder.png', thumbnail='DefaultFolder.png', path=path)
+            li = ListItem(label=blog, label2=blogurlbase.format(blog), icon='DefaultFolder.png', thumbnail='DefaultFolder.png', path=path)
             litems.append(li)
     else:
-        if len(bloglist) > 50:
-            bloglist = bloglist[0:50]
+        if len(bloglist) > 100:
+            bloglist = bloglist[0:100]
         for blog in bloglist:
-            html = urllib.urlopen(blogurlbase.format(blog)).read().decode('utf-8')
+            html = DL(blogurlbase.format(blog)).decode('utf-8')
             matchest = titlere.findall(html)
             matchesd = aboutre.findall(html)
             blogtitle = u''
@@ -737,7 +737,7 @@ def tumblrhome():
             blogthumb = 'DefaultFolder.png'
             if len(matches) > 0:
                 blogthumb = matches.pop().split('"',1)[0]
-            li = {'label': bloglabel, 'label2': blogabout, 'icon': blogthumb, 'thumbnail': blogthumb, 'path': plugin.url_for(endpoint=tumblr, blogname=blog, year=nowd.year.numerator, month=nowd.month.numerator, mostrecent=False), 'properties': {'genre': blog, 'year': blogabout}}
+            li = {'label': bloglabel, 'label2': blogabout, 'icon': blogthumb, 'thumbnail': blogthumb, 'path': plugin.url_for(endpoint=tumblr, blogname=blog, year=nowd.year.numerator, month=nowd.month.numerator, mostrecent=False)}
             li.setdefault(li.keys()[0])
             item = ListItem.from_dict(**li)
             item.set_info('video', {'genre': blog, 'year': blogabout})
@@ -854,7 +854,6 @@ def tumblr(blogname, year, month, mostrecent):
             li = {'label': lbl, 'label2': url, 'thumbnail': thumbnail, 'icon': thumbnail, 'path': plugpath, 'is_playable': True,'is_folder': False, 'info_type': 'video', 'info_labels': {}}
             li.setdefault(li.keys()[0])
             item = ListItem.from_dict(**li)
-
             vids.append(li)
         except:
             plugin.log.error("Failed to add item")
@@ -1124,7 +1123,8 @@ def site(sitename, section, url):
         itemslist.append(itemnext)
         litems = itemslist
     #return plugin.finish(items=litems)
-    return plugin.finish(items=litems, sort_methods=[SortMethod.LABEL, SortMethod.GENRE, SortMethod.DURATION, SortMethod.VIDEO_YEAR, SortMethod.VIDEO_RATING])
+    #return plugin.finish(items=litems, sort_methods=[SortMethod.LABEL, SortMethod.GENRE, SortMethod.DURATION, SortMethod.VIDEO_YEAR, SortMethod.VIDEO_RATING])
+    return finish(litems)
 
 
 @plugin.route('/gaypower/<page>')
@@ -1194,8 +1194,9 @@ def gaypower(page=1):
             xbmc.log("Problem converting page to listitems")
     # litems.append(itemnext)
     # No Next page as only 4 pages of results so I load them all at the same time and sort them and list them
-    return plugin.finish(items=litems, sort_methods=[SortMethod.LABEL_IGNORE_THE, SortMethod.GENRE, SortMethod.DURATION, SortMethod.VIDEO_YEAR, SortMethod.VIDEO_RATING])
+    #return plugin.finish(items=litems, sort_methods=[SortMethod.LABEL_IGNORE_THE, SortMethod.GENRE, SortMethod.DURATION, SortMethod.VIDEO_YEAR, SortMethod.VIDEO_RATING])
     #return plugin.finish(items=litems)
+    return finish(litems)
 
 
 @plugin.route('/resolver')
@@ -1276,7 +1277,8 @@ def category(catname):
         except:
             plugin.log.error('***ERROR MAKING ITEMS FOR {0}'.format(sitename))
     litems.sort(key=lambda litems : litems.label)
-    return plugin.finish(items=litems, sort_methods=[SortMethod.LABEL_IGNORE_THE, SortMethod.GENRE, SortMethod.VIDEO_RUNTIME, SortMethod.VIDEO_YEAR, SortMethod.VIDEO_RATING])
+    #return plugin.finish(items=litems, sort_methods=[SortMethod.LABEL_IGNORE_THE, SortMethod.GENRE, SortMethod.VIDEO_RUNTIME, SortMethod.VIDEO_YEAR, SortMethod.VIDEO_RATING])
+    return finish(litems)
 
 
 @plugin.route('/search')
@@ -1330,12 +1332,70 @@ def search():
         xbmc.log("***ERROR GETTING MOTHERLESS SEARCH RESULTS***\n{0}".format(murl))
     litems = allitems
     litems.sort(key=lambda litems: litems.label) #= sorted(allitems, key=lambda allitems: allitems.label)
-    plugin.set_content('movies')
-    return plugin.finish(items=litems, sort_methods=[SortMethod.LABEL_IGNORE_THE, SortMethod.GENRE, SortMethod.DURATION, SortMethod.VIDEO_YEAR, SortMethod.VIDEO_RATING])
+    #plugin.set_content('movies')
+    #return plugin.finish(items=litems, sort_methods=[SortMethod.LABEL_IGNORE_THE, SortMethod.GENRE, SortMethod.DURATION, SortMethod.VIDEO_YEAR, SortMethod.VIDEO_RATING])
+    return finish(litems)
 
 
 @plugin.route('/playmovie/<url>')
 def playmovie(url):
+    resolved = ''
+    stream_url = ''
+    item = None
+    try:
+        import urlresolver
+        resolved = urlresolver.HostedMediaFile(url).resolve()
+        if not resolved or resolved == False or len(resolved) < 1:
+            resolved = urlresolver.resolve(url)
+            if resolved is None or len(resolved) < 1:
+                resolved = urlresolver.resolve(urllib.unquote(url))
+        if len(resolved) > 1:
+            plugin.notify(msg="PLAY {0}".format(resolved.split('.',1)[-1]), title="URLRESOLVER {0}".format(url.split('.',1)[-1]), delay=2000)
+            plugin.set_resolved_url(resolved)
+            item = ListItem.from_dict(path=resolved)
+            item.add_stream_info('video', stream_values={})
+            item.set_is_playable(True)
+            return item
+    except:
+        resolved = ''
+        plugin.notify(msg="URLResolver Failed {0}".format(resolved.split('.',1)[-1]), title="Trying..YOUTUBE-DL {0}".format(url.split('.',1)[-1]), delay=2000)
+    try:
+        import YDStreamExtractor
+        info = YDStreamExtractor.getVideoInfo(url)
+        resolved = info.streamURL()
+        for s in info.streams():
+            try:
+                stream_url = s['xbmc_url'].encode('utf-8', 'ignore')
+                xbmc.log(msg="**YOUTUBE-DL Stream found: {0}".format(stream_url))
+            except:
+                pass
+        if len(stream_url) > 1:
+            resolved = stream_url
+        if len(resolved) > 1:
+            plugin.notify(msg="PLAY {0}".format(resolved.split('.',1)[-1]), title="YOUTUBE-DL {0}".format(url.split('.',1)[-1]), delay=2000)
+            plugin.set_resolved_url(resolved)
+            item = ListItem.from_dict(path=resolved)
+            item.add_stream_info('video', stream_values={})
+            item.set_is_playable(True)
+            return item
+    except:
+        plugin.notify(msg="YOUTUBE-DL Failed: {0}".format(resolved.split('.',1)[-1]), title="Can't play {0}".format(url.split('.',1)[-1]), delay=2000)
+
+    if len(resolved) > 1:
+        plugin.set_resolved_url(resolved)
+        item = ListItem.from_dict(path=resolved)
+    else:
+        plugin.set_resolved_url(url)
+        plugurl = 'plugin://plugin.video.live.streamspro/?url={0}'.format(urllib.quote_plus(url))
+        item = ListItem.from_dict(path=plugurl)
+    item.add_stream_info('video', stream_values={})
+    item.set_is_playable(True)
+    plugin.notify(msg="RESOLVE FAIL: {0}".format(url.split('.',1)[-1]), title="Trying {0}".format(item.path.split('.',1)[-1]), delay=2000)
+    return item
+
+
+#@plugin.route('/playmovie/<url>')
+def playmovie_old(url):
     try:
         import urlresolver
         resolved = ''
@@ -1388,6 +1448,25 @@ def playmovie(url):
 
 @plugin.route('/play/<url>/<video>/<title>')
 def play(url='', video='DefaultVideo.png', title=''):
+    if len(title) < 1:
+        title = str(url.partition('.com')[0])
+        title = urllib.unquote(title).replace('http://','').partition('.')[2]
+    vidurl = ''
+    vli = None
+    try:
+        vidurl = find_video(url)
+        if vidurl is not None:
+            plugin.set_resolved_url(vidurl)
+            vli = ListItem.from_dict(label=title, label2="{0} / {1}".format(url, vidurl), thumbnail=video, path=vidurl)
+            vli.set_is_playable(True)
+            vli.add_stream_info(stream_type='video', stream_values={})
+            return vli
+    except:
+        plugin.notify(msg="FAILED: {0} no video found on {1}".format(title, url.split('.',1)[-1]), title="Trying Resolvers for {0}".format(url))
+    return playmovie(url)
+
+
+def play_old(url='', video='DefaultVideo.png', title=''):
     """
     Play attempts to scrape the video's page and find the actual video file to play. This is still buggy but seems to work on
     a lot of the sites but not all the time so any help on this function working better would be appreciated. I pass in the
@@ -1473,27 +1552,42 @@ def download(name='', url=''):
         pass
     #return plugin.finish(items=[])
 
+
+@plugin.route('/setViewMode')
+def setView():
+    try:
+        from xbmcutil import viewModes
+        viewModes.Selector('video')
+    except:
+        pass
+
+
 def finish(items=[]):
     plugin.set_content('movies')
     #for sort in lstSorts: plugin.add_sort_method(sort_method=sort)
     viewmode = int(plugin.get_setting('viewmode'))
-    if viewmode is None: viewmode = 500
-    plugin.set_view_mode(viewmode)
-    return items
+    if viewmode is None:
+        viewmode = 500
+        plugin.set_setting('viewmode', viewmode)
+    xlitems = []
+    for item in items:
+        if not isinstance(item, ListItem):
+            li = ListItem.from_dict(**item)
+        else:
+            li = item
+        li.add_context_menu_items([('Change View', 'RunPlugin(plugin://plugin.video.hubgay/setViewMode/video'),])
+        xlitems.append(li)
+    return plugin.finish(items=xlitems, sort_methods=[SortMethod.LABEL, SortMethod.GENRE, SortMethod.DURATION, SortMethod.VIDEO_YEAR, SortMethod.VIDEO_RATING], succeeded=True, update_listing=True, cache_to_disc=True, view_mode=viewmode)
     #return plugin.finish(items=items, sort_methods=lstSorts, succeeded=True, update_listing=True, cache_to_disc=True, view_mode=viewmode)
 
 
 if __name__ == '__main__':
     try:
         import xbmcutil
-        action = xbmcutil.plugin.actions[0]
-        if action == u"system":
-            xbmcutil.sysCheck()
-        else:
-            # Call Function Based on Action Param
-            import main as plugin
-            getattr(plugin, action)()
-        plugin.run()
+        if xbmcutil.plugin.actions[0] == u"setviewmode":
+            #from xbmcutil import viewModes
+            import viewModes
+            viewModes.Selector('video')
     except:
-        plugin.run()
-    #plugin.finish(items=plugin.added_items, sort_methods=lstSorts, succeeded=True, update_listing=True, cache_to_disc=True, view_mode=viewmode)
+        pass
+    plugin.run()

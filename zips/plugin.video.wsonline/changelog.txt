@@ -1,0 +1,8 @@
+V 1.2.0 (2017-02-15)
+- Added setting for favourite file sources
+- Uses sources in settings to sort them to top of list
+- Fixed problem with url request getting access denied from new .PL server by using REQUESTS module
+
+V 1.1.0 (2017-02-14)
+- Hostname changed to watchseries-online.pl
+- Added setting for addon to specify the current hostname
