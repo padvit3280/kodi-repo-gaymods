@@ -220,7 +220,7 @@ def parseVideosUrl(url):
     # resp = urllib2.urlopen(req).read()
     try:
         resp = download_page(url)
-        obj = json.loads(resp.decode('utf-8', 'ignore'))
+        obj = json.loads(resp.decode('latin', 'ignore'))
         assert isinstance(obj, dict)
         obj = clean_dict(obj)
         if url.find('xtube.com') != -1:
@@ -285,7 +285,7 @@ def catlist_tube8(isGay=True):
     catlist = []
     resp = DL(urlapi)
     #resp = urllib2.urlopen(urlapi).read()
-    obj = json.loads(unicode(resp).decode('ascii'))
+    obj = json.loads(unicode(resp).decode('latin', 'ignore'))
     try:
         if isGay:
             catlist = obj.get("gay")
@@ -302,7 +302,7 @@ def catlist_tube8(isGay=True):
         litems = sorted(allitems, key=lambda allitems: allitems['label'])
     except:
         pass
-    return litems
+    return finish(litems)
 
 
 def catlist_xtube():
@@ -316,7 +316,7 @@ def catlist_xtube():
     allitems = []
     resp = DL(urlapi)
     #resp = urllib2.urlopen(urlapi).read()
-    obj = json.loads(unicode(resp).decode('ascii'))
+    obj = json.loads(unicode(resp).decode('latin', 'ignore'))
     try:
         assert isinstance(obj, list)
         for item in obj:
@@ -332,7 +332,7 @@ def catlist_xtube():
         litems = sorted(allitems, key=lambda allitems: allitems['label'])
     except:
         pass
-    return litems
+    return finish(litems)
 
 
 def catlist_youporn():
@@ -346,7 +346,7 @@ def catlist_youporn():
     allitems = []
     resp = DL(urlapi)
     #resp = urllib2.urlopen(urlapi).read()
-    obj = json.loads(unicode(resp).decode('ascii'))
+    obj = json.loads(unicode(resp).decode('latin', 'ignore'))
     try:
         assert isinstance(obj, list)
         for item in obj:
@@ -364,7 +364,7 @@ def catlist_youporn():
         litems = sorted(allitems, key=lambda allitems: allitems['label'])
     except:
         pass
-    return litems
+    return finish(litems)
 
 
 def catlist_gaytube():
@@ -393,7 +393,7 @@ def catlist_gaytube():
         litems = sorted(allitems, key=lambda allitems: allitems['label'])
     except:
         pass
-    return litems
+    return finish(litems)
 
 
 def catlist_pornhub():
@@ -432,7 +432,7 @@ def catlist_pornhub():
         litems = sorted(allitems, key=lambda allitems: allitems['label'])
     except:
         pass
-    return litems
+    return finish(litems)
 
 
 def catlist_redtube():
@@ -460,7 +460,7 @@ def catlist_redtube():
         litems = sorted(allitems, key=lambda allitems: allitems['label'])
     except:
         pass
-    return litems
+    return finish(litems)
 
 
 def groupslist_motherless():
@@ -476,7 +476,7 @@ def groupslist_motherless():
         except:
             xbmc.log("Failed parsing URL {0}".format(url))
     allitems.sort(key=lambda allitems: allitems.label)
-    return allitems
+    return finish(allitems)
 
 
 def groupurls_motherless():
@@ -508,7 +508,7 @@ def allcats_make():
     for sitename, urlapi in caturls.items():
         resp = ''
         html = ''
-        resp = download_page(urlapi).decode('utf-8', 'ignore')
+        resp = DL(urlapi).decode('utf-8', 'ignore')
         obj = json.loads(resp)
         if isinstance(obj, list):
             for item in obj:
@@ -745,7 +745,7 @@ def tumblrhome():
             item.set_property('year', blogabout)
             litems.append(item)
     #plugin.add_items(items=litems)
-    finish(litems)
+    return finish(litems)
 
 
 @plugin.route('/playtumblr/<url>')
@@ -753,19 +753,19 @@ def playtumblr(url):
     vidurl = None
     try:
         import YDStreamExtractor
-        info = YDStreamExtractor.getVideoInfo(url)
+        info = YDStreamExtractor.getVideoInfo(url, resolve_redirects=True)
         vidurl = info.streamURL()
     except:
         vidurl = url
     if vidurl is not None:
         #xbmc.Player().play(vidurl)
+        plugin.set_resolved_url(vidurl)
         vitem = ListItem(label='Tumblr', label2=str(vidurl), icon='DefaultVideo.png', thumbnail='DefaultVideo', path=vidurl)
-        vitem.set_info('video', {})
-        vitem.playable = True
-        #plugin.clear_added_items()
-        plugin.play_video(vitem)
-        #return plugin.set_resolved_url(item=vitem)
-    plugin.clear_added_items()
+        vitem.set_info('video', {'Title': 'Tumblr {0}'.format(url), 'Plot': vidurl})
+        vitem.set_is_playable(True)
+        vitem.add_stream_info(stream_type='video', stream_values={})
+        return vitem
+    return None
 
 
 def tumblrhtml(url, section="START CONTENT", sectionend="END CONTENT"):
@@ -876,7 +876,7 @@ def tumblr(blogname, year, month, mostrecent):
             litem.add_context_menu_items([('Download', 'RunPlugin("{0}")'.format(
                 plugin.url_for(download, name=item.get('label'), url=item.get('label2'))),)])
         litems.append(litem)
-    finish(litems)
+    return finish(litems)
 
 
 @plugin.route('/')
@@ -918,7 +918,7 @@ def index():
     allitems.append(itemallcats)
     allitems.append(itemstream)
     allitems.append(itemsearch)
-    return allitems
+    return finish(allitems)
 
 
 @plugin.route('/site/<sitename>/<section>/<url>/')
@@ -1176,10 +1176,8 @@ def gaypower(page=1):
                             vtitle = "{0} (GayPower.org - flashx)".format(str(title).title())
                             vpath = plugin.url_for(play, title=vtitle, video=thumb, url=vidurl.encode('utf-8'))
                             vpath2 = plugin.url_for(playmovie, url=vidurl)
-                            # item = dict(label=title, label2=link, icon=thumb, thumbnail=thumb, path=vpath)
-                            # item.setdefault(item.keys()[0])
                             item = ListItem(label=title, icon=thumb, thumbnail=thumb, path=vpath2)
-                            item.set_info(info_type='video', info_labels=dict(plot=vidurl))
+                            item.set_info(info_type='video', info_labels={"Plot": vidurl})
                             item.playable = True
                             item.thumbnail = thumb
                             item.icon = thumb
@@ -1207,14 +1205,15 @@ def resolver():
     try:
         url = plugin.keyboard(default='', heading='Video Page URL')
         if url != "":
-            playmovie(url)
+            return playmovie(url)
             #plugin.redirect(plugin.url_for(playmovie, url=url))
         else:
-            plugin.redirect(plugin.url_for(index))
+            #plugin.redirect(plugin.url_for(index))
+            return None
     except:
         pass
     #plugin.redirect(plugin.url_for(index))
-    return plugin.finish()
+    #return plugin.finish()
     #return []
 
 
@@ -1361,7 +1360,7 @@ def playmovie(url):
         plugin.notify(msg="URLResolver Failed {0}".format(resolved.split('.',1)[-1]), title="Trying..YOUTUBE-DL {0}".format(url.split('.',1)[-1]), delay=2000)
     try:
         import YDStreamExtractor
-        info = YDStreamExtractor.getVideoInfo(url)
+        info = YDStreamExtractor.getVideoInfo(url, resolve_redirects=True)
         resolved = info.streamURL()
         for s in info.streams():
             try:
@@ -1418,7 +1417,7 @@ def playmovie_old(url):
             if not resolved or len(resolved) < 1:
                 try:
                     import YDStreamExtractor
-                    info = YDStreamExtractor.getVideoInfo(url)
+                    info = YDStreamExtractor.getVideoInfo(url, resolve_redirects=True)
                     resolved = info.streamURL()
                     return [plugin.play_video(resolved)]
                 except:
@@ -1533,7 +1532,7 @@ def download(name='', url=''):
     try:
         import YDStreamExtractor
         if resolved is None:
-            info = YDStreamExtractor.getVideoInfo(url)
+            info = YDStreamExtractor.getVideoInfo(url, resolve_redirects=True)
             resolved = info.streamURL()
             if resolved is not None:
                 if resolved.find('|') != -1: resolved = resolved.partition('|')[0]
@@ -1542,24 +1541,33 @@ def download(name='', url=''):
                 return None
         savepath = ''
         savepath = plugin.get_setting('downloadpath')
-        info = YDStreamExtractor.getVideoInfo(resolved)
+        info = YDStreamExtractor.getVideoInfo(resolved, resolve_redirects=True)
         if savepath == '':
             result = YDStreamExtractor.handleDownload(info, bg=True)
         else:
             result = YDStreamExtractor.handleDownload(info, bg=True, path=savepath)
+        plugin.notify(title="DOWNLOADED {0} from {1}".format(url, resolved), msg="{0}".format(str(repr(result))))
         xbmc.log("\n***DOWNLOAD {0} from {1}\n***RESULT {2}\n".format(url, resolved, str(repr(result))))
     except:
-        pass
+        plugin.notify(msg="ERROR downloading {0}".format(url), title="Couldn't Download")
     #return plugin.finish(items=[])
+    return None
 
 
 @plugin.route('/setViewMode')
 def setView():
     try:
-        from xbmcutil import viewModes
+        import xbmcutil
+        import xbmcutil.viewModes as viewModes
         viewModes.Selector('video')
     except:
-        pass
+        try:
+            from viewModes import Selector
+            view = Selector('video')
+            plugin.notify(msg="View {0}".format(view.currentMode))
+        except:
+            pass
+    return None
 
 
 def finish(items=[]):
@@ -1575,10 +1583,15 @@ def finish(items=[]):
             li = ListItem.from_dict(**item)
         else:
             li = item
-        li.add_context_menu_items([('Change View', 'RunPlugin(plugin://plugin.video.hubgay/setViewMode/video'),])
+        if str(li.path).find('playmovie') != -1 or urllib.unquote_plus(li.path).find('/play') != -1:
+            itemurl = li.path.rpartition('/playmovie/')[0]
+            pathdl = plugin.url_for(endpoint=download, name=li.label, url=itemurl)
+            li.add_context_menu_items([('Download', 'RunPlugin({0}'.format(pathdl)),])
+            li.set_is_playable(True)
+            li.set_info(type='video', info_labels={'Title': li.label, 'Plot': li.label2})
+            li.add_stream_info(stream_type='video', stream_values={})
         xlitems.append(li)
-    return plugin.finish(items=xlitems, sort_methods=[SortMethod.LABEL, SortMethod.GENRE, SortMethod.DURATION, SortMethod.VIDEO_YEAR, SortMethod.VIDEO_RATING], succeeded=True, update_listing=True, cache_to_disc=True, view_mode=viewmode)
-    #return plugin.finish(items=items, sort_methods=lstSorts, succeeded=True, update_listing=True, cache_to_disc=True, view_mode=viewmode)
+    return xlitems
 
 
 if __name__ == '__main__':
@@ -1586,7 +1599,7 @@ if __name__ == '__main__':
         import xbmcutil
         if xbmcutil.plugin.actions[0] == u"setviewmode":
             #from xbmcutil import viewModes
-            import viewModes
+            import xbmcutil.viewModes as viewModes
             viewModes.Selector('video')
     except:
         pass

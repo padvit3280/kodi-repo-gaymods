@@ -149,6 +149,31 @@ def DL(url):
     html = getWeb.getSource(url, form_data=None, referer=__BASEURL__, xml=False, mobile=False).encode('latin', errors='ignore')
     return html
 
+def formatshow(name=""):
+    epname = name.replace('&#8211;', '-')
+    xname = ''
+    epnum = ''
+    eptit = ''
+    nameparts = re.split(' S\d+[Ee]\d+', epname)
+    if len(nameparts) > 1:
+        eptit = nameparts[0]
+        epnum = epname.replace(nameparts[0], '').strip(' ')
+    else:
+        nameparts = epname.split('(',1)
+        if len(nameparts) > 1:
+            eptit = nameparts[0].strip()
+            epnum = nameparts[1].replace(')', '').strip(' ')
+        else:
+            nameparts = re.split(r'[12][0-9][0-9][0-9].[0-9][0-9]?.[0-9]', epname, 1)
+            if len(nameparts) > 1:
+                eptit = nameparts[0].strip(' (')
+                epnum = epname.replace(eptit, '').strip()
+    if epnum != '':
+        xname = "{0} [COLOR blue]{1}[/COLOR]".format(eptit, epnum)
+    else:
+        xname = epname
+    return xname, eptit, epnum
+
 
 @plugin.route('/latest')
 def latest():
@@ -156,12 +181,19 @@ def latest():
     html = DL(url)
     matches = re.compile(ur'href="(http.+watchseries-online.+/episode.+?[^"])".+?</span>(.+?[^<])</a>', re.DOTALL + re.S + re.U).findall(html)
     litems = []
+    epdate = ''
+    eptitle = ''
     for eplink, epname in matches:
-        epname = epname.replace('&#8211;', '-')
+        epnamelbl, eptitle, epdate = formatshow(epname)
+        infolbl = {}
+        if len(epdate) > 0:
+            infolbl = {'Date': epdate, 'Title': eptitle, 'Plot': '{0}: {1} ({2})'.format(eptitle, epdate, eplink)}
         spath = plugin.url_for(episode, name=epname, url=eplink)
-        item = {'label' : epname, 'label2': eplink, 'icon':'DefaultVideoFolder.png', 'path':spath}
+        item = {'label' : epnamelbl, 'label2': eplink, 'icon':'DefaultVideoFolder.png', 'path':spath}
         item.setdefault(item.keys()[0])
-        litems.append(item)
+        li = ListItem.from_dict(**item)
+        li.set_info(type='video', info_labels=infolbl)
+        litems.append(li)
     return litems
 
 
@@ -294,7 +326,7 @@ def play(url):
         plugin.notify(msg="URLResolver Failed {0}".format(resolved.split('.',1)[-1]), title="Trying..YOUTUBE-DL {0}".format(url.split('.',1)[-1]), delay=2000)
     try:
         import YDStreamExtractor
-        info = YDStreamExtractor.getVideoInfo(url)
+        info = YDStreamExtractor.getVideoInfo(url, resolve_redirects=True)
         resolved = info.streamURL()
         for s in info.streams():
             try:
