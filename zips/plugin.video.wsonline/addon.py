@@ -79,19 +79,7 @@ def playurl():
         item.set_is_playable(True)
         item.set_info(type='video', info_labels={'Title': url, 'Plot': url})
         item.add_stream_info(stream_type='video', stream_values={})
-        #plugin.add_items([item])
-        #item.select()
-        #plugin.play_video(item.path)
-        #play(url)
-        #return item
-        #plugin.play_video(item)
-        #play(url)
-        #
-        #plugin.play_video(item)
-        #return item
-        #return plugin.redirect(item.path) #
         play(url)
-        #return plugin.play_video(item)
 
 
 @plugin.route('/saved')
@@ -128,22 +116,6 @@ def saveshow(name='', link=''):
         plugin.notify(msg="ERROR save failed for {0}".format(name), title=link)
 
 
-def oldsave(name='', link=''):
-    try:
-        sitems = loadsaved()
-        item = makecatitem(name, link, True)
-        if len(sitems) > 1:
-            sitems.append(item)
-        else:
-            sitems = [item]
-        jsout = json.dumps(sitems)
-        plugin.addon.setSetting('savedshows', jsout)
-        plugin.notify(msg='#{0}: {1} Saved link: {2}'.format(str(len(sitems)), name, link), title='Saved {0}'.format(name))
-    except:
-        plugin.notify(msg='Error saving {0}'.format(link), title='Save failed {0}'.format(name))
-    return None
-
-
 @plugin.route('/removeshow/<name>/<link>')
 def removeshow(name='', link=''):
     sitems = []
@@ -158,10 +130,12 @@ def removeshow(name='', link=''):
     plugin.addon.setSetting('savedshows', jsout)
     plugin.notify(title='Removed {0}'.format(name), msg='{0} Removed Show link: {1}'.format(name, link))
 
+
 def DL(url):
     html = u''
     html = getWeb.getSource(url, form_data=None, referer=__BASEURL__, xml=False, mobile=False).encode('latin', errors='ignore')
     return html
+
 
 def formatshow(name=""):
     epname = name.replace('&#8211;', '-')
@@ -212,6 +186,7 @@ def formatshow(name=""):
     epnum = epnum.replace('(','').replace(')','').strip()
     return epname.strip(), epdate.strip(), epnum.strip()
 
+
 def formatlabel(epname, epdate, epnum):
     eplbl = ''
     epname = epname.replace('!', '')
@@ -230,42 +205,6 @@ def formatlabel(epname, epdate, epnum):
         eplbl = epname + ' ' + epdate + ' ' + epnum
     return eplbl
 
-def oldformat(name=""):
-    epname = name.replace('&#8211;', '-')
-    epname = ''
-    epnum = ''
-    eplbl = ''
-    nameparts = re.split(r'[12][0-9][0-9][0-9].[0-9][0-9]?.[0-9][0-9]?', epname, 1)
-    if len(nameparts) > 1:
-        epname = nameparts[0].strip(' (')
-        epdate = epname.replace(epname, '').strip()
-        dateparts = epdate.split('(', 1)
-        if len(dateparts) > 1:
-            epdate = dateparts[0].strip()
-            epnum = dateparts[-1].strip()
-        else:
-            dateparts = epdate.split(' ', 1)
-            if len(dateparts) > 1:
-                epdate = dateparts[0].strip()
-                epnum = dateparts[1:-1]
-    else:
-        nameparts = epname.split('(', 1)
-        if len(nameparts) > 1:
-            epname = nameparts[0].strip()
-            leftover = nameparts[1].split(')',1)
-            epdate = leftover[0]
-            if len(leftover) > 1:
-                epnum = leftover[-1].strip()
-        else:
-            nameparts = re.split(r'[12][0-9][0-9][0-9].[0-9][0-9]?.[0-9]', epname, 1)
-            if len(nameparts) > 1:
-                epname = nameparts[0].strip(' (')
-                epdate = epname.replace(epname, '').strip()
-    if epnum != '':
-        eplbl = "{0} [COLOR blue]{1}[/COLOR]".format(epname, epnum)
-    else:
-        eplbl = epname
-    return eplbl, epname, epnum
 
 def findepseason(epnum):
     numseason = ''
@@ -274,6 +213,7 @@ def findepseason(epnum):
     numseason = parts[0].replace('s', '').strip()
     numep = parts[-1].replace('e', '').strip()
     return numseason, numep
+
 
 def episode_makeitem(episodename, episodelink):
     '''
@@ -304,10 +244,11 @@ def episode_makeitem(episodename, episodelink):
         item.setdefault(item.keys()[0])
         li = ListItem.from_dict(**item)
         li.set_info(type='video', info_labels=infolbl)
-        li.add_context_menu_items([('Search [B]{0}[/B]'.format(eptitle), 'RunPlugin({0})'.format(plugin.url_for(query, searchquery=eptitle)))])
+        li.add_context_menu_items([('Search [B]{0}[/B]'.format(eptitle), 'RunPlugin({0})'.format(plugin.url_for(query, searchquery=eptitle)),)])
     except:
         li = ListItem(label=episodename, label2=episodelink, icon=img, thumbnail=img, path=spath)
     return li
+
 
 @plugin.route('/latest')
 def latest():
