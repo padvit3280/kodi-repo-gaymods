@@ -62,7 +62,7 @@ def makecatitem(name, link, removelink=False):
     itempath = plugin.url_for(category, name=name, url=link)
     item = {'label': name, 'label2': link, 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png', 'path': itempath}
     item.setdefault(item.keys()[0])
-    litem = ListItem.from_dict(**item) #label=name, label2=link, icon='DefaultFolder.png', thumbnail='DefaultFolder.png', path=itempath)
+    litem = ListItem.from_dict(**item)
     if removelink:
         litem.add_context_menu_items([('Remove Saved Show', 'RunPlugin("{0}")'.format(plugin.url_for(removeshow, name=name, link=link)),)])
     else:
@@ -75,9 +75,23 @@ def playurl():
     url = ''
     url = plugin.keyboard(default='', heading='Video Page URL')
     if url != '' and len(url) > 0:
-        return play(url)
-    else:
-        return index()
+        item = ListItem.from_dict(path=plugin.url_for(endpoint=play, url=url))
+        item.set_is_playable(True)
+        item.set_info(type='video', info_labels={'Title': url, 'Plot': url})
+        item.add_stream_info(stream_type='video', stream_values={})
+        #plugin.add_items([item])
+        #item.select()
+        #plugin.play_video(item.path)
+        #play(url)
+        #return item
+        #plugin.play_video(item)
+        #play(url)
+        #
+        #plugin.play_video(item)
+        #return item
+        #return plugin.redirect(item.path) #
+        play(url)
+        #return plugin.play_video(item)
 
 
 @plugin.route('/saved')
@@ -151,29 +165,149 @@ def DL(url):
 
 def formatshow(name=""):
     epname = name.replace('&#8211;', '-')
-    xname = ''
     epnum = ''
-    eptit = ''
-    nameparts = re.split(' S\d+[Ee]\d+', epname)
+    epname = ''
+    epdate = ''
+    numparts = re.compile(r'[Ss]\d+[Ee]\d+').findall(name)
+    if len(numparts) > 0:
+        epnum = numparts.pop()
+    datematch = re.compile(r'[12][0-9][0-9][0-9].[0-9][0-9]?.[0-9][0-9]?').findall(name)
+    if len(datematch) > 0:
+        epdate = datematch[0]
+    name = name.replace('  ', ' ').strip()
+    name = name.replace(epnum, '').strip()
+    name = name.replace(epdate, '').strip()
+    if epdate == '':
+        # Let's see if we can find the date in the form of a string of Month_Abbr Daynum Year
+        try:
+            from calendar import month_abbr, month_name
+            monthlist = month_name[:]
+            monthlist.extend(month_abbr)
+            monthlist.pop(13)
+            monthlist.pop(0)
+            regex = "{0}.(\d\d).(\d\d\d\d)"
+            nummonth = 1
+            for mon in monthlist:
+                matches = re.compile(regex.format(mon)).findall(name)
+                if len(matches) > 0:
+                    day, year = matches.pop()
+                    if nummonth < 10:
+                        epdate = "{0} 0{1} {2}".format(year, nummonth, day)
+                    else:
+                        epdate = "{0} {1} {2}".format(year, nummonth, day)
+                    name = name.replace(mon, '').strip()
+                    name = name.replace(year, '').strip()
+                    name = name.replace(day, '').strip()
+                    break
+                nummonth += 1
+                if nummonth > 12: nummonth = 1
+            if epdate == '':
+                year = re.split(r'\d\d\d\d', name, 1)[0]
+                epdate = name.replace(year, '').strip()
+                name = name.replace(epdate, '').strip()
+        except:
+            pass
+    epname = name.replace('(','').replace(')','').strip()
+    epdate = epdate.replace('(','').replace(')','').strip()
+    epnum = epnum.replace('(','').replace(')','').strip()
+    return epname.strip(), epdate.strip(), epnum.strip()
+
+def formatlabel(epname, epdate, epnum):
+    eplbl = ''
+    epname = epname.replace('!', '')
+    try:
+        if len(epdate) == 0 and len(epnum) == 0:
+            return epname
+        else:
+            if len(epdate) > 0 and len(epnum) > 0:
+                eplbl = "{0} ([COLOR blue]{1}[/COLOR] [COLOR cyan]{2}[/COLOR])".format(epname, epdate, epnum)
+            else:
+                if len(epdate) > 0:
+                    eplbl = "{0} ([COLOR blue]{1}[/COLOR])".format(epname, epdate)
+                else:
+                    eplbl = "{0} ([COLOR cyan]{1}[/COLOR])".format(epname, epnum)
+    except:
+        eplbl = epname + ' ' + epdate + ' ' + epnum
+    return eplbl
+
+def oldformat(name=""):
+    epname = name.replace('&#8211;', '-')
+    epname = ''
+    epnum = ''
+    eplbl = ''
+    nameparts = re.split(r'[12][0-9][0-9][0-9].[0-9][0-9]?.[0-9][0-9]?', epname, 1)
     if len(nameparts) > 1:
-        eptit = nameparts[0]
-        epnum = epname.replace(nameparts[0], '').strip(' ')
+        epname = nameparts[0].strip(' (')
+        epdate = epname.replace(epname, '').strip()
+        dateparts = epdate.split('(', 1)
+        if len(dateparts) > 1:
+            epdate = dateparts[0].strip()
+            epnum = dateparts[-1].strip()
+        else:
+            dateparts = epdate.split(' ', 1)
+            if len(dateparts) > 1:
+                epdate = dateparts[0].strip()
+                epnum = dateparts[1:-1]
     else:
-        nameparts = epname.split('(',1)
+        nameparts = epname.split('(', 1)
         if len(nameparts) > 1:
-            eptit = nameparts[0].strip()
-            epnum = nameparts[1].replace(')', '').strip(' ')
+            epname = nameparts[0].strip()
+            leftover = nameparts[1].split(')',1)
+            epdate = leftover[0]
+            if len(leftover) > 1:
+                epnum = leftover[-1].strip()
         else:
             nameparts = re.split(r'[12][0-9][0-9][0-9].[0-9][0-9]?.[0-9]', epname, 1)
             if len(nameparts) > 1:
-                eptit = nameparts[0].strip(' (')
-                epnum = epname.replace(eptit, '').strip()
+                epname = nameparts[0].strip(' (')
+                epdate = epname.replace(epname, '').strip()
     if epnum != '':
-        xname = "{0} [COLOR blue]{1}[/COLOR]".format(eptit, epnum)
+        eplbl = "{0} [COLOR blue]{1}[/COLOR]".format(epname, epnum)
     else:
-        xname = epname
-    return xname, eptit, epnum
+        eplbl = epname
+    return eplbl, epname, epnum
 
+def findepseason(epnum):
+    numseason = ''
+    numep = ''
+    parts = epnum.lower().split('e', 1)
+    numseason = parts[0].replace('s', '').strip()
+    numep = parts[-1].replace('e', '').strip()
+    return numseason, numep
+
+def episode_makeitem(episodename, episodelink):
+    '''
+    Will return a ListItem for the given link to an episode and it's full linked name.
+    Name will be sent to format show to attempt to parse out a date or season from the title.
+    Infolabels are populated with any details that can be parsed from the title as well.
+    Should be used anytime an item needs to be created that is an item for one specific episode of a show.
+    Latest 350, Saved Show, Category (Show listing of all episodes for that series) would all use this.
+    '''
+    infolbl = {}
+    spath = plugin.url_for(episode, name=episodename, url=episodelink)
+    img = "DefaultVideoFolder.png"
+    seasonstr = ''
+    try:
+        eptitle, epdate, epnum = formatshow(episodename)
+        eplbl = formatlabel(eptitle, epdate, epnum)
+        plotstr = "{0} ({1}): {2} {3}".format(epdate, epnum, eptitle, episodelink)
+        infolbl = {'Date': epdate, 'Title': eptitle, 'Plot': plotstr}
+        if len(epnum) > 0:
+            showS, showE = findepseason(epnum)
+            dictshow = {'Episode': showE, 'Season': showS}
+            infolbl.update(dictshow)
+            snum = int(showS)
+            epnum = int(showE)
+            if snum > 0 and epnum > 0:
+                epdate = "S{0}e{1}".format(snum, epnum)
+        item = {'label': eplbl, 'label2': epdate, 'icon': img, 'thumbnail': img, 'path': spath}
+        item.setdefault(item.keys()[0])
+        li = ListItem.from_dict(**item)
+        li.set_info(type='video', info_labels=infolbl)
+        li.add_context_menu_items([('Search [B]{0}[/B]'.format(eptitle), 'RunPlugin({0})'.format(plugin.url_for(query, searchquery=eptitle)))])
+    except:
+        li = ListItem(label=episodename, label2=episodelink, icon=img, thumbnail=img, path=spath)
+    return li
 
 @plugin.route('/latest')
 def latest():
@@ -184,16 +318,7 @@ def latest():
     epdate = ''
     eptitle = ''
     for eplink, epname in matches:
-        epnamelbl, eptitle, epdate = formatshow(epname)
-        infolbl = {}
-        if len(epdate) > 0:
-            infolbl = {'Date': epdate, 'Title': eptitle, 'Plot': '{0}: {1} ({2})'.format(eptitle, epdate, eplink)}
-        spath = plugin.url_for(episode, name=epname, url=eplink)
-        item = {'label' : epnamelbl, 'label2': eplink, 'icon':'DefaultVideoFolder.png', 'path':spath}
-        item.setdefault(item.keys()[0])
-        li = ListItem.from_dict(**item)
-        li.set_info(type='video', info_labels=infolbl)
-        litems.append(li)
+        litems.append(episode_makeitem(epname, eplink))
     return litems
 
 
@@ -204,6 +329,11 @@ def search():
     searchtxt = plugin.keyboard(searchtxt, 'Search All Sites', False)
     searchquery = searchtxt.replace(' ', '+')
     plugin.set_setting(key='lastsearch', val=searchtxt)
+    return query(searchquery)
+
+
+@plugin.route('/query/<searchquery>')
+def query(searchquery):
     urlsearch = __BASEURL__ + '/?s={0}&search='.format(searchquery)
     html = DL(urlsearch)
     htmlres = html.partition('<div class="ddmcc">')[2].split('</div>',1)[0]
@@ -227,12 +357,8 @@ def category(name, url):
     matches = re.compile(ur"href='(http.+watchseries-online.+/episode.+?[^'])'.+?</span>(.+?[^<])</a>", re.DOTALL + re.S + re.U).findall(html)
     litems =[]
     for eplink, epname in matches:
-        epname = epname.replace('&#8211;', '-')
-        epath = plugin.url_for(episode, name=epname, url=eplink)
-        item = {'label' : epname, 'label2': eplink, 'icon' : banner, 'thumbnail' : banner, 'path' : epath}
-        item.setdefault(item.keys()[0])
-        litems.append(item)
-    litems.sort(key=lambda litems : litems['label'])
+        litems.append(episode_makeitem(epname, eplink))
+    litems.sort(key=lambda litems : litems.label, reverse=True)
     return litems
 
 
@@ -349,14 +475,15 @@ def play(url):
     if len(resolved) > 1:
         plugin.set_resolved_url(resolved)
         item = ListItem.from_dict(path=resolved)
+        return item
     else:
-        plugin.set_resolved_url(url)
-        plugurl = 'plugin://plugin.video.live.streamspro/?url={0}'.format(urllib.quote_plus(url))
-        item = ListItem.from_dict(path=plugurl)
-    item.add_stream_info('video', stream_values={})
-    item.set_is_playable(True)
-    plugin.notify(msg="RESOLVE FAIL: {0}".format(url.split('.',1)[-1]), title="Trying {0}".format(item.path.split('.',1)[-1]), delay=2000)
-    return item
+        plugin.set_resolved_url() #url)
+        #plugurl = 'plugin://plugin.video.live.streamspro/?url={0}'.format(urllib.quote_plus(url))
+        #item = ListItem.from_dict(path=plugurl)
+        #item.add_stream_info('video', stream_values={})
+        #item.set_is_playable(True)
+        #plugin.notify(msg="RESOLVE FAIL: {0}".format(url.split('.', 1)[-1]),title="Trying {0}".format(item.path.split('.', 1)[-1]), delay=2000)
+        return None
 
 
 if __name__ == '__main__':

@@ -1,3 +1,8 @@
+V 1.5.0 (2017-02-20)
+- Added parser to get details from the linked show
+- Added formatter to label the show name with color for details parser has found
+- Parser tries to find a date in a few formats and Season and Episode Number.
+
 V 1.2.0 (2017-02-15)
 - Added setting for favourite file sources
 - Uses sources in settings to sort them to top of list
