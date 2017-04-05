@@ -26,10 +26,13 @@ def index():
     itemsaved = {'label': 'Saved Shows', 'path': plugin.url_for(saved), 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png'}
     itemplay = {'label': 'Resolve URL and Play (URLresolver required)', 'path': plugin.url_for(playurl), 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png'}
     itemlatest = {'label': 'Last 350 Episodes', 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png', 'path': plugin.url_for(latest)}
-    itemsearch = {'label': 'Search', 'icon': __imgsearch__, 'thumbnail': __imgsearch__, 'path': plugin.url_for(search)}
+    itemsearch = {'label': 'Search', 'icon': __imgsearch__, 'thumbnail': __imgsearch__, 'path': plugin.url_for(search, paste=False)}
+    itemsearchpasted = {'label': 'Search (Paste Clipboard)', 'icon': __imgsearch__, 'thumbnail': __imgsearch__, 'path': plugin.url_for(search, paste=True)}
+
     litems.append(itemlatest)
-    litems.append(itemsearch)
     litems.append(itemsaved)
+    litems.append(itemsearch)
+    litems.append(itemsearchpasted)
     litems.append(itemplay)
     return litems
 
@@ -50,6 +53,8 @@ def loadsaved():
             return []
         for item in sitems:
             li = ListItem.from_dict(**item)
+            li.add_context_menu_items(
+                [('Remove Saved Show', 'RunPlugin("{0}")'.format(plugin.url_for(removeshow, name=li.label, link=li.label2)),)])
             litems.append(li)
     except:
         pass
@@ -114,6 +119,24 @@ def saveshow(name='', link=''):
         plugin.notify(msg="SAVED {0}".format(name), title=link)
     except:
         plugin.notify(msg="ERROR save failed for {0}".format(name), title=link)
+
+
+@plugin.route('/saveshowfromepisode/<name>/<link>')
+def saveshowfromepisode(name='', link=''):
+    '''
+    Loads the episode page and searches html for the category for the entire show not this specific episode to then save the show using the same show function used when we alreaedy know the category.
+    <span class="info-category"><a href="https://watchseries-online.pl/category/late-night-with-seth-meyers" rel="category tag">Late Night with Seth Meyers</a></span>
+    '''
+    html = DL(link)
+    matches = re.compile(ur'span class="info-category">.+?href="(http.+?[^"])".+?>(.+?[^<])</a>', re.DOTALL+re.S+re.U).findall(html)
+    litems = []
+    categorylink = ''
+    showname = ''
+    if matches is not None:
+        for showlink, catname in matches:
+            categorylink = showlink
+            showname = catname
+        saveshow(name=showname, link=categorylink)
 
 
 @plugin.route('/removeshow/<name>/<link>')
@@ -244,7 +267,10 @@ def episode_makeitem(episodename, episodelink):
         item.setdefault(item.keys()[0])
         li = ListItem.from_dict(**item)
         li.set_info(type='video', info_labels=infolbl)
-        li.add_context_menu_items([('Search [B]{0}[/B]'.format(eptitle), 'RunPlugin({0})'.format(plugin.url_for(query, searchquery=eptitle)),)])
+        ctxitems = [('Search [B]{0}[/B]'.format(eptitle), 'RunPlugin({0})'.format(plugin.url_for(queryshow, searchquery=eptitle)),)]
+        ctxitems.append([('Save Show', 'RunPlugin("{0}")'.format(plugin.url_for(saveshowfromepisode, name=li.label, link=episodelink)),)])
+        ctxitems.append(li.get_context_menu_items())
+        li.add_context_menu_items(items=ctxitems, replace_items=True)
     except:
         li = ListItem(label=episodename, label2=episodelink, icon=img, thumbnail=img, path=spath)
     return li
@@ -263,18 +289,35 @@ def latest():
     return litems
 
 
-@plugin.route('/search')
-def search():
+
+@plugin.route('/search/<paste>')
+def search(paste=False):
     searchtxt = ''
-    searchtxt = plugin.get_setting('lastsearch')
+    if paste:
+        try:
+            import pycliper
+            searchtxt = pycliper.clipboard.paste()
+        except:
+            searchtxt = ''
+    else:
+        searchtxt = plugin.get_setting('lastsearch')
     searchtxt = plugin.keyboard(searchtxt, 'Search All Sites', False)
     searchquery = searchtxt.replace(' ', '+')
     plugin.set_setting(key='lastsearch', val=searchtxt)
-    return query(searchquery)
+    query(searchquery)
+
+
+@plugin.route('/queryshow/<searchquery>')
+def queryshow(searchquery):
+    #plugin.add_items(items=query(searchquery))
+    plugin.clear_added_items()
+    resitems = query(searchquery)
+    return plugin.finish(items=resitems, succeeded=True, update_listing=True)
 
 
 @plugin.route('/query/<searchquery>')
 def query(searchquery):
+    searchquery = searchquery.replace(' ', '+')
     urlsearch = __BASEURL__ + '/?s={0}&search='.format(searchquery)
     html = DL(urlsearch)
     htmlres = html.partition('<div class="ddmcc">')[2].split('</div>',1)[0]
@@ -282,6 +325,9 @@ def query(searchquery):
     litems = []
     for slink, sname in matches:
         litems.append(makecatitem(sname, slink))
+    #plugin.add_items(litems)
+    plugin.notify(msg="Search {0}".format(urlsearch), title="Found: {0} {1}".format(str(len(litems)), searchquery))
+    #plugin.ad(litems, update_listing=True)
     return litems
 
 
