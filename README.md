@@ -3,6 +3,20 @@
 ## An in development collection of Gay Adult addons for ~~XBMC~~ Kodi *(Jarvis 16.0+/Krypton 17)* all in one place 
 Intended to be the one stop place for the latest addons and most up to date code for addons that will display gay content from adult websites typically forked addons already written for many straight sites but modified slightly to filter out content that is not GAY 
 
+*April 2017*
+
+Thanks everyone for lots of emails and interest in this repo I hadn't ever intended it to go public and so once I realized it was about I have tried to make it easier to use and more functional but it's just a little project of mine and first repo so apologies if things don't work.
+
+Please note I have a Mac and Raspberry Pi running OSMC and that's all I test these on. 
+
+FireTV I get asked how to install and I don't own one so I am not sure. I have heard people transfer the zip file however they can to the firetv (dropbox etc) and then it should install.
+
+Please if you know of any good working gay addon's not in here submit an issue or contact me as these aren't just meant to be my addon's I want to make this a repo of ones that I have had time to develop or fix but also of just gay content in general so people have one place they can always check to see the latest gay addon's.
+
+If you have a gay addon for Kodi please tell me and let me include your repo in here or your addon!!
+
+I have released repo version 2.0 not much different but still the main addon in this whole thing that I devote all my time to is the Plugin.Video.HUBgay it has the new tumblr stuff I am working on as well as various other sites. As I am happy with the layout and ease to add new sections to it I have stopped trying to make individual addon's and reuse lots of functions and instead just put the sites into this one. 
+
 *Christmas Update 2016*
 
 I have finally fixed the problem with the repo not allowing addon's to update or install from within Kodi so this should make everyones life easier!

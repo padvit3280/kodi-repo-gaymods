@@ -232,7 +232,7 @@ REQUIRED [B]Script.Module.URLResolver, Simple.Downloader, YouTubeDL, and KODIswi
     </extension>
 </addon>
 
-<addon id="repository.kodi-repo-gaymods" name="Gay Addons Repo" version="1.6.9" provider-name="moedje">
+<addon id="repository.kodi-repo-gaymods" name="Gay Addons Repo" version="2.0.69" provider-name="moedje">
         <extension point="xbmc.addon.repository" name="Gay Addons Repo">
                 <info compressed="false">https://raw.githubusercontent.com/moedje/kodi-repo-gaymods/master/addons.xml</info>
                 <checksum>https://raw.githubusercontent.com/moedje/kodi-repo-gaymods/master/addons.xml.md5</checksum>
