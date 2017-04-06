@@ -1,3 +1,9 @@
+V 1.6.2 (2017-04-05)
+- Oops bug fixes
+
+V 1.6.1 (2017-04-05)
+- Oops bug fixes
+
 V 1.6.0 (2017-04-05)
 - Bug Fixes to Save Show/Remove Show
 - Search Show Fixes
