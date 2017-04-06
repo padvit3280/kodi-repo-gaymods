@@ -210,7 +210,7 @@ REQUIRED [B]Script.Module.URLResolver, Simple.Downloader, YouTubeDL, and KODIswi
   </extension>
 </addon>
 
-<addon id="plugin.video.wsonline" name="WatchSeries-Online" version="1.6.2" provider-name="moedje">
+<addon id="plugin.video.wsonline" name="WatchSeries-Online" version="1.6.3" provider-name="moedje">
     <requires>
         <import addon="xbmc.python" version="2.24.0"/>
         <import addon="script.module.requests" optional="false"/>

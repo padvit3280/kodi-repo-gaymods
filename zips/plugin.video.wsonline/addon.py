@@ -12,11 +12,13 @@ ssl._create_default_https_context = ssl._create_unverified_context
 plugin = Plugin()
 __BASEURL__ = 'https://watchseries-online.pl'
 __addondir__ = xbmc.translatePath(plugin.addon.getAddonInfo('path'))
+__temp__ = path.join(__addondir__, '../', 'temp/')
 __datadir__ = xbmc.translatePath('special://profile/addon_data/{0}/'.format(plugin.id))
 __resdir__ = path.join(__addondir__, 'resources')
 __imgsearch__ = path.join(__resdir__, 'search.png')
 __savedjson__ = path.join(xbmc.translatePath(plugin.addon.getAddonInfo('profile')), 'savedshows.json')
-getWeb = WebUtils.BaseRequest(path.join(__datadir__, 'cookies.lwp'))
+getWeb = WebUtils.CachedWebRequest(path.join(__datadir__, 'cookies.lwp'), __temp__)
+#getWeb = WebUtils.BaseRequest(path.join(__datadir__, 'cookies.lwp'))
 
 
 def loadsaved():
@@ -36,7 +38,7 @@ def loadsaved():
         for item in sitems:
             li = ListItem.from_dict(**item)
             li.add_context_menu_items(
-                [('Remove Saved Show', 'RunPlugin("{0}")'.format(plugin.url_for(removeshow, name=li.label, link=li.label2)),)])
+                [('Remove Saved Show', 'RunPlugin("{0}")'.format(plugin.url_for(removeshow, name=li.label, link=li.path)),)])
             litems.append(li)
     except:
         pass
@@ -50,10 +52,10 @@ def makecatitem(name, link, removelink=False):
     item = {'label': name, 'label2': link, 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png', 'path': itempath}
     item.setdefault(item.keys()[0])
     litem = ListItem.from_dict(**item)
-    if removelink:
-        litem.add_context_menu_items([('Remove Saved Show', 'RunPlugin("{0}")'.format(plugin.url_for(removeshow, name=name, link=link)),)])
-    else:
-        litem.add_context_menu_items([('Save Show', 'RunPlugin("{0}")'.format(plugin.url_for(saveshow, name=name, link=link)),)])
+    #if removelink:
+    #    litem.add_context_menu_items([('Remove Saved Show', 'RunPlugin("{0}")'.format(plugin.url_for(removeshow, name=name, link=itempath)),)])
+    #else:
+    #    litem.add_context_menu_items([('Save Show', 'RunPlugin("{0}")'.format(plugin.url_for(saveshow, name=name, link=link)),)])
     return litem
 
 
@@ -157,23 +159,19 @@ def episode_makeitem(episodename, episodelink):
         eptitle, epdate, epnum = formatshow(episodename)
         eplbl = formatlabel(eptitle, epdate, epnum)
         plotstr = "{0} ({1}): {2} {3}".format(epdate, epnum, eptitle, episodelink)
-        infolbl = {'Date': epdate, 'Title': eptitle, 'Plot': plotstr}
+        infolbl = {'EpisodeName': epdate, 'Title': eptitle, 'Plot': plotstr}
         if len(epnum) > 0:
             showS, showE = findepseason(epnum)
-            dictshow = {'Episode': showE, 'Season': showS}
-            infolbl.update(dictshow)
             snum = int(showS)
             epnum = int(showE)
+            infolbl.update({'Episode': showE, 'Season': showS})
             if snum > 0 and epnum > 0:
                 epdate = "S{0}e{1}".format(snum, epnum)
+                infolbl.update({'PlotOutline': epdate})
         item = {'label': eplbl, 'label2': epdate, 'icon': img, 'thumbnail': img, 'path': spath}
         item.setdefault(item.keys()[0])
         li = ListItem.from_dict(**item)
         li.set_info(type='video', info_labels=infolbl)
-        #ctxitems = [('More: [B]{0}[/B]'.format(eptitle), 'RunPlugin({0})'.format(plugin.url_for(queryshow, searchquery=eptitle))),('Save Show', 'RunPlugin("{0}")'.format(plugin.url_for(saveshowfromepisode, name=li.label, link=episodelink))),] # li.get_context_menu_items()
-        #ctxitems.append(('Search [B]{0}[/B]'.format(eptitle), 'RunPlugin({0})'.format(plugin.url_for(queryshow, searchquery=eptitle))))
-        #ctxitems.append(('Save Show', 'RunPlugin("{0}")'.format(plugin.url_for(saveshowfromepisode, name=li.label, link=episodelink))))
-        #li.add_context_menu_items([('More: [B]{0}[/B]'.format(eptitle), 'RunPlugin({0})'.format(plugin.url_for(queryshow, searchquery=eptitle))),('Save Show', 'RunPlugin("{0}")'.format(plugin.url_for(saveshowfromepisode, name=li.label, link=episodelink))),('Search [B]{0}[/B]'.format(eptitle), 'RunPlugin({0})'.format(plugin.url_for(queryshow, searchquery=eptitle))),])
     except:
         li = ListItem(label=episodename, label2=episodelink, icon=img, thumbnail=img, path=spath)
     return li
@@ -200,7 +198,7 @@ def sortSourceItems(litems=[]):
         stext = plugin.get_setting('topSources')
         if len(stext) < 1:
             sourceslist.append('streamcloud')
-            sourceslist.append('vidto')
+            sourceslist.append('movpod')
             sourceslist.append('openload')
             sourceslist.append('thevideo')
         else:
@@ -224,13 +222,12 @@ def sortSourceItems(litems=[]):
 @plugin.route('/')
 def index():
     litems = []
-    plugin.set_content('movies')
+    plugin.set_content('episodes')
     itemlatest = {'label': 'Last 350 Episodes', 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png', 'path': plugin.url_for(latest)}
     itemsaved = {'label': 'Saved Shows', 'path': plugin.url_for(saved), 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png'}
     itemplay = {'label': 'Resolve URL and Play (URLresolver required)', 'path': plugin.url_for(playurl), 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png'}
     itemsearch = {'label': 'Search', 'icon': __imgsearch__, 'thumbnail': __imgsearch__, 'path': plugin.url_for(search, paste=False)}
     itemsearchpasted = {'label': 'Search (Paste Clipboard)', 'icon': __imgsearch__, 'thumbnail': __imgsearch__, 'path': plugin.url_for(search, paste=True)}
-
     litems.append(itemlatest)
     litems.append(itemsaved)
     litems.append(itemsearch)
@@ -248,7 +245,7 @@ def playurl():
         item.set_is_playable(True)
         item.set_info(type='video', info_labels={'Title': url, 'Plot': url})
         item.add_stream_info(stream_type='video', stream_values={})
-        play(url)
+        return play(url)
 
 
 @plugin.route('/saved')
@@ -334,34 +331,39 @@ def latest():
 
 
 @plugin.route('/search/<paste>')
-def search(paste=False):
+def search(paste):
     searchtxt = ''
-    if paste:
+    if paste is None: paste = False
+    if bool(paste):
         try:
             import pyperclip
             searchtxt = pyperclip.paste()
+            if len(searchtxt) > 50:
+                nsearchtxt = searchtxt[0:50]
+                searchtxt = searchtxt.replace(nsearchtxt, '').split(' ', 1)[0]
         except:
-            searchtxt = ''
+            searchtxt = plugin.get_setting('lastsearch')
     else:
         searchtxt = plugin.get_setting('lastsearch')
     searchtxt = plugin.keyboard(searchtxt, 'Search All Sites', False)
-    searchquery = searchtxt.replace(' ', '+')
-    plugin.set_setting(key='lastsearch', val=searchtxt)
-    #return query(searchquery)
-    return query(searchquery)
+    if len(searchtxt) > 1:
+        plugin.set_setting(key='lastsearch', val=searchtxt)
+        return query(searchquery=searchtxt)
+    else:
+        return []
 
 
 @plugin.route('/query/<searchquery>')
 def query(searchquery):
-    searchqueryw = searchquery.replace(' ', '+')
+    if searchquery.find(' ') != -1:
+        searchqueryw = searchquery.replace(' ', '+')
     urlsearch = __BASEURL__ + '/?s={0}&search='.format(searchqueryw)
     html = DL(urlsearch)
     htmlres = html.partition('<div class="ddmcc">')[2].split('</div>',1)[0]
-    matches = re.compile(ur'href="(http.+watchseries-online.+/category.+?[^"])".+?[^>]>(.+?[^<])<.a>', re.DOTALL + re.S + re.U).findall(htmlres)
+    matches = re.compile(ur'href="(https?.+?watchseries-online\.[a-z]+/category.+?[^"])".+?[^>]>(.+?[^<])<.a>', re.DOTALL + re.S + re.U).findall(htmlres)
     litems = []
     for slink, sname in matches:
         litems.append(makecatitem(sname, slink))
-    #plugin.add_items(litems)
     plugin.notify(msg="Search {0}".format(urlsearch), title="{0} {1}".format(str(len(litems)), searchquery))
     #plugin.ad(litems, update_listing=True)
     return litems
@@ -388,7 +390,7 @@ def category(name, url):
     except:
         pass
     if banner is None: banner = 'DefaultVideoFolder.png'
-    matches = re.compile(ur"href='(http.+watchseries-online.+/episode.+?[^'])'.+?</span>(.+?[^<])</a>", re.DOTALL + re.S + re.U).findall(html)
+    matches = re.compile(ur"href='(https?.+watchseries-online.[a-z]+/episode.+?[^'])'.+?</span>(.+?[^<])</a>", re.DOTALL + re.S + re.U).findall(html)
     litems =[]
     for eplink, epname in matches:
         item = episode_makeitem(epname, eplink)
@@ -436,7 +438,7 @@ def play(url):
             if resolved is None or len(resolved) < 1:
                 resolved = urlresolver.resolve(urllib.unquote(url))
         if len(resolved) > 1:
-            plugin.notify(msg="PLAY {0}".format(resolved.partition('.',1)[-1]), title="URLRESOLVER", delay=1000)
+            plugin.notify(msg="PLAY {0}".format(resolved.partition('.')[-1]), title="URLRESOLVER", delay=1000)
             plugin.set_resolved_url(resolved)
             item = ListItem.from_dict(path=resolved)
             item.add_stream_info('video', stream_values={})
@@ -444,7 +446,7 @@ def play(url):
             return item
     except:
         resolved = ''
-        plugin.notify(msg="FAILED {0}".format(url.partition('.',1)[-1]), title="URLRESOLVER", delay=1000)
+        plugin.notify(msg="FAILED {0}".format(url.partition('.')[-1]), title="URLRESOLVER", delay=1000)
     try:
         import YDStreamExtractor
         info = YDStreamExtractor.getVideoInfo(url, resolve_redirects=True)
@@ -458,14 +460,14 @@ def play(url):
         if len(stream_url) > 1:
             resolved = stream_url
         if len(resolved) > 1:
-            plugin.notify(msg="Playing: {0}".format(resolved.partition('.',1)[-1]), title="YOUTUBE-DL", delay=1000)
+            plugin.notify(msg="Playing: {0}".format(resolved.partition('.')[-1]), title="YOUTUBE-DL", delay=1000)
             plugin.set_resolved_url(resolved)
             item = ListItem.from_dict(path=resolved)
             item.add_stream_info('video', stream_values={})
             item.set_is_playable(True)
             return item
     except:
-        plugin.notify(msg="Failed: {0}".format(resolved.partition('.',1)[-1]), title="YOUTUBE-DL", delay=1000)
+        plugin.notify(msg="Failed: {0}".format(resolved.partition('.')[-1]), title="YOUTUBE-DL", delay=1000)
 
     if len(resolved) > 1:
         plugin.set_resolved_url(resolved)
@@ -492,5 +494,5 @@ if __name__ == '__main__':
         else:
             __BASEURL__ = 'https://' + hostname
     plugin.run()
-    plugin.set_content('movies')
+    plugin.set_content('episodes')
     plugin.set_view_mode(0)
