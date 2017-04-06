@@ -1,6 +1,8 @@
 ## repository.gaymods
-###  Gay SAddons Repo for Kodi/XBMC 
-## An in development collection of Gay Adult addons for ~~XBMC~~ Kodi *(Jarvis 16.0+/Krypton 17)* all in one place 
+## Gay Addons/Plugins Repo for Kodi/XBMC 
+
+*An in development collection of Gay Adult addons for ~~XBMC~~ Kodi *(Jarvis 16.0+/Krypton 17)* all in one place*
+ 
 Intended to be the one stop place for the latest addons and most up to date code for addons that will display gay content from adult websites typically forked addons already written for many straight sites but modified slightly to filter out content that is not GAY 
 
 *April 2017*
