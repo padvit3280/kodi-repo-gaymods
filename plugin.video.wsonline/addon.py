@@ -12,8 +12,9 @@ ssl._create_default_https_context = ssl._create_unverified_context
 plugin = Plugin()
 __BASEURL__ = 'https://watchseries-online.pl'
 __addondir__ = xbmc.translatePath(plugin.addon.getAddonInfo('path'))
-__temp__ = xbmc.translatePath('special://temp/') #path.join(__addondir__, '../', 'temp/')
 __datadir__ = xbmc.translatePath('special://profile/addon_data/{0}/'.format(plugin.id))
+__cookie__ = path.join(__datadir__, 'cookies.lwp')
+__temp__ = path.join(__datadir__, 'temp/')
 __resdir__ = path.join(__addondir__, 'resources')
 __imgsearch__ = path.join(__resdir__, 'search.png')
 __savedjson__ = path.join(xbmc.translatePath(plugin.addon.getAddonInfo('profile')), 'savedshows.json')
@@ -61,6 +62,7 @@ def makecatitem(name, link, removelink=False):
 
 def DL(url):
     html = u''
+    getWeb = WebUtils.CachedWebRequest(__cookie__, __temp__)
     html = getWeb.getSource(url, form_data=None, referer=__BASEURL__, xml=False, mobile=False).encode('latin', errors='ignore')
     return html
 

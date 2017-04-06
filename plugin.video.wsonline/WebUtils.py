@@ -366,8 +366,11 @@ class CachedWebRequest(DemystifiedWebRequest):
         
 
     def getSource(self, url, form_data, referer='', xml=False, mobile=False, ignoreCache=False, demystify=False):
-        
+        filepart = url.rpartition('/')[-1] + '.html'
+        self.cachedSourcePath = self.cachedSourcePath.replace('.html', '-') + filepart
         if url == self.getLastUrl() and not ignoreCache:
+            data = self.__getCachedSource()
+        elif os.path.exists(self.cachedSourcePath):
             data = self.__getCachedSource()
         else:
             data = super(CachedWebRequest,self).getSource(url, form_data, referer, xml, mobile, demystify)

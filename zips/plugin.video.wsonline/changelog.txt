@@ -1,3 +1,10 @@
+V 1.6.9 (2017-04-05)
+- Bug fixes
+- Minor enhancements
+- Cache web requests to speed things on
+- Save temp requests to addon_data
+- Oops bug fixes
+
 V 1.6.3 (2017-04-05)
 - Oops bug fixes
 
