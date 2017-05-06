@@ -337,7 +337,7 @@ def latest():
 
 def filterout(text):
     filterwords = []
-    filtertxt = plugin.get_setting('lastsearch')
+    filtertxt = plugin.get_setting('filtertext')
     if len(filtertxt) < 1:
         return False
     if filtertxt.find(',') != -1:
@@ -345,7 +345,7 @@ def filterout(text):
     else:
         return False
     for word in filterwords:
-        if text.find(word) != -1:
+        if text.lower().find(word.lower()) != -1:
             return True
     return False
 
