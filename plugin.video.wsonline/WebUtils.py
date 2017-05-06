@@ -12,6 +12,89 @@ import cookielib
 from HTMLParser import HTMLParser
 import requests
 #------------------------------------------------------------------------------
+
+class Cleaner(object):
+
+    def __init__(self, text=''):
+        self.txt = text
+        if len(text) > 0:
+            self.cleantext = self.CLEANUP(text)
+            self.encodedtext = self.GetEncodeString(text)
+            self.nohtml = self.replaceHTMLCodes(text)
+            self.notags = self.strip_tags(text)
+
+
+    def GetEncodeString(self, text=''):
+        if text is None or len(text) < 1:
+            str = self.txt
+        else:
+            str = text
+        try:
+            import chardet
+            str = str.decode(chardet.detect(str)["encoding"]).encode("utf-8")
+        except:
+            try:
+                str = str.encode("utf-8")
+            except:
+                pass
+        return str
+
+
+    def CLEANUP(self, text=''):
+        if text is None or len(text) < 1:
+            text = self.txt
+        text = str(text)
+        text = text.replace('\\r','')
+        text = text.replace('\\n','')
+        text = text.replace('\\t','')
+        text = text.replace('\\','')
+        text = text.replace('<br />','\n')
+        text = text.replace('<hr />','')
+        text = text.replace('&#039;',"'")
+        text = text.replace('&quot;','"')
+        text = text.replace('&rsquo;',"'")
+        text = text.replace('&amp;',"&")
+        text = text.replace('&#39;',"'")
+        text = text.replace('&#8211;',"&")
+        text = text.replace('&#8217;',"'")
+        text = text.replace('&#038;',"&")
+        text = text.lstrip(' ')
+        text = text.lstrip('    ')
+
+        return text
+
+
+    def replaceHTMLCodes(self, text=''):
+        # Code from Lambdas ParseDOM file.
+        if text is None or len(text) < 1:
+            txt = self.txt
+        txt = re.sub("(&#[0-9]+)([^;^0-9]+)", "\\1;\\2", txt)
+        txt = HTMLParser().unescape(txt)
+        txt = txt.replace("&quot;", "\"")
+        txt = txt.replace("&amp;", "&")
+        txt = txt.strip()
+        return txt
+
+    class MLStripper(HTMLParser):
+        def __init__(self):
+            self.reset()
+            self.fed = []
+        def handle_data(self, d):
+            self.fed.append(d)
+        def get_data(self):
+            return ''.join(self.fed)
+
+    def strip_tags(self, text):
+        if text is None or len(text) < 1:
+            html = self.txt
+        else:
+            html = text
+        s = MLStripper()
+        s.feed(html)
+        return s.get_data()
+
+
+
 class FileUtils(object):
     """docstring for FileUtils - File Helpers"""
 

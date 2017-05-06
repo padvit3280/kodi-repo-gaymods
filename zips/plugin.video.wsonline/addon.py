@@ -3,14 +3,17 @@ import os.path as path
 import json
 import re
 import urllib
+from urllib import quote_plus
 import ssl
 import requests
-import WebUtils
+from unidecode import unidecode
+#import WebUtils
+import webutil as WebUtils
 from xbmcswift2 import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod
-ssl._create_default_https_context = ssl._create_unverified_context
 
 plugin = Plugin()
-__BASEURL__ = 'https://watchseries-online.pl'
+ssl._create_default_https_context = ssl._create_unverified_context
+__BASEURL__ = u'https://watchseries-online.pl'
 __addondir__ = xbmc.translatePath(plugin.addon.getAddonInfo('path'))
 __datadir__ = xbmc.translatePath('special://profile/addon_data/{0}/'.format(plugin.id))
 __cookie__ = path.join(__datadir__, 'cookies.lwp')
@@ -56,7 +59,7 @@ def makecatitem(name, link, removelink=False):
     #if removelink:
     #    litem.add_context_menu_items([('Remove Saved Show', 'RunPlugin("{0}")'.format(plugin.url_for(removeshow, name=name, link=itempath)),)])
     #else:
-    #    litem.add_context_menu_items([('Save Show', 'RunPlugin("{0}")'.format(plugin.url_for(saveshow, name=name, link=link)),)])
+    litem.add_context_menu_items([('Save Show', 'RunPlugin("{0}")'.format(plugin.url_for(saveshow, name=name, link=link)),)])
     return litem
 
 
@@ -201,7 +204,6 @@ def sortSourceItems(litems=[]):
         if len(stext) < 1:
             sourceslist.append('streamcloud')
             sourceslist.append('movpod')
-            sourceslist.append('openload')
             sourceslist.append('thevideo')
         else:
             sourceslist = stext.split(',')
@@ -228,12 +230,12 @@ def index():
     itemlatest = {'label': 'Last 350 Episodes', 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png', 'path': plugin.url_for(latest)}
     itemsaved = {'label': 'Saved Shows', 'path': plugin.url_for(saved), 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png'}
     itemplay = {'label': 'Resolve URL and Play (URLresolver required)', 'path': plugin.url_for(playurl), 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png'}
-    itemsearch = {'label': 'Search', 'icon': __imgsearch__, 'thumbnail': __imgsearch__, 'path': plugin.url_for(search, paste=False)}
-    itemsearchpasted = {'label': 'Search (Paste Clipboard)', 'icon': __imgsearch__, 'thumbnail': __imgsearch__, 'path': plugin.url_for(search, paste=True)}
+    itemsearch = {'label': 'Search', 'icon': __imgsearch__, 'thumbnail': __imgsearch__, 'path': plugin.url_for(search, dopaste=bool(False))}
+    # itemsearchpasted = {'label': 'Search (Paste Clipboard)', 'icon': __imgsearch__, 'thumbnail': __imgsearch__, 'path': plugin.url_for(search, paste=True)}
     litems.append(itemlatest)
     litems.append(itemsaved)
     litems.append(itemsearch)
-    litems.append(itemsearchpasted)
+    #litems.append(itemsearchpasted)
     litems.append(itemplay)
     return litems
 
@@ -326,20 +328,36 @@ def latest():
     epdate = ''
     eptitle = ''
     for eplink, epname in matches:
-        item = episode_makeitem(epname, eplink)
-        item.set_path(plugin.url_for(episode, name=epname, url=eplink))
-        litems.append(item)
+        if not filterout(epname):
+            item = episode_makeitem(epname, eplink)
+            item.set_path(plugin.url_for(episode, name=epname, url=eplink))
+            litems.append(item)
     return litems
 
 
-@plugin.route('/search/<paste>')
-def search(paste):
-    searchtxt = ''
-    if paste is None: paste = False
-    if bool(paste):
+def filterout(text):
+    filtertxt = plugin.get_setting('lastsearch')
+    filterwords = []
+    if filtertxt.find(',') != -1:
+        filterwords = filtertxt.split(',')
+    else:
+        return True
+    for word in filterwords:
+        if text.find(word) != -1:
+            return False
+    return True
+
+
+@plugin.route('/search/<dopaste>')
+def search(dopaste):
+    searchtxt = plugin.get_setting('lastsearch')
+    if dopaste is None:
+        dopaste = False
+    elif dopaste:
         try:
             import pyperclip
             searchtxt = pyperclip.paste()
+            plugin.notify("Searching: " + str(dopaste), searchtxt)
             if len(searchtxt) > 50:
                 nsearchtxt = searchtxt[0:50]
                 searchtxt = searchtxt.replace(nsearchtxt, '').split(' ', 1)[0]
@@ -358,8 +376,8 @@ def search(paste):
 @plugin.route('/query/<searchquery>')
 def query(searchquery):
     if searchquery.find(' ') != -1:
-        searchqueryw = searchquery.replace(' ', '+')
-    urlsearch = __BASEURL__ + '/?s={0}&search='.format(searchqueryw)
+        searchquery = searchquery.replace(' ', '+')
+    urlsearch = __BASEURL__ + '/?s={0}&search='.format(quote_plus(searchquery))
     html = DL(urlsearch)
     htmlres = html.partition('<div class="ddmcc">')[2].split('</div>',1)[0]
     matches = re.compile(ur'href="(https?.+?watchseries-online\.[a-z]+/category.+?[^"])".+?[^>]>(.+?[^<])<.a>', re.DOTALL + re.S + re.U).findall(htmlres)
