@@ -345,7 +345,7 @@ def filterout(text):
     else:
         return False
     for word in filterwords:
-        if text.find(word) != -1:
+        if text.lower().find(word.lower()) != -1:
             return True
     return False
 
