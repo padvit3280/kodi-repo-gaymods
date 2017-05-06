@@ -336,16 +336,18 @@ def latest():
 
 
 def filterout(text):
-    filtertxt = plugin.get_setting('lastsearch')
     filterwords = []
+    filtertxt = plugin.get_setting('lastsearch')
+    if len(filtertxt) < 1:
+        return False
     if filtertxt.find(',') != -1:
         filterwords = filtertxt.split(',')
     else:
-        return True
+        return False
     for word in filterwords:
         if text.find(word) != -1:
-            return False
-    return True
+            return True
+    return False
 
 
 @plugin.route('/search/<dopaste>')
