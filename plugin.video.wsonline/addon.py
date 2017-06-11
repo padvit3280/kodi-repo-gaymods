@@ -7,7 +7,6 @@ from urllib import quote_plus
 import ssl
 import requests
 from unidecode import unidecode
-#import WebUtils
 import webutil as WebUtils
 from xbmcswift2 import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod
 
@@ -148,7 +147,44 @@ def findepseason(epnum):
     return numseason, numep
 
 
-def episode_makeitem(episodename, episodelink):
+def episode_makeitem(episodename, episodelink, dateadded=None):
+    '''
+    Will return a ListItem for the given link to an episode and it's full linked name.
+    Name will be sent to format show to attempt to parse out a date or season from the title.
+    Infolabels are populated with any details that can be parsed from the title as well.
+    Should be used anytime an item needs to be created that is an item for one specific episode of a show.
+    Latest 350, Saved Show, Category (Show listing of all episodes for that series) would all use this.
+    '''
+    infolbl = {}
+    spath = plugin.url_for(episode, name=episodename, url=episodelink)
+    img = "DefaultVideoFolder.png"
+    seasonstr = ''
+    try:
+        eptitle, epdate, epnum = formatshow(episodename)
+        eplbl = formatlabel(eptitle, epdate, epnum)
+        plotstr = "{0} ({1}): {2} {3}".format(epdate, epnum, eptitle, episodelink)
+        infolbl = {'EpisodeName': epdate, 'Title': eptitle, 'Plot': plotstr}
+        if len(epnum) > 0:
+            showS, showE = findepseason(epnum)
+            snum = int(showS)
+            epnum = int(showE)
+            infolbl.update({'Episode': showE, 'Season': showS})
+            if snum > 0 and epnum > 0:
+                epdate = "S{0}e{1}".format(snum, epnum)
+                infolbl.update({'PlotOutline': epdate})
+        if dateadded is not None:
+            dateout = str(dateadded.replace(' ', '-')).strip()
+            infolbl.update({"Date": dateout})
+        item = {'label': eplbl, 'label2': epdate, 'icon': img, 'thumbnail': img, 'path': spath}
+        item.setdefault(item.keys()[0])
+        li = ListItem.from_dict(**item)
+        li.set_info(type='video', info_labels=infolbl)
+    except:
+        li = ListItem(label=episodename, label2=episodelink, icon=img, thumbnail=img, path=spath)
+    return li
+
+
+def episode_makeitem2(episodename, episodelink):
     '''
     Will return a ListItem for the given link to an episode and it's full linked name.
     Name will be sent to format show to attempt to parse out a date or season from the title.
@@ -227,15 +263,16 @@ def sortSourceItems(litems=[]):
 def index():
     litems = []
     plugin.set_content('episodes')
-    itemlatest = {'label': 'Last 350 Episodes', 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png', 'path': plugin.url_for(latest)}
+    itemlatest = {'label': 'Latest Episodes', 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png', 'path': plugin.url_for(latest, offset=0)}
+    itemlatest2 = {'label': ' Latest -> Page 2', 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png', 'path': plugin.url_for(latest, offset=400)}
     itemsaved = {'label': 'Saved Shows', 'path': plugin.url_for(saved), 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png'}
     itemplay = {'label': 'Resolve URL and Play (URLresolver required)', 'path': plugin.url_for(playurl), 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png'}
     itemsearch = {'label': 'Search', 'icon': __imgsearch__, 'thumbnail': __imgsearch__, 'path': plugin.url_for(search, dopaste=bool(False))}
     # itemsearchpasted = {'label': 'Search (Paste Clipboard)', 'icon': __imgsearch__, 'thumbnail': __imgsearch__, 'path': plugin.url_for(search, paste=True)}
     litems.append(itemlatest)
+    litems.append(itemlatest2) # searchpasted)
     litems.append(itemsaved)
     litems.append(itemsearch)
-    #litems.append(itemsearchpasted)
     litems.append(itemplay)
     return litems
 
@@ -319,34 +356,52 @@ def removeshow(name='', link=''):
     plugin.notify(title='Removed {0}'.format(name), msg='{0} Removed Show link: {1}'.format(name, link))
 
 
-@plugin.route('/latest')
-def latest():
+@plugin.route('/latest/<offset>')
+def latest(offset=0):
     url = __BASEURL__ + '/last-350-episodes'
-    html = DL(url)
-    matches = re.compile(ur'href="(http.+watchseries-online.+/episode.+?[^"])".+?</span>(.+?[^<])</a>', re.DOTALL + re.S + re.U).findall(html)
+    fullhtml = DL(url)
+    html = fullhtml.partition("</nav>")[-1].split("</ul>",1)[0]
+    strDate = ur"<li class='listEpisode'>(\d+ \d+ \d+) : "
+    strUrl = ur'<a.+?href="([^"]*?)">'
+    strName = ur'</span>([^<]*?)</a>' # reDate = re.compile(strDate) #ur"<li class='listEpisode'>(\d+ \d+ \d+) :") reUrl = re.compile(strUrl) 
+#ur'<a.+?href="([^"]*?)">') reName = re.compile(strName) #ur'</span>([^<]*?)</a>')
+    regexstr = "{0}{1}.+?{2}".format(strDate, strUrl, strName) 
+    matches = re.compile(regexstr).findall(html)  
     litems = []
     epdate = ''
     eptitle = ''
-    for eplink, epname in matches:
-        if not filterout(epname):
-            item = episode_makeitem(epname, eplink)
-            item.set_path(plugin.url_for(episode, name=epname, url=eplink))
-            litems.append(item)
+    filtertxt = plugin.get_setting('filtertext')
+    itemnext = {'label': 'Next ->', 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png', 'path': plugin.url_for(latest, offset=int(offset)+400)}
+    if len(matches) > 400:
+        matches = matches[0:400]
+    for epdate, eplink, epname in matches:
+        #if not filterout(epname, filtertxt):
+        item = episode_makeitem(epname, eplink, epdate)
+        item.set_path(plugin.url_for(episode, name=epname, url=eplink))
+        dateout = epdate.replace(' ', '-').strip()
+        item.label += " [I][B][LIGHT]{0}[/LIGHT][/B][/I]".format(dateout)
+        litems.append(item)
+        #if not filterout(epname, filtertxt):
+        #    item = episode_makeitem(epname, eplink)
+        #    item.set_path(plugin.url_for(episode, name=epname, url=eplink))
+        #    litems.append(item)
+    litems.append(itemnext)
     return litems
 
 
-def filterout(text):
+def filterout(text, filtertxt=''):
     filterwords = []
-    filtertxt = plugin.get_setting('filtertext')
     if len(filtertxt) < 1:
         return False
     if filtertxt.find(',') != -1:
-        filterwords = filtertxt.split(',')
+        filterwords = filtertxt.lower().split(',')
     else:
         return False
-    for word in filterwords:
-        if text.lower().find(word.lower()) != -1:
-            return True
+    #for word in filterwords:
+    #    if text.lower().find(word.lower()) != -1:
+    #        return True
+    if text.lower() in filterwords:
+        return True
     return False
 
 
