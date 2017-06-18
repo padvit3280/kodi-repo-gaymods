@@ -2,6 +2,7 @@
 import os, sys, ssl, time, datetime, json
 from kodiswift import Plugin, ListItem, xbmc, xbmcgui, xbmcvfs, xbmcaddon, xbmcplugin, xbmcmixin
 from resources.lib import getoauth, TUMBLRAUTH, TumblrRestClient, tumblrsearch
+from collections import namedtuple
 try:
     from xbmcutil import viewModes
 except:
@@ -18,6 +19,11 @@ __imgnext__ = os.path.join(__imgdir__, 'next.png')
 __imgtumblr__ = os.path.join(__imgdir__, 'tumblr.png')
 tagpath = os.path.join(xbmc.translatePath('special://profile/addon_data/'), 'plugin.video.tumblrv', 'tagslist.json')
 weekdelta = datetime.timedelta(days=7)
+
+def _json_object_hook(d):
+    return namedtuple ('TumblrData', d.keys(), rename=True)(*d.values())
+def json2obj(data):
+    return json.loads(data, object_hook = _json_object_hook)
 
 
 @plugin.route('/')
@@ -573,6 +579,15 @@ def blogposts(blogname, offset=0):
     savetags(alltags)
     litems.append(nextitem)
     return litems
+
+@plugin.route('/posts/<blogname>/<offset>')
+def posts(blogname, offset=0):
+    postdata = tclient.posts(blogname=blogname, type='text', filter='video', offset=offset)
+    postdata = postdata.get('response', {})
+    postdata = postdata.get('posts', {"posts": [{"__type__": "Post"}]})
+    listdata = json2obj(postdata)
+    assert isinstance(listdata, namedtuple)
+
 
 
 @plugin.route('/search')
