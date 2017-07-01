@@ -1,199 +1,186 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addons>
-<addon id="plugin.video.dagay" name="DaGay" provider-name="kodi-repo-gaymods" version="2.0.0">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-  </requires>
-  <extension library="default.py" point="xbmc.python.pluginsource">
-    <provides>video</provides>
-  </extension>
-  <extension point="xbmc.addon.metadata">
-    <summary>Gaymods Repo Dagay.com/Deviantclip Porn Videos (Adult 18+)</summary>
-    <description>DaGay has Gay Porn or Deviantclip has Str8 set which you want in settings. Modified from the
-            plugin.video.dclip will combine the 6 pages of video results into one result screen and set Thumbs view
-        </description>
-    <platform>all</platform>
-  </extension>
-</addon>
-
-<addon id="plugin.video.gayboystube" name="GayBoysTube" provider-name="moedje" version="0.0.4">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-  </requires>
-  <extension library="addon.py" point="xbmc.python.pluginsource">
-    <provides>video</provides>
-  </extension>
-  <extension point="xbmc.addon.metadata">
-    <summary>Gaymod Fork Watch videos from gayboystube.com</summary>
-    <description>Amateur and professional gay porn.forked: antigenx adding categories search still bugs
-        </description>
-    <platform>all</platform>
-  </extension>
-</addon>
-
-<addon id="plugin.video.hubgay" name="HubGAY" provider-name="moedje" version="1.3.0">
+  <addon id="plugin.video.dagay" name="DaGay" provider-name="kodi-repo-gaymods" version="2.0.0">
     <requires>
-        <import addon="xbmc.python" version="2.24.0"/>
-        <import addon="script.module.xbmcswift2"/>
-        <import addon="script.module.urlresolver"/>
-        <import addon="script.module.youtube.dl"/>
-        <import addon="script.module.simple.downloader" optional="true"/>
-        <import addon="script.module.xbmcutil" optional="true"/>
+      <import addon="xbmc.python" version="2.1.0"/>
     </requires>
-    <extension library="addon.py" point="xbmc.python.pluginsource">
-        <provides>video</provides>
+    <extension library="default.py" point="xbmc.python.pluginsource">
+      <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
-        <platform>all</platform>
-        <language>en</language>
-        <summary>[COLOR red]GAY or STRAIGHT XXX[/COLOR] Porn from Hub Traffic sites and GayPower</summary>
-        <description>STRAIGHT or GAY content filter in Settings default is GAY content. Unlike other addon's this uses the Hub Traffic JSON API's to retrieve video's from the Porn Hub network of sites: [COLOR yellow]PornHub[/COLOR], [COLOR pink]Spankwire[/COLOR], [COLOR green]Tube8[/COLOR], [COLOR blue]GayTube[/COLOR], [COLOR orange]XTube[/COLOR], [COLOR red]RedTube[/COLOR], and [COLOR purple]YouPorn[/COLOR]. [COLOR yellow]GayPower.org[/COLOR] Full Length DVD Streams from FlashX. [COLOR red][B]WARNING:[/B] Only for adults[/COLOR]
+      <summary>Gaymods Repo Dagay.com/Deviantclip Porn Videos (Adult 18+)</summary>
+      <description>DaGay has Gay Porn or Deviantclip has Str8 set which you want in settings. Modified from the
+            plugin.video.dclip will combine the 6 pages of video results into one result screen and set Thumbs view
+        </description>
+      <platform>all</platform>
+    </extension>
+  </addon>
+  <addon id="plugin.video.gayboystube" name="GayBoysTube" provider-name="moedje" version="0.0.4">
+    <requires>
+      <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension library="addon.py" point="xbmc.python.pluginsource">
+      <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+      <summary>Gaymod Fork Watch videos from gayboystube.com</summary>
+      <description>Amateur and professional gay porn.forked: antigenx adding categories search still bugs
+        </description>
+      <platform>all</platform>
+    </extension>
+  </addon>
+  <addon id="plugin.video.hubgay" name="HubGAY" provider-name="moedje" version="1.3.0">
+    <requires>
+      <import addon="xbmc.python" version="2.24.0"/>
+      <import addon="script.module.xbmcswift2"/>
+      <import addon="script.module.urlresolver"/>
+      <import addon="script.module.youtube.dl"/>
+      <import addon="script.module.simple.downloader" optional="true"/>
+      <import addon="script.module.xbmcutil" optional="true"/>
+    </requires>
+    <extension library="addon.py" point="xbmc.python.pluginsource">
+      <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+      <platform>all</platform>
+      <language>en</language>
+      <summary>[COLOR red]GAY or STRAIGHT XXX[/COLOR] Porn from Hub Traffic sites and GayPower</summary>
+      <description>STRAIGHT or GAY content filter in Settings default is GAY content. Unlike other addon's this uses the Hub Traffic JSON API's to retrieve video's from the Porn Hub network of sites: [COLOR yellow]PornHub[/COLOR], [COLOR pink]Spankwire[/COLOR], [COLOR green]Tube8[/COLOR], [COLOR blue]GayTube[/COLOR], [COLOR orange]XTube[/COLOR], [COLOR red]RedTube[/COLOR], and [COLOR purple]YouPorn[/COLOR]. [COLOR yellow]GayPower.org[/COLOR] Full Length DVD Streams from FlashX. [COLOR red][B]WARNING:[/B] Only for adults[/COLOR]
             [B]1.2.0[/B] NEW PLAY FUNCTION total rewrite of the video play code to fix many bugs in resolving and finding playable video's from a link and bugs with play/stop and more. v1.1.0: Fixed pornhub and xtube changed addon to use XBMCSWIFT2 instead of KODISWIFT 0.9.9/10/11 Added Context Menu for download to Tumblr, trying sort options. Fixed error in 0.9.9 Tumblr updated to support multiple blogs in settings seperated by a | will display each blog with thumbnail from the blog. More pages for browsing previous months and years from each blog. Very close to finished first version want to add a way to easily add and remove blogs not in settings. 0.9.8/7: Still working on tumblr It now works with any tumblr site and you can spedcify which blog it looks for video's at in the settings. The next/retrieve older is still a work in progress though. Improving the Tumblr function now to work for any blog specified in the settings. It uses the Tumblr Archive to request only video's from the blog. Next feature once this works well will be to allow for multiple tumblr sites to be displayed and browsed. 0.9.6: Fixed play bug in last release. 0.9.5: First attempt to add Tumblr Video's. GayPower removed site appears offline, random bug fixes and improvements, category images added for some standard named categories that can be matched. 0.6.0: Minor Bug Fixes, Additional attempts to resolve video's on website using slightly modified Livestreamer ex RunPlugin(plugin://plugin.video.livestreamerkodi/play/http...) Fixed Porkytube thumbnail URL spaces encoded to %20 as + caused 404 [B]V0.5.0 7/12[/B]: Added PorkyTube site. V0.4.0: Motherless added with full search and included in multisite search results more group and tag functionality to come next. Also tried to fix some bugs on playback. 0.3.0: YouTubeDL to resolve videostream URLs, Download Context Menu, URLResolver added, GayPower streaming, Category Lists, Search All Sites
 REQUIRED [B]Script.Module.URLResolver, Simple.Downloader, YouTubeDL, and KODIswift[/B] (https://github.com/Sinap/kodiswift) Optional Plugin.Video.Livestreamerkodi for additional URL resolving features.
         </description>
-        <disclaimer>ADULTS ONLY - GAY and STRAIGHT XXX CONTENT
+      <disclaimer>ADULTS ONLY - GAY and STRAIGHT XXX CONTENT
         </disclaimer>
     </extension>
-</addon>
-
-<addon id="plugin.video.largecamtube" name="largecamtube" provider-name="moedje" version="2.0.0">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-  </requires>
-  <extension library="default.py" point="xbmc.python.pluginsource">
-    <provides>video</provides>
-  </extension>
-  <extension point="xbmc.addon.metadata">
-    <summary>Forked to gaymods Adult(18+) Gay videos from largecamtube.com</summary>
-    <description>Adult(18+) videos from largecamtube.com</description>
-    <platform>all</platform>
-  </extension>
-</addon>
-
-<addon id="plugin.video.oxo" name="Oxo" provider-name="moedje forked pcd@xtrend-alliance" version="1.2.1">
-  <extension library="default.py" point="xbmc.python.pluginsource">
-    <provides>video</provides>
-  </extension>
-  <extension point="xbmc.addon.metadata">
-    <summary>Adult(18+) videos from OxoTube.co</summary>
-    <description>Adult(18+) videos from OxoTube.com</description>
-    <platform>all</platform>
-  </extension>
-</addon>
-
-<addon id="plugin.video.prontv" name="Pron.TV" provider-name="moedje" version="0.4">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-    <import addon="script.module.xbmcswift2" version="2.4.0"/>
-    <import addon="script.module.urlresolver"/>
-    <import addon="script.module.youtube.dl"/>
-  </requires>
-  <extension library="addon.py" point="xbmc.python.pluginsource">
-    <provides>video</provides>
-  </extension>
-  <extension point="xbmc.addon.metadata">
-    <platform>all</platform>
-    <language/>
-    <summary>Pron.TV Streaming Porn</summary>
-    <description>Search Pron.TV website for streaming porn from Kodi with this addon. ADULTS ONLY!! V 0.4 added youtubedl as resolver and more bug fixes/additions. V 0.3 adds more features such as settings, set view mode, filter hosts, will be continuing to add basic features to this addon V 0.2 seems to search and play ok still struggles on some thumbnails. More to come soon! Just started this addon to bring up streams from pron.tv after playing with and registering for the API but have not started any of the addon just yet.</description>
-  </extension>
-</addon>
-
-<addon id="plugin.video.tumblrv" name="TumblrV" provider-name="moedje" version="1.0.1">
-  <requires>
-    <import addon="xbmc.python" version="2.25.0"/>
-    <import addon="script.module.kodiswift" version="0.0.8"/>
-    <import addon="script.module.requests" version="2.9.1"/>
-    <import addon="script.module.simple.downloader" optional="true"/>
-    <import addon="script.module.xbmcutil" optional="true"/>
-    <import addon="script.module.urlresolver" optional="true"/>
-    <import addon="script.module.oauth2"/>
-    <import addon="script.module.youtube.dl"/>
-  </requires>
-  <extension library="addon.py" point="xbmc.python.pluginsource">
-    <provides>video</provides>
-  </extension>
-  <extension point="xbmc.addon.metadata">
-    <platform>all</platform>
-    <language>en</language>
-    <summary lang="en">plugin.video.tumblrV Kodi/XBMC Addon for watching Videos from Tumblr</summary>
-    <description lang="en">[B]v0.9.8[/B]  Refactored this plugin repo so it could be easily included in my main repo. Will remove the old remove as I don't know how to do it any better in GIT still learning. V0.9.7: Search is working now though loads all results so is slow. 0.9.6: First attempt at new OAuth Token retrieving. Search works but needs lots of work, following retrieves all, dashboard can paginate now. V0.9.5: Added Download Video with YouTube-DL and added LIKE video, and improved loading of Blog's thumbnail image/avatar. V0.9.3: First public preview most features working. http://www.github.com/moedje/ Read the instructions about how to get your OAUTH_TOKEN and OAUTH_SECRET from Tumblr. It is required to login to Tumblr from an external App like this one. [COLOR red]YOU must put your OAUTH Token and Secret in settings[/COLOR] This will not work if you do not visit below Tumblr URL and put this App's Consumer Key and Secret in to generate an OAUTH token!
+  </addon>
+  <addon id="plugin.video.largecamtube" name="largecamtube" provider-name="moedje" version="2.0.0">
+    <requires>
+      <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension library="default.py" point="xbmc.python.pluginsource">
+      <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+      <summary>Forked to gaymods Adult(18+) Gay videos from largecamtube.com</summary>
+      <description>Adult(18+) videos from largecamtube.com</description>
+      <platform>all</platform>
+    </extension>
+  </addon>
+  <addon id="plugin.video.oxo" name="Oxo" provider-name="moedje forked pcd@xtrend-alliance" version="1.2.1">
+    <extension library="default.py" point="xbmc.python.pluginsource">
+      <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+      <summary>Adult(18+) videos from OxoTube.co</summary>
+      <description>Adult(18+) videos from OxoTube.com</description>
+      <platform>all</platform>
+    </extension>
+  </addon>
+  <addon id="plugin.video.prontv" name="Pron.TV" provider-name="moedje" version="0.4">
+    <requires>
+      <import addon="xbmc.python" version="2.1.0"/>
+      <import addon="script.module.xbmcswift2" version="2.4.0"/>
+      <import addon="script.module.urlresolver"/>
+      <import addon="script.module.youtube.dl"/>
+    </requires>
+    <extension library="addon.py" point="xbmc.python.pluginsource">
+      <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+      <platform>all</platform>
+      <language/>
+      <summary>Pron.TV Streaming Porn</summary>
+      <description>Search Pron.TV website for streaming porn from Kodi with this addon. ADULTS ONLY!! V 0.4 added youtubedl as resolver and more bug fixes/additions. V 0.3 adds more features such as settings, set view mode, filter hosts, will be continuing to add basic features to this addon V 0.2 seems to search and play ok still struggles on some thumbnails. More to come soon! Just started this addon to bring up streams from pron.tv after playing with and registering for the API but have not started any of the addon just yet.</description>
+    </extension>
+  </addon>
+  <addon id="plugin.video.tumblrv" name="TumblrV" provider-name="moedje" version="1.0.1">
+    <requires>
+      <import addon="xbmc.python" version="2.25.0"/>
+      <import addon="script.module.kodiswift" version="0.0.8"/>
+      <import addon="script.module.requests" version="2.9.1"/>
+      <import addon="script.module.simple.downloader" optional="true"/>
+      <import addon="script.module.xbmcutil" optional="true"/>
+      <import addon="script.module.urlresolver" optional="true"/>
+      <import addon="script.module.oauth2"/>
+      <import addon="script.module.youtube.dl"/>
+    </requires>
+    <extension library="addon.py" point="xbmc.python.pluginsource">
+      <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+      <platform>all</platform>
+      <language>en</language>
+      <summary lang="en">plugin.video.tumblrV Kodi/XBMC Addon for watching Videos from Tumblr</summary>
+      <description lang="en">[B]v0.9.8[/B]  Refactored this plugin repo so it could be easily included in my main repo. Will remove the old remove as I don't know how to do it any better in GIT still learning. V0.9.7: Search is working now though loads all results so is slow. 0.9.6: First attempt at new OAuth Token retrieving. Search works but needs lots of work, following retrieves all, dashboard can paginate now. V0.9.5: Added Download Video with YouTube-DL and added LIKE video, and improved loading of Blog's thumbnail image/avatar. V0.9.3: First public preview most features working. http://www.github.com/moedje/ Read the instructions about how to get your OAUTH_TOKEN and OAUTH_SECRET from Tumblr. It is required to login to Tumblr from an external App like this one. [COLOR red]YOU must put your OAUTH Token and Secret in settings[/COLOR] This will not work if you do not visit below Tumblr URL and put this App's Consumer Key and Secret in to generate an OAUTH token!
       [COLOR red]https://api.tumblr.com/console/calls/user/info REQUIRED TO GET OAUTH TOKEN TO PUT IN SETTINGS[/COLOR]
       Consumer Key: [B]5wEwFCF0rbiHXYZQQeQnNetuwZMmIyrUxIePLqUMcZlheVXwc4[/B]
       Consumer Secret: [B]GCLMI2LnMZqO2b5QheRvUSYY51Ujk7nWG2sYroqozW06x4hWch[/B]
       https://github.com/moedje/plugin.video.TumblrV
     </description>
-    <disclaimer lang="en">May contain adult content so you must be of legal age in your jurisdiction to use tumblrV to view adult content.</disclaimer>
-  </extension>
-</addon>
-
-<addon id="plugin.video.wsonline" name="WatchSeries-Online" provider-name="moedje" version="1.8.2">
+      <disclaimer lang="en">May contain adult content so you must be of legal age in your jurisdiction to use tumblrV to view adult content.</disclaimer>
+    </extension>
+  </addon>
+  <addon id="plugin.video.wsonline" name="WatchSeries-Online" provider-name="moedje" version="1.8.2">
     <requires>
-        <import addon="xbmc.python" version="2.24.0"/>
-        <import addon="script.module.requests" optional="false"/>
-        <import addon="script.module.urlresolver" optional="true"/>
-        <import addon="script.module.youtube.dl" optional="true"/>
-        <import addon="script.module.pyperclip" optional="true"/>
-        <import addon="script.module.unidecode" optional="true"/>
-        <import addon="script.module.xbmcswift2"/>
+      <import addon="xbmc.python" version="2.24.0"/>
+      <import addon="script.module.requests" optional="false"/>
+      <import addon="script.module.urlresolver" optional="true"/>
+      <import addon="script.module.youtube.dl" optional="true"/>
+      <import addon="script.module.pyperclip" optional="true"/>
+      <import addon="script.module.unidecode" optional="true"/>
+      <import addon="script.module.xbmcswift2"/>
     </requires>
     <extension library="addon.py" point="xbmc.python.pluginsource">
-        <provides>video</provides>
+      <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
-        <platform>all</platform>
-        <language>en</language>
-        <summary>Watchseries-online TV Plugin</summary>
-        <description>Get the latest TV episodes on Watchseries-Online(.pl/.nl/.la...) and search for a series, list all online
+      <platform>all</platform>
+      <language>en</language>
+      <summary>Watchseries-online TV Plugin</summary>
+      <description>Get the latest TV episodes on Watchseries-Online(.pl/.nl/.la...) and search for a series, list all online
             episodes in that series, and play them from Openload.Co or VODlocker
             [B]v1.8[/B] Fixed a problem with addon only returning 1 result due to a change in the HTML  of the WatchSeries-Online Website V1.7.1 2017-05-06 Added filter results settings V1.6.9 Minor fixes/changes to make Save Show and Remove show work better. Make Search Show work as currently doesn't. V1.5 2017-2-20: Parsers have been added to attempt to grab details out of the name of the show such as the date, episode number and season. Formats the listings to be standard for easy sorting and reading through including color to make date stand out. V1.2.0 2018-02-14: New playback and video file resolving fixing many bugs. Source Sorting and fave sources can be set in settings. Updated to new watchseries-online host which is currently .PL and added this as a setting that can be changed in the addon so I don't have to release an update each time they move servers.
         </description>
     </extension>
-</addon>
-
-<addon id="repository.kodi-repo-gaymods" name="Gay Addons Repo" provider-name="moedje" version="2.0.69">
-        <extension name="Gay Addons Repo" point="xbmc.addon.repository">
-                <info compressed="false">https://raw.githubusercontent.com/moedje/kodi-repo-gaymods/master/addons.xml</info>
-                <checksum>https://raw.githubusercontent.com/moedje/kodi-repo-gaymods/master/addons.xml.md5</checksum>
-                <datadir zip="true">https://raw.githubusercontent.com/moedje/kodi-repo-gaymods/master</datadir>
-        </extension>
-        <extension point="xbmc.addon.metadata">
-                <summary>Gay oriented addon's for Kodi/XBMC. Plugin.Video.hubGAY addon for gay and straight porn from HUB Traffic and more. Plugin.Video.WSonline a Watchseries-Online TV Addon. </summary>
-                <description>Home of plugin.video.hubGAY a porn addon focused on the Hub Traffic sites but with additional sites being added such as Motherless, Porkytube, and Tumblr. Also there is a STRAIGHT settings so it can be gay or straight, kinda bi I guess! ;) The rest are mainly gay oriented addons for XBMC/Kodi or other gay relatred content such as movie scrapers. WORK IN PROGRESS i never intended this to be used by many people it was all jut to make my personal quest for porn easier. Addons by antigenx, xbmcadult, and others with gaymods by moedje. Many of these are works in progress, or have only minor changes to them to help filter out straight porn or display gay porn categories. They include many various sources and AGX repo was first that I saw with some exclusive gay addons which I added into this repo and modified a bit. There is also a random TV plugin called WSOnline which is for the website Watchseries-Online and it scrapes the latest 250 shows and sources for a show and has searching. It was really just a personal thing but others may find it useful. The main plugins that are the most solid in this repo is the plugin.video.hubGAY and the non gay porn related plugin.video.wsonline for Watchseries-Online website.</description>
-                <disclaimer>The owners and submitters to this repository do not host or distribute any of the content displayed by these addons nor do they have any affiliation with the content providers.</disclaimer>
-                <platform>all</platform>
-        </extension>
-</addon>
-
-<addon id="repository.xbmc-repo-agx" name="agx's XBMC Repo" version="1.0.3" provider-name="xbmc-repo-agx">
-        <extension point="xbmc.addon.repository" name="agx's XBMC Repo">
-                <info compressed="false">https://raw.githubusercontent.com/antigenx/xbmc-repo-agx/master/addons.xml</info>
-                <checksum>https://raw.githubusercontent.com/antigenx/xbmc-repo-agx/master/addons.xml.md5</checksum>
-                <datadir zip="true">https://raw.githubusercontent.com/antigenx/xbmc-repo-agx/master/</datadir>
-        </extension>
-        <extension point="xbmc.addon.metadata">
-                <summary>XBMC Addons by agx</summary>
-                <description>Addons by antigenx.</description>
-                <disclaimer>The owners and submitters to this repository do not host or distribute any of the content displayed by these addons nor do they have any affiliation with the content providers.</disclaimer>
-                <platform>all</platform>
-        </extension>
-</addon>
-
-<addon id="script.module.pyperclip"
-       name="pyperclip"
-       version="1.5.27"
-       provider-name="moedje">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-  </requires>
-  <extension point="xbmc.python.module" library="lib"/>
-  <extension point="xbmc.addon.metadata">
-    <summary>Clipboard Python Module</summary>
-    <description>Cross Platform Python Module for interacting with the clipboard from https://github.com/asweigart/pyperclip Packaged as a module to allow XBMC / Kodi to interact with the clipboard.</description>
-    <platform>all</platform>
-    <license>Simplified BSD</license>
-    <source>https://github.com/asweigart/pyperclip.git</source>
-    <website>https://pypi.python.org/pypi/pyperclip</website>
-  </extension>
-</addon>
+  </addon>
+  <addon id="repository.kodi-repo-gaymods" name="Gay Addons Repo" provider-name="moedje" version="2.0.69">
+    <extension name="Gay Addons Repo" point="xbmc.addon.repository">
+      <info compressed="false">https://raw.githubusercontent.com/moedje/kodi-repo-gaymods/master/addons.xml</info>
+      <checksum>https://raw.githubusercontent.com/moedje/kodi-repo-gaymods/master/addons.xml.md5</checksum>
+      <datadir zip="true">https://raw.githubusercontent.com/moedje/kodi-repo-gaymods/master</datadir>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+      <summary>Gay oriented addon's for Kodi/XBMC. Plugin.Video.hubGAY addon for gay and straight porn from HUB Traffic and more. Plugin.Video.WSonline a Watchseries-Online TV Addon. </summary>
+      <description>Home of plugin.video.hubGAY a porn addon focused on the Hub Traffic sites but with additional sites being added such as Motherless, Porkytube, and Tumblr. Also there is a STRAIGHT settings so it can be gay or straight, kinda bi I guess! ;) The rest are mainly gay oriented addons for XBMC/Kodi or other gay relatred content such as movie scrapers. WORK IN PROGRESS i never intended this to be used by many people it was all jut to make my personal quest for porn easier. Addons by antigenx, xbmcadult, and others with gaymods by moedje. Many of these are works in progress, or have only minor changes to them to help filter out straight porn or display gay porn categories. They include many various sources and AGX repo was first that I saw with some exclusive gay addons which I added into this repo and modified a bit. There is also a random TV plugin called WSOnline which is for the website Watchseries-Online and it scrapes the latest 250 shows and sources for a show and has searching. It was really just a personal thing but others may find it useful. The main plugins that are the most solid in this repo is the plugin.video.hubGAY and the non gay porn related plugin.video.wsonline for Watchseries-Online website.</description>
+      <disclaimer>The owners and submitters to this repository do not host or distribute any of the content displayed by these addons nor do they have any affiliation with the content providers.</disclaimer>
+      <platform>all</platform>
+    </extension>
+  </addon>
+  <addon id="repository.xbmc-repo-agx" name="agx's XBMC Repo" provider-name="xbmc-repo-agx" version="1.0.3">
+    <extension name="agx's XBMC Repo" point="xbmc.addon.repository">
+      <info compressed="false">https://raw.githubusercontent.com/antigenx/xbmc-repo-agx/master/addons.xml</info>
+      <checksum>https://raw.githubusercontent.com/antigenx/xbmc-repo-agx/master/addons.xml.md5</checksum>
+      <datadir zip="true">https://raw.githubusercontent.com/antigenx/xbmc-repo-agx/master/</datadir>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+      <summary>XBMC Addons by agx</summary>
+      <description>Addons by antigenx.</description>
+      <disclaimer>The owners and submitters to this repository do not host or distribute any of the content displayed by these addons nor do they have any affiliation with the content providers.</disclaimer>
+      <platform>all</platform>
+    </extension>
+  </addon>
+  <addon id="script.module.pyperclip" name="pyperclip" provider-name="moedje" version="1.5.27">
+    <requires>
+      <import addon="xbmc.python" version="2.1.0"/>
+    </requires>
+    <extension library="lib" point="xbmc.python.module"/>
+    <extension point="xbmc.addon.metadata">
+      <summary>Clipboard Python Module</summary>
+      <description>Cross Platform Python Module for interacting with the clipboard from https://github.com/asweigart/pyperclip Packaged as a module to allow XBMC / Kodi to interact with the clipboard.</description>
+      <platform>all</platform>
+      <license>Simplified BSD</license>
+      <source>https://github.com/asweigart/pyperclip.git</source>
+      <website>https://pypi.python.org/pypi/pyperclip</website>
+    </extension>
+  </addon>
 </addons>
