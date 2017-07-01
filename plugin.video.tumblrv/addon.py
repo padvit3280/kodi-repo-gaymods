@@ -19,6 +19,7 @@ __imgnext__ = os.path.join(__imgdir__, 'next.png')
 __imgtumblr__ = os.path.join(__imgdir__, 'tumblr.png')
 tagpath = os.path.join(xbmc.translatePath('special://profile/addon_data/'), 'plugin.video.tumblrv', 'tagslist.json')
 weekdelta = datetime.timedelta(days=7)
+updatedelta = datetime.timedelta(minutes=10)
 
 def _json_object_hook(d):
     return namedtuple ('TumblrData', d.keys(), rename=True)(*d.values())
@@ -447,7 +448,7 @@ def dashboard_old(listlikes, alltags, litems):
     item = listlikes[-1]
     plugin.set_setting('lastid', str(item.get('id', lastid)))
     savetags(alltags)
-    litems.append(nextitem)
+    #litems.append(nextitem)
     return litems
 
 
@@ -474,13 +475,45 @@ def download(urlvideo):
         plugin.notify(urlvideo, "Download Failed")
 
 
-def following_cachelist(offset=0):
-    resp = tclient.following(offset=offset, limit=20)  # tclient.dashboard(type='videos')
+def following_getlist():
+    blogpath = tagpath.replace("tagslist.json", "following.json")
+    needsupdate = False
+    if not os.path.exists(blogpath):
+        needsupdate = True
+    lastupdated = plugin.get_setting('lastupdate')
+    tstamp = str(time.mktime((datetime.datetime.now() - updatedelta).timetuple())).split('.', 1)[0]
+    tstampnow = float(str(time.mktime((datetime.datetime.now()).timetuple())).split('.', 1)[0])
+    if tstampnow - float(lastupdated) > 600:
+        needsupdate = True
+    if not needsupdate:
+        allblogs = []
+        allblogs = json.load(fp=open(blogpath, mode='r'))
+        return allblogs
+    from operator import itemgetter
     litems = []
+    allblogs = []
+    blogs = []
     offset = 0
     total = 0
-    total = int(resp.get('total_blogs', 0))
+    resp = tclient.following(offset=0, limit=20)  # tclient.dashboard(type='videos')
+    results = resp.get('response', {})
+    total = int(results.get('total_blogs', 0))
+    for offset in range(0, total, 20):
+        resp = tclient.following(offset=offset, limit=20)
+        results = resp.get('response', {})
+        blogs = results.get('blogs', [])
+        blogs.sort(key=itemgetter('updated'), reverse=True)
+        for item in blogs:
+            allblogs.append(item)
+    allblogs.sort(key=itemgetter('updated'), reverse=True)
+    following_save(allblogs)
+    plugin.set_setting('lastupdate', str(tstampnow))
+    return allblogs
 
+
+def following_save(allblogs=[]):
+    blogpath = tagpath.replace("tagslist.json", "following.json")
+    json.dump(allblogs, fp=open(blogpath, mode='w'))
 
 
 def following_list(offset=0, max=0):
@@ -494,25 +527,14 @@ def following_list(offset=0, max=0):
     else:
         total = 20 + max
     results = resp.get('response', {})
-    if results is not None:
-        blogres = results.get('blogs', [])
-        for blog in blogres:
-            blog['updated'] = datetime.datetime.fromtimestamp(blog.get('updated'), 0).isoformat()
-            litems.append(blog)
-        try:
-            for offnum in range(len(blogres), total, 20):
-                newblogs = []
-                newres = tclient.following(offset=offnum, limit=20)
-                newblogs = newres.get('blogs', [])
-                if len(newblogs) > 0:
-                    for blog in newblogs:
-                        blog['updated'] = datetime.datetime.fromtimestamp(blog['updated']).isoformat()
-                        litems.append(blog)
-        except:
-            pass
-    items = sorted(litems, key=lambda litems: litems['updated'])
-    #plugin.notify(msg="Following: {0} Total: {1} Len: {2}".format(str(len(resp.get('blogs',[]))), str(total), str(len(litems))))
-    return items
+    offend = offset+50
+    if offend > len(litems):
+        offend = len(litems)
+    blogres = following_getlist()[offset:offend]
+    for blog in blogres:
+        blog['updated'] = datetime.datetime.fromtimestamp(blog.get('updated'), 0).isoformat()
+        litems.append(blog)
+    return litems
 
 
 @plugin.route('/following/<offset>')
@@ -559,8 +581,6 @@ def following(offset=0):
             litems.append(litem)
         except:
             pass
-    #items = sorted(litems, key=lambda litems: litems.label2)
-    # litems.append(nextitem) NO NEXT PAGE TODO: Make max work and paginate results as this is slow
     return litems
 
 

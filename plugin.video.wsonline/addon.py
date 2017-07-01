@@ -64,7 +64,7 @@ def makecatitem(name, link, removelink=False):
 
 def DL(url):
     html = u''
-    getWeb = WebUtils.CachedWebRequest(__cookie__, __temp__)
+    getWeb = WebUtils.CachedWebRequest(path.join(__datadir__, 'cookies.lwp'), __temp__)
     html = getWeb.getSource(url, form_data=None, referer=__BASEURL__, xml=False, mobile=False).encode('latin', errors='ignore')
     return html
 
@@ -286,7 +286,10 @@ def playurl():
         item.set_is_playable(True)
         item.set_info(type='video', info_labels={'Title': url, 'Plot': url})
         item.add_stream_info(stream_type='video', stream_values={})
-        return play(url)
+        playable = play(url)
+        resurl = playable.path
+        plugin.notify(msg=resurl, title="Playing..")
+        plugin.play_video(playable)
 
 
 @plugin.route('/saved')
@@ -358,14 +361,15 @@ def removeshow(name='', link=''):
 
 @plugin.route('/latest/<offset>')
 def latest(offset=0):
+    # reDate = re.compile(strDate) #ur"<li class='listEpisode'>(\d+ \d+ \d+) :") reUrl = re.compile(strUrl)
+    #ur'<a.+?href="([^"]*?)">') reName = re.compile(strName) #ur'</span>([^<]*?)</a>')
     url = __BASEURL__ + '/last-350-episodes'
     fullhtml = DL(url)
     html = fullhtml.partition("</nav>")[-1].split("</ul>",1)[0]
     strDate = ur"<li class='listEpisode'>(\d+ \d+ \d+) : "
     strUrl = ur'<a.+?href="([^"]*?)">'
-    strName = ur'</span>([^<]*?)</a>' # reDate = re.compile(strDate) #ur"<li class='listEpisode'>(\d+ \d+ \d+) :") reUrl = re.compile(strUrl) 
-#ur'<a.+?href="([^"]*?)">') reName = re.compile(strName) #ur'</span>([^<]*?)</a>')
-    regexstr = "{0}{1}.+?{2}".format(strDate, strUrl, strName) 
+    strName = ur'</span>([^<]*?)</a>'
+    regexstr = "{0}{1}.+?{2}".format(strDate, strUrl, strName)
     matches = re.compile(regexstr).findall(html)  
     litems = []
     epdate = ''
@@ -410,7 +414,7 @@ def search(dopaste):
     searchtxt = plugin.get_setting('lastsearch')
     if dopaste is None:
         dopaste = False
-    elif dopaste:
+    if dopaste:
         try:
             import pyperclip
             searchtxt = pyperclip.paste()
@@ -422,7 +426,7 @@ def search(dopaste):
             searchtxt = plugin.get_setting('lastsearch')
     else:
         searchtxt = plugin.get_setting('lastsearch')
-    searchtxt = plugin.keyboard(searchtxt, 'Search All Sites', False)
+    searchtxt = plugin.keyboard(searchtxt, 'Search Watchseries-Online', False)
     if len(searchtxt) > 1:
         plugin.set_setting(key='lastsearch', val=searchtxt)
         return query(searchquery=searchtxt)
@@ -435,16 +439,29 @@ def query(searchquery):
     if searchquery.find(' ') != -1:
         searchquery = searchquery.replace(' ', '+')
     urlsearch = __BASEURL__ + '/?s={0}&search='.format(quote_plus(searchquery))
-    html = DL(urlsearch)
+    fullhtml = DL(urlsearch)
+    html = fullhtml
     htmlres = html.partition('<div class="ddmcc">')[2].split('</div>',1)[0]
     matches = re.compile(ur'href="(https?.+?watchseries-online\.[a-z]+/category.+?[^"])".+?[^>]>(.+?[^<])<.a>', re.DOTALL + re.S + re.U).findall(htmlres)
     litems = []
     for slink, sname in matches:
         litems.append(makecatitem(sname, slink))
+    html = fullhtml.partition("</nav>")[-1].split("</ul>",1)[0]
+    strDate = ur"<li class='listEpisode'>(\d+ \d+ \d+) : "
+    strUrl = ur'<a.+?href="([^"]*?)">'
+    strName = ur'</span>([^<]*?)</a>'
+    regexstr = "{0}{1}.+?{2}".format(strDate, strUrl, strName)
+    matches = re.compile(regexstr).findall(html)
+    epdate = ''
+    eptitle = ''
+    for epdate, eplink, epname in matches:
+        item = episode_makeitem(epname, eplink, epdate)
+        item.set_path(plugin.url_for(episode, name=epname, url=eplink))
+        dateout = epdate.replace(' ', '-').strip()
+        item.label += " [I][B][LIGHT]{0}[/LIGHT][/B][/I]".format(dateout)
+        litems.append(item)
     plugin.notify(msg="Search {0}".format(urlsearch), title="{0} {1}".format(str(len(litems)), searchquery))
-    #plugin.ad(litems, update_listing=True)
     return litems
-    #return plugin.finish()
 
 
 @plugin.route('/queryshow/<searchquery>')
