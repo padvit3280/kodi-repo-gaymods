@@ -263,8 +263,8 @@ def sortSourceItems(litems=[]):
 def index():
     litems = []
     plugin.set_content('episodes')
-    itemlatest = {'label': 'Latest Episodes', 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png', 'path': plugin.url_for(latest, offset=0)}
-    itemlatest2 = {'label': ' Latest -> Page 2', 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png', 'path': plugin.url_for(latest, offset=400)}
+    itemlatest = {'label': 'Latest Episodes', 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png', 'path': plugin.url_for(latest, offset=0, urlpath='/last-350-episodes')}
+    itemlatest2 = {'label': 'Other Shows', 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png', 'path': plugin.url_for(category, name="not-in-homepage", url="/category/not-in-homepage")}
     itemsaved = {'label': 'Saved Shows', 'path': plugin.url_for(saved), 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png'}
     itemplay = {'label': 'Resolve URL and Play (URLresolver required)', 'path': plugin.url_for(playurl), 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png'}
     itemsearch = {'label': 'Search', 'icon': __imgsearch__, 'thumbnail': __imgsearch__, 'path': plugin.url_for(search, dopaste=bool(False))}
@@ -359,11 +359,11 @@ def removeshow(name='', link=''):
     plugin.notify(title='Removed {0}'.format(name), msg='{0} Removed Show link: {1}'.format(name, link))
 
 
-@plugin.route('/latest/<offset>')
-def latest(offset=0):
+@plugin.route('/latest/<offset>/<urlpath>')
+def latest(offset=0, urlpath='/last-350-episodes'):
     # reDate = re.compile(strDate) #ur"<li class='listEpisode'>(\d+ \d+ \d+) :") reUrl = re.compile(strUrl)
     #ur'<a.+?href="([^"]*?)">') reName = re.compile(strName) #ur'</span>([^<]*?)</a>')
-    url = __BASEURL__ + '/last-350-episodes'
+    url = __BASEURL__ + urlpath #'/last-350-episodes'
     fullhtml = DL(url)
     html = fullhtml.partition("</nav>")[-1].split("</ul>",1)[0]
     strDate = ur"<li class='listEpisode'>(\d+ \d+ \d+) : "
@@ -375,15 +375,15 @@ def latest(offset=0):
     epdate = ''
     eptitle = ''
     filtertxt = plugin.get_setting('filtertext')
-    itemnext = {'label': 'Next ->', 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png', 'path': plugin.url_for(latest, offset=int(offset)+400)}
-    if len(matches) > 400:
-        matches = matches[0:400]
+    itemnext = {'label': 'Next ->', 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png', 'path': plugin.url_for(latest, offset=int(offset)+400, urlpath=urlpath)}
+    if len(matches) > 1000:
+        matches = matches[0:1000]
     for epdate, eplink, epname in matches:
         #if not filterout(epname, filtertxt):
         item = episode_makeitem(epname, eplink, epdate)
         item.set_path(plugin.url_for(episode, name=epname, url=eplink))
         dateout = epdate.replace(' ', '-').strip()
-        item.label += " [I][B][LIGHT]{0}[/LIGHT][/B][/I]".format(dateout)
+        item.label += " [I][B][COLOR orange]{0}[/COLOR][/B][/I]".format(dateout)
         litems.append(item)
         #if not filterout(epname, filtertxt):
         #    item = episode_makeitem(epname, eplink)
@@ -412,20 +412,6 @@ def filterout(text, filtertxt=''):
 @plugin.route('/search/<dopaste>')
 def search(dopaste):
     searchtxt = plugin.get_setting('lastsearch')
-    if dopaste is None:
-        dopaste = False
-    if dopaste:
-        try:
-            import pyperclip
-            searchtxt = pyperclip.paste()
-            plugin.notify("Searching: " + str(dopaste), searchtxt)
-            if len(searchtxt) > 50:
-                nsearchtxt = searchtxt[0:50]
-                searchtxt = searchtxt.replace(nsearchtxt, '').split(' ', 1)[0]
-        except:
-            searchtxt = plugin.get_setting('lastsearch')
-    else:
-        searchtxt = plugin.get_setting('lastsearch')
     searchtxt = plugin.keyboard(searchtxt, 'Search Watchseries-Online', False)
     if len(searchtxt) > 1:
         plugin.set_setting(key='lastsearch', val=searchtxt)
@@ -458,7 +444,7 @@ def query(searchquery):
         item = episode_makeitem(epname, eplink, epdate)
         item.set_path(plugin.url_for(episode, name=epname, url=eplink))
         dateout = epdate.replace(' ', '-').strip()
-        item.label += " [I][B][LIGHT]{0}[/LIGHT][/B][/I]".format(dateout)
+        item.label += " [I][B][COLOR orange]{0}[/COLOR][/B][/I]".format(dateout)
         litems.append(item)
     plugin.notify(msg="Search {0}".format(urlsearch), title="{0} {1}".format(str(len(litems)), searchquery))
     return litems
@@ -474,8 +460,68 @@ def queryshow(searchquery):
     #return plugin.add_items(resitems)
 
 
+
+def category2(name, url):
+    if not str(url).startswith('http'):
+        url = __BASEURL__ + url
+    fullhtml = DL(url)
+    html = fullhtml #.split('episode-list',1)[-1]
+    banner = None
+    try:
+        banner = str(fullhtml.split('id="banner_single"', 1)[0].rpartition('src="')[2].split('"',1)[0])
+        if banner.startswith('/'): banner = __BASEURL__ + banner
+    except:
+        pass
+    if banner is None: banner = 'DefaultVideoFolder.png'
+    html = fullhtml #.partition("</nav>")[-1].split("</ul>", 1)[0]
+    strUrl = ur'<a.+?href="([^"]*?)">'
+    strName = ur'</span>([^<]*?)</a>'
+    regexstr = "{0}.+?{1}".format(strUrl, strName)
+    matches = re.compile(regexstr).findall(html) #re.compile(ur"href='(https?.+watchseries-online.[a-z]+/episode.+?[^'])'.+?</span>(.+?[^<])</a>", re.DOTALL + re.S + re.U).findall(html)
+    litems = []
+    for eplink, epname in matches:
+        item = makecatitem(epname, eplink)
+        # item = episode_makeitem(epname, eplink)
+        #item.set_path(plugin.url_for(episode, name=epname, url=eplink))
+        litems.append(item)
+    #litems = find_episodes(html, noDate=True)
+    #for eplink, epname in matches:
+    #    item = episode_makeitem(epname, eplink)
+    #    item.path = plugin.url_for(episode, name=epname, url=eplink)
+    #    litems.append(item)
+    #litems.sort(key=lambda litems : litems.label, reverse=True)
+    return litems
+
+def find_episodes(fullhtml='', noDate=False):
+    html = fullhtml.partition("</nav>")[-1].split("</ul>", 1)[0]
+    strDate = ur"<li class='listEpisode'>(\d+ \d+ \d+) : "
+    strUrl = ur'<a.+?href="([^"]*?)">'
+    strName = ur'</span>([^<]*?)</a>'
+    regexstr = "{0}{1}.+?{2}".format(strDate, strUrl, strName)
+    if noDate:
+        regexstr = "{0}.+?{1}".format(strUrl, strName)
+    matches = re.compile(regexstr).findall(html)
+    epdate = ''
+    eptitle = ''
+    litems = []
+    if noDate:
+        for eplink, epname in matches:
+            item = episode_makeitem(epname, eplink)
+            item.set_path(plugin.url_for(episode, name=epname, url=eplink))
+            litems.append(item)
+    else:
+        for epdate, eplink, epname in matches:
+            item = episode_makeitem(epname, eplink, epdate)
+            item.set_path(plugin.url_for(episode, name=epname, url=eplink))
+            dateout = epdate.replace(' ', '-').strip()
+            item.label += " [I][B][COLOR orange]{0}[/COLOR][/B][/I]".format(dateout)
+            litems.append(item)
+    return litems
+
 @plugin.route('/category/<name>/<url>')
 def category(name, url):
+    if not str(url).startswith('http'):
+        url = __BASEURL__ + url
     html = DL(url)
     banner = None
     try:
@@ -484,8 +530,12 @@ def category(name, url):
     except:
         pass
     if banner is None: banner = 'DefaultVideoFolder.png'
-    matches = re.compile(ur"href='(https?.+watchseries-online.[a-z]+/episode.+?[^'])'.+?</span>(.+?[^<])</a>", re.DOTALL + re.S + re.U).findall(html)
-    litems =[]
+    epre = re.compile(ur"href='(https?://watchseries-online.[a-z]+/episode/.+?)' .+?<span.+?</span>(.+?)</a>", re.DOTALL)
+    #matches = re.compile(ur"href='(https?.+watchseries-online.[a-z]+/episode.+?[^'])'.+?</span>(.+?[^<])</a>", re.DOTALL + re.S + re.U).findall(html)
+    #matches = re.compile(ur"href='(https?://watchseries-online.[a-z]+/episode/.+?)' target=._blank. class=.listEpisode.><span class=.viewControl.>.+?</span>([^<]*)</a>.+?</", re.MULTILINE+re.DOTALL+re.IGNORECASE).findall(html.split("<ul class='listEpisodes'>", 1)[-1])
+    matches = epre.findall(html)
+    litems = [] #find_episodes(html, noDate=True)
+    if len(matches) > 1000: matches = matches[0:1000]
     for eplink, epname in matches:
         item = episode_makeitem(epname, eplink)
         item.path = plugin.url_for(episode, name=epname, url=eplink)
