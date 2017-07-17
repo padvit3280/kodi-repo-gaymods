@@ -566,7 +566,8 @@ def playfirst(url):
     if len(linklist) > 0:
         name, link = linklist
         plugin.notify(msg=link, title="Playing {0}".format(name))
-        plugin.redirect(plugin.url_for(endpoint=play, url=link))
+        #plugin.redirect(plugin.url_for(endpoint=play, url=link))
+        play(url=link)
         #name, link = linklist
         #itempath = plugin.url_for(play, url=link)
         #item = dict(label=name, label2=link, icon='DefaultFolder.png', thumbnail='DefaultFolder.png', path=itempath)
