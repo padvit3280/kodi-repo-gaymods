@@ -179,6 +179,7 @@ def episode_makeitem(episodename, episodelink, dateadded=None):
         item.setdefault(item.keys()[0])
         li = ListItem.from_dict(**item)
         li.set_info(type='video', info_labels=infolbl)
+        li.add_context_menu_items([("Autoplay","RunPlugin('{0}')".format(plugin.url_for(endpoint=find_playablelink(url=episodelink))))])
     except:
         li = ListItem(label=episodename, label2=episodelink, icon=img, thumbnail=img, path=spath)
     return li
@@ -218,9 +219,11 @@ def episode_makeitem2(episodename, episodelink):
     return li
 
 
-def findvidlinks(html=''):
+def findvidlinks(html='', findhost=None):
     matches = re.compile(ur'<div class="play-btn">.*?</div>', re.DOTALL).findall(html)
     vids = []
+    if findhost is not None:
+        findhost = findhost.lower()
     for link in matches:
         url = re.compile(ur'href="(.+)">', re.DOTALL+re.S).findall(str(link))[0]
         if url is not None:
@@ -229,6 +232,9 @@ def findvidlinks(html=''):
             host = str(host.split('.', 1)[0]).title()
             label = "{0} [COLOR blue]{1}[/COLOR]".format(host, url.rpartition('/')[-1])
             vids.append((label, url,))
+            if findhost is not None:
+                if url.lower().find(findhost) != -1:
+                    return (label, url,)
     return vids
 
 
@@ -238,9 +244,8 @@ def sortSourceItems(litems=[]):
         sourceslist = []
         stext = plugin.get_setting('topSources')
         if len(stext) < 1:
-            sourceslist.append('streamcloud')
-            sourceslist.append('movpod')
             sourceslist.append('thevideo')
+            sourceslist.append('movpod')
         else:
             sourceslist = stext.split(',')
         sorteditems = []
@@ -542,6 +547,31 @@ def category(name, url):
         litems.append(item)
     litems.sort(key=lambda litems : litems.label, reverse=True)
     return litems
+
+
+def find_playablelink(url):
+    html = DL(url)
+    prefhost = ''
+    sourceslist = []
+    stext = plugin.get_setting('topSources')
+    if len(stext) < 1:
+        prefhost = 'thevideo'
+    else:
+        sourceslist = stext.split(',')
+        prefhost = sourceslist[0]
+    litems = []
+    linklist = findvidlinks(html, findhost=prefhost)
+    if len(linklist) > 0:
+        name, link = linklist
+        play(url=link)
+        #name, link = linklist
+        #itempath = plugin.url_for(play, url=link)
+        #item = dict(label=name, label2=link, icon='DefaultFolder.png', thumbnail='DefaultFolder.png', path=itempath)
+        #item.setdefault(item.keys()[0])
+        #litem = ListItem.from_dict(**item)
+        #litem.set_is_playable(True)
+        #litem.set_info(type='video', info_labels={'Title': item.label, 'Plot': item.label2})
+        #litem.add_stream_info(stream_type='video', stream_values={})
 
 
 @plugin.route('/episode/<name>/<url>')

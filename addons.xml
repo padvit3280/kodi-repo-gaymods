@@ -31,7 +31,7 @@
   </extension>
 </addon>
 
-<addon id="plugin.video.hubgay" name="HubGAY" provider-name="moedje" version="1.3.0">
+<addon id="plugin.video.hubgay" name="HubGAY" provider-name="moedje" version="1.3.1">
     <requires>
         <import addon="xbmc.python" version="2.24.0"/>
         <import addon="script.module.xbmcswift2"/>
@@ -127,7 +127,7 @@ REQUIRED [B]Script.Module.URLResolver, Simple.Downloader, YouTubeDL, and KODIswi
   </extension>
 </addon>
 
-<addon id="plugin.video.wsonline" name="WatchSeries-Online" provider-name="moedje" version="1.8.9">
+<addon id="plugin.video.wsonline" name="WatchSeries-Online" provider-name="moedje" version="1.9.0">
     <requires>
         <import addon="xbmc.python" version="2.24.0"/>
         <import addon="script.module.requests" optional="false"/>
