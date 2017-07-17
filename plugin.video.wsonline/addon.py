@@ -179,7 +179,7 @@ def episode_makeitem(episodename, episodelink, dateadded=None):
         item.setdefault(item.keys()[0])
         li = ListItem.from_dict(**item)
         li.set_info(type='video', info_labels=infolbl)
-        li.add_context_menu_items([("Autoplay","RunPlugin('{0}')".format(plugin.url_for(endpoint=find_playablelink(url=episodelink))))])
+        li.add_context_menu_items([('Autoplay', 'RunPlugin("{0}")'.format(plugin.url_for(endpoint=playfirst, url=episodelink)),)])
     except:
         li = ListItem(label=episodename, label2=episodelink, icon=img, thumbnail=img, path=spath)
     return li
@@ -465,7 +465,6 @@ def queryshow(searchquery):
     #return plugin.add_items(resitems)
 
 
-
 def category2(name, url):
     if not str(url).startswith('http'):
         url = __BASEURL__ + url
@@ -497,6 +496,7 @@ def category2(name, url):
     #litems.sort(key=lambda litems : litems.label, reverse=True)
     return litems
 
+
 def find_episodes(fullhtml='', noDate=False):
     html = fullhtml.partition("</nav>")[-1].split("</ul>", 1)[0]
     strDate = ur"<li class='listEpisode'>(\d+ \d+ \d+) : "
@@ -522,6 +522,7 @@ def find_episodes(fullhtml='', noDate=False):
             item.label += " [I][B][COLOR orange]{0}[/COLOR][/B][/I]".format(dateout)
             litems.append(item)
     return litems
+
 
 @plugin.route('/category/<name>/<url>')
 def category(name, url):
@@ -549,7 +550,8 @@ def category(name, url):
     return litems
 
 
-def find_playablelink(url):
+@plugin.route('/playfirst/<url>')
+def playfirst(url):
     html = DL(url)
     prefhost = ''
     sourceslist = []
@@ -563,7 +565,8 @@ def find_playablelink(url):
     linklist = findvidlinks(html, findhost=prefhost)
     if len(linklist) > 0:
         name, link = linklist
-        play(url=link)
+        plugin.notify(msg=link, title="Playing {0}".format(name))
+        plugin.redirect(plugin.url_for(endpoint=play, url=link))
         #name, link = linklist
         #itempath = plugin.url_for(play, url=link)
         #item = dict(label=name, label2=link, icon='DefaultFolder.png', thumbnail='DefaultFolder.png', path=itempath)
