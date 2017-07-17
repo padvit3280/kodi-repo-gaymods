@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import json, datetime
 import calendar
 from calendar import month_name, month_abbr
@@ -199,7 +200,8 @@ def makeVideoItems(itemlist, sitename=None):
                 litems.append(xli)
     except:
         xbmc.log("***LAST FAIL AFTER ALL ITEMS -- ERROR MAKINGVIDEOITEMS: {0}\n".format(vitem))
-    litems.sort(key=lambda litems: litems.label)
+    if plugin.get_setting('sortresultsby') == 'date':
+        litems.sort(key=lambda litems: litems.label)
     return litems
 
 
