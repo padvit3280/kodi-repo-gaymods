@@ -6,7 +6,10 @@ from urllib import quote_plus
 import ssl
 import requests
 import webutil as WebUtils
-from xbmcswift2 import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod
+#from xbmcswift2 import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod
+from kodiswift import Plugin, xbmc, ListItem
+from xbmcswift2 import download_page, clean_dict, SortMethod
+
 
 plugin = Plugin()
 ssl._create_default_https_context = ssl._create_unverified_context

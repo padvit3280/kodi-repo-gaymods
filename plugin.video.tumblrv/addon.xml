@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.tumblrv" name="TumblrV" provider-name="moedje" version="1.0.1">
+<addon id="plugin.video.tumblrv" name="TumblrV" provider-name="moedje" version="1.0.9">
   <requires>
     <import addon="xbmc.python" version="2.25.0"/>
     <import addon="script.module.kodiswift" version="0.0.8"/>
@@ -9,6 +9,8 @@
     <import addon="script.module.urlresolver" optional="true"/>
     <import addon="script.module.oauth2"/>
     <import addon="script.module.youtube.dl"/>
+    <import addon="script.module.kodi-pdb" optional="true"/>
+    <import addon="script.module.web-pdb" optional="true" version="1.0"/>
   </requires>
   <extension library="addon.py" point="xbmc.python.pluginsource">
     <provides>video</provides>
