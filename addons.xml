@@ -154,7 +154,7 @@ REQUIRED [B]Script.Module.URLResolver, Simple.Downloader, YouTubeDL, and KODIswi
   </extension>
 </addon>
 
-<addon id="plugin.video.watchseries" name="WatchSeries" version="1.0.2" provider-name="moedje">
+<addon id="plugin.video.watchseries" name="WatchSeries" version="1.0.6" provider-name="moedje">
     <requires>
         <import addon="xbmc.python" version="2.24.0"/>
         <import addon="script.module.kodiswift"/>
@@ -192,15 +192,16 @@ REQUIRED [B]Script.Module.URLResolver, Simple.Downloader, YouTubeDL, and KODIswi
     </extension>
 </addon>
 
-<addon id="plugin.video.wsonline" name="WatchSeries-Online" provider-name="moedje" version="1.9.5">
+<addon id="plugin.video.wsonline" name="WatchSeries-Online" provider-name="moedje" version="1.9.6">
     <requires>
         <import addon="xbmc.python" version="2.24.0"/>
+        <import addon="script.module.kodiswift"/>
+        <import addon="script.module.xbmcswift2"/>
         <import addon="script.module.requests" optional="false"/>
         <import addon="script.module.urlresolver" optional="true"/>
         <import addon="script.module.youtube.dl" optional="true"/>
         <import addon="script.module.pyperclip" optional="true"/>
         <import addon="script.module.unidecode" optional="true"/>
-        <import addon="script.module.xbmcswift2"/>
     </requires>
     <extension library="addon.py" point="xbmc.python.pluginsource">
         <provides>video</provides>
