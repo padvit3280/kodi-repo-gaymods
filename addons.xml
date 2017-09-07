@@ -193,7 +193,7 @@ REQUIRED [B]Script.Module.URLResolver, Simple.Downloader, YouTubeDL, and KODIswi
 </addon>
 
 <addon id="plugin.video.xnxx"
-version="0.3.9"
+version="0.4.0"
 name="XNXX"
 provider-name="kodi-repo-gaymods">
 <requires>
@@ -210,7 +210,7 @@ provider-name="kodi-repo-gaymods">
 </extension>
 <extension point="xbmc.addon.metadata">
   <summary lang="en">XNXX.com Adult Plugin</summary>
-  <description lang="en">Plugin to view video's from the adult XNXX.Com porn site. [B]V0.3.0 basic working first release[/B]</description>
+  <description lang="en">Plugin to view video's from the adult XNXX.Com porn site. [B]V0.4.0 First release basic working first release[/B]</description>
   <disclaimer lang="en">ADULTS ONLY CONTENT FROM www.xnxx.com.</disclaimer>
   <assets>
     <icon>icon.png</icon>
