@@ -1,49 +1,125 @@
 # -*- coding: utf-8 -*-
-# Module: default
-# Author: moedje (Roman V. M. example plugin as template)
-# Created on: 28.11.2014
+# Module: plugin.video.xnxx
+# Author: moedje (Roman V. M. SimplePlugin/example framework)
+# Created on: 27.08.2017
 # License: GPL v.3 https://www.gnu.org/copyleft/gpl.html
-import sys, json, os, re
-from urllib import urlencode
-from urlparse import parse_qsl
-from simpleplugin import Plugin
-import simpleutils
+import sys, json, os, re, simpleutils
 import xbmc, xbmcgui
-plugin = Plugin()
-# Get the plugin url in plugin:// notation.
-_url = sys.argv[0]
-# Get the plugin handle as an integer number.
+from urllib import quote_plus
+from simpleplugin import Plugin, Params
+from operator import itemgetter
+
+plugin = Plugin()   # Get the plugin url in plugin:// notation.
+_url = sys.argv[0]  # Get the plugin handle as an integer number.
 _handle = int(sys.argv[1])
 __addondir__ = xbmc.translatePath(plugin.addon.getAddonInfo('path'))
 __resources__ = os.path.join(__addondir__, 'resources/')
+__next__ = os.path.join(__resources__, "next.png")
+__filtersex__ = plugin.get_setting('filterorientation')
+__sortby__ = plugin.get_setting('sortby')
+
 VIDEOS = json.load(file(os.path.join(__resources__, 'tags.json')))
-urlorientation = 'straight'
-urlsort = 'uploaddate'
-urlorientation = plugin.get_setting('filterorientation')
-urlsort = plugin.get_setting('sortby')
+webreq = simpleutils.CachedWebRequest(cookiePath=os.path.join(xbmc.translatePath('special://profile'), 'addon_data/', plugin.id))
+revidblock = re.compile(ur'<div id="(video_.*?)</p></div>', re.DOTALL)
+revidparts = re.compile(ur'video_([\d]+).*? src="(.*?)".*?href="(.*?)".*?itle="(.*?)".*?"duration">[\(](.+?)[\)]</span',re.DOTALL)
+
+
+def parsepageforvideos(html):
+    matches = revidblock.findall(html)
+    listitems = []
+    for vidhtml in matches:
+        vmatches = revidparts.findall(vidhtml)
+        if vmatches is not None:
+            for vidid, img, link, title, length in vmatches:
+                linkfull = 'https://flashservice.xvideos.com/embedframe/' + vidid
+                label = title + " [COLOR white][I][B]({0})[/B][/I][/COLOR]".format(length)
+                label2 = str(length)
+                itempath = plugin.get_url(action='play', url=linkfull)
+                img = img.replace('THUMBNUM', '{0}')
+                icon = img.format(5)
+                thumb = img.format(25)
+                fanart = img.format(10)
+                clearart = img.format(15)
+                artwork = {'clearart': clearart, 'thumb': thumb, 'icon': icon, 'fanart': fanart, 'thumb': thumb}
+                mitem = {'label': label, 'label2': label2, 'icon': icon, 'thumb': thumb, 'url': itempath,
+                         'is_playable': True, 'is_folder': False, 'art': artwork, 'mime': 'video/mp4', 'info': {'video': {'Runtime': length}}}
+                mitem.update(ctx(linkfull))
+                listitems.append(mitem)
+    return listitems
+
+def DL(url):
+    resp = None
+    html = None
+    try:
+        resp = webreq.getSource(url)
+        html = resp.encode('latin-1', 'ignore')
+    except:
+        try:
+            resp = webreq.getSource(url)
+            html = simpleutils.try_coerce_native(resp)
+        except:
+            html = resp
+    return html
+
+def setView(id=500):
+    try:
+        xbmc.executebuiltin("Container.SetViewMode({0})".format(str(id)))
+    except:
+        pass
+
+def ctx(url):
+    #pathdl = "plugin://plugin.video.tumblrv/download/" + vidurl
+    pathdl = plugin.get_url(action='download', vidurl=url)
+    citem = ('Download', 'RunPlugin({0})'.format(pathdl),)
+    return {'context_menu': [citem]}
+
+def notify(msg):
+    xbmc.executebuiltin("Notification('{0}')".format(msg))
+
+def getinput(title='Search', default=None):
+    search_term = None
+    if default is None:
+        default = plugin.get_setting('lastsearch')
+    kb = xbmc.Keyboard('default', 'heading')
+    kb.setDefault(default)
+    kb.setHeading(title)
+    kb.setHiddenInput(False)
+    kb.doModal()
+    if (kb.isConfirmed()):
+        search_term = kb.getText()
+    if search_term is not None:
+        plugin.set_setting('lastsearch', search_term)
+    else:
+        search_term = False
+    return search_term
 
 @plugin.action()
 def root():
     """
     Root virtual folder
-
     This is mandatory item.
     """
     listitems = []
+    searchitem = None
     for tagkey in VIDEOS.iterkeys():
         numtags = str(len(VIDEOS[tagkey]))
-        label = "{0} [COLOR white][I]({1})[/I][/COLOR]".format(tagkey, numtags)
-        tagpath = plugin.get_url(action='taglistforletter', tagkey=tagkey)
-        listitems.append({'label': label, 'label2': numtags, 'url': tagpath})
-    return plugin.create_listing(listitems, succeeded=True, update_listing=False, cache_to_disk=False, view_mode=50, content='movies')
-    #return listitems
-
+        if tagkey.lower() != 'search':
+            label = "{0} [COLOR white][I]({1})[/I][/COLOR]".format(tagkey, numtags)
+            tagpath = plugin.get_url(action='taglistforletter', tagkey=tagkey)
+            listitems.append({'label': label, 'label2': numtags, 'url': tagpath})
+        else:
+            label = "[COLOR yellow][B]{0}[/B][/COLOR]".format(tagkey)
+            tagpath = plugin.get_url(action='newsearch')#, page=0)
+            searchitem = {'label': label, 'label2': numtags, 'url': tagpath}
+    listitems.sort(key=itemgetter('label'), reverse=False)
+    listitems.insert(0, searchitem)
+    return listitems
 
 @plugin.action()
 def taglistforletter(params):
     """Virtual subfolder"""
     # Create 1-item list with a link to a playable video.
-    plugin.log(message=str("** Taglist: " + str(repr(params))), level=xbmc.LOGERROR)
+    #plugin.log(message=str("** Taglist: " + str(repr(params))), level=xbmc.LOGERROR)
     listitems = []
     for item in VIDEOS.get(params.tagkey, []):
         tagname = item.get('tagname', None)
@@ -51,25 +127,24 @@ def taglistforletter(params):
             tagpath = plugin.get_url(action='videosfortag', tagname=tagname, page=1)
             litem = {'label': item.get('name', tagname), 'thumb': item.get('thumb', 'DefaultFolder.png'), 'url': tagpath}
             listitems.append(litem)
-    #return listitems
-    return plugin.create_listing(listitems, succeeded=True, update_listing=False, cache_to_disk=False, view_mode=51, content='movies')
-
+    #setView(551)
+    return listitems
+    #return plugin.create_listing(listitems, succeeded=True, update_listing=True, cache_to_disk=False, view_mode=51, content='movies')
 
 @plugin.action()
 def videosfortag(params):
-    plugin.log(message=str("** videosfortag: " + str(repr(params))), level=xbmc.LOGERROR)
-    webreq = simpleutils.CachedWebRequest(cookiePath=os.path.join(xbmc.translatePath('special://profile'),'addon_data/', plugin.id))
-    revidparts = re.compile(ur'video_([\d]+).*? src="(.*?)".*?a href="(.*?)".*?title="(.*?)".*?"duration">[\(](.+?)[\)]</span',re.DOTALL)
     tagname = params.tagname
     pagenum = '1'
     doup = False
     if params.page is not None:
         pagenum = params.page
-    tagurl = "http://www.xnxx.com/tags/{0}/{1}/t:{2}/s:{3}".format(tagname, str(pagenum), urlorientation, urlsort)
+    tagurl = "http://www.xnxx.com/tags/{0}/{1}/t:{2}/s:{3}".format(tagname, str(pagenum), __filtersex__, __sortby__)
     pagenum = str(1 + int(pagenum))
-    nexturl = "http://www.xnxx.com/tags/{0}/{1}/t:{2}/s:{3}".format(tagname, str(pagenum), urlorientation, urlsort)
+    nexturl = "http://www.xnxx.com/tags/{0}/{1}/t:{2}/s:{3}".format(tagname, str(pagenum), __filtersex__, __sortby__)
     nextpagepath = plugin.get_url(action='videosfortag', tagname=tagname, page=pagenum)
     nextitem = {'label': 'Next -> #{0}'.format(pagenum), 'label2': nexturl, 'thumb': os.path.join(__resources__, 'next.png'), 'url': nextpagepath}
+    html = DL(tagurl)
+    '''
     try:
         resp = webreq.getSource(url=tagurl).encode('latin-1', 'ignore')
         html = resp.partition('div class="mozaique"')[-1].rpartition('class="no-page">Next</a>')[0]
@@ -80,11 +155,14 @@ def videosfortag(params):
         html = simpleutils.try_coerce_native(resp).partition('div class="mozaique"')[-1].rpartition('class="no-page">Next</a>')[0]
     except:
         plugin.log('Error downloading page', xbmc.LOGERROR)
-    #notifytxt = "Notification('{0} {1}', '{2}')".format(params.page, tagurl, html)
-    #xbmc.executebuiltin(notifytxt)
-    #plugin.log(notifytxt, xbmc.LOGNOTICE)
-    matches = re.compile(ur'<div id="(video_.*?)</p></div>', re.DOTALL).findall(html)
+    '''
+    matches = revidblock.findall(html)
     listitems = []
+    listitems = parsepageforvideos(html)
+    if len(listitems) > 0:
+      listitems.append(nextitem)
+    return listitems
+    '''
     for vidhtml in matches:
         vmatches = revidparts.findall(vidhtml)
         if vmatches is not None:
@@ -94,14 +172,76 @@ def videosfortag(params):
                 label2 = linkfull
                 itempath = plugin.get_url(action='play', url=linkfull)
                 mitem = {'label': label, 'label2': label2, 'thumb': thumb.replace('THUMBNUM', '1'), 'url': itempath, 'is_playable': True}
+                mitem.update(ctx(linkfull))
                 listitems.append(mitem)
     listitems.append(nextitem)
-    if int(pagenum) > 1: doup = True
-    return plugin.create_listing(listitems, succeeded=True, update_listing=doup, cache_to_disk=False, view_mode=500, content='movies')
+    return listitems
+    '''
 
-# An action can take an optional argument that contain
-# plugin call parameters parsed into a dict-like object.
-# The params object allows to access parameters by key or by attribute
+@plugin.action()
+def download(params):
+    try:
+        urlvideo = params.vidurl
+        plugin.log(message=str("** download: " + str(repr(params))), level=xbmc.LOGINFO) 
+        try:
+            import YDStreamExtractor
+            from YDStreamExtractor import getVideoInfo
+            from YDStreamExtractor import handleDownload
+        except:
+            notify("Couldn't load YouTubeDL Addon")
+        info = getVideoInfo(urlvideo, resolve_redirects=True)
+        dlpath = plugin.get_setting('downloadpath')
+        if not os.path.exists(dlpath):
+            dlpath = xbmc.translatePath("home://")
+        handleDownload(info, bg=True, path=dlpath)
+    except:
+        if urlvideo is not None:
+            notify("Failed " + urlvideo)
+        else:
+            notify("No video URL was found to download")
+    return None
+
+@plugin.action()
+def newsearch():
+    term = getinput()
+    if not term:
+        notify('No search terms provided')
+        return None
+    nextpathurl = plugin.get_url(action='search', page=0, term=term)
+    surl = "http://www.xnxx.com/?k={0}&p={1}&typef={2}&sort={3}&datef=all&durf=all".format(term, 0, __filtersex__,__sortby__)
+    nexturl = "http://www.xnxx.com/?k={0}&p={1}&typef={2}&sort={3}&datef=all&durf=1-10min".format(term, 1,__filtersex__,__sortby__)
+    nextpathurl = plugin.get_url(action='search', page=1, term=term)
+    nextlbl = "[B]Next[/B] -> Page [COLOR green]#{0}[/COLOR]".format(2)
+    nextitem = {'label': nextlbl, 'label2': "1", 'thumb': __next__, 'url': nextpathurl}
+    html = DL(surl)
+    listitems = []
+    listitems = parsepageforvideos(html)
+    if len(listitems) > 0:
+        listitems.append(nextitem)
+    return listitems
+
+@plugin.action()
+def search(params):
+    page = params.page
+    term = params.term
+    if page is None:
+        page = 0
+    nextpage = int(page) + 1
+    if term is None:
+        return None
+    term = quote_plus(term)
+    surl = "http://www.xnxx.com/?k={0}&p={1}&typef={2}&sort={3}&datef=all&durf=all".format(term, page, __filtersex__, __sortby__)
+    nexturl = "http://www.xnxx.com/?k={0}&p={1}&typef={2}&sort={3}&datef=all&durf=1-10min".format(term, nextpage, __filtersex__,  __sortby__)
+    nextpathurl = plugin.get_url(action='search', page=nextpage, term=term)
+    nextlbl = "[B]Next[/B] -> Page [COLOR green]#{0}[/COLOR]".format(nextpage)
+    nextitem = {'label': nextlbl, 'label2': str(nextpage), 'thumb': __next__, 'url': nextpathurl}
+    html = DL(surl)
+    listitems = []
+    listitems = parsepageforvideos(html)
+    if len(listitems) > 0:
+        listitems.append(nextitem)
+    return listitems
+
 @plugin.action()
 def play(params):
     """Play video"""
@@ -119,9 +259,13 @@ def play(params):
             else:
                 moveurl = matches
     plugin.log(message="Video url: " + movurl, level=xbmc.LOGINFO)
-    return movurl
+    litem = plugin.create_list_item({"url": movurl})
+    litem.setInfo(type='video', infoLabels={"Genre": "porn"})
+    litem.setMimeType("video/mp4")
+    return plugin.create_listing(listing=plugin.resolve_url(path=movurl, play_item=litem, succeeded=True), update_listing=False)
+    #return movurl
 
-
+'''
 def get_categories(ITEMS):
     """
     Get the list of video categories.
@@ -255,66 +399,7 @@ def list_videos(category, **kwargs):
     # Finish creating a virtual folder.
     xbmcplugin.endOfDirectory(_handle)
 
+'''
+
 if __name__ == '__main__':
     plugin.run()  # Start plugin
-    #viewmodeid = plugin.get_setting('viewmode')
-
-
-'''
-def play_video(path):
-    """
-    Play a video by the provided path.
-
-    :param path: Fully-qualified video URL
-    :type path: str
-    """
-    # Create a playable item with a path to play.
-    play_item = xbmcgui.ListItem(path=path)
-    # Pass the item to the Kodi player.
-    xbmcplugin.setResolvedUrl(_handle, True, listitem=play_item)
-
-
-def router(paramstring):
-    """
-    Router function that calls other functions
-    depending on the provided paramstring
-
-    :param paramstring: URL encoded plugin paramstring
-    :type paramstring: str
-    """
-    # Parse a URL-encoded paramstring to the dictionary of
-    # {<parameter>: <value>} elements
-    params = dict(parse_qsl(paramstring))
-    # Check the parameters passed to the plugin
-    if params:
-        if params['action'] == 'list_videos':
-            tagname = params['tagname']
-            ITEMS = get_tag(tagname)
-            list_videos(tagname, ITEMS)
-        if params['action'] == 'listing':
-            # Display the list of videos in a provided category.
-            ITEMS = VIDEOS.get(params['category'], None)
-            if ITEMS is not None:
-                list_tags(ITEMS)
-            else:
-                list_videos(params['category'])
-        elif params['action'] == 'play':
-            # Play a video from a provided URL.
-            play_video(params['video'])
-        else:
-            # If the provided paramstring does not contain a supported action
-            # we raise an exception. This helps to catch coding errors,
-            # e.g. typos in action names.
-            raise ValueError('Invalid paramstring: {0}!'.format(paramstring))
-    else:
-        # If the plugin is called from Kodi UI without any parameters,
-        # display the list of video categories
-        list_categories(VIDEOS)
-
-
-if __name__ == '__main__':
-    # Call the router function and pass the plugin call parameters to it.
-    # We use string slicing to trim the leading '?' from the plugin call paramstring
-    router(sys.argv[2][1:])
-
-'''

@@ -895,7 +895,7 @@ class Plugin(Addon):
                                         'audio': {'codec': 'ac3', 'language': 'en'}},
                         'info': {'video': {'genre': 'Comedy', 'year': 2005}},
                         'context_menu': [('Menu Item', 'Action')],
-                        'url': 'plugin:/plugin.video.test/?action=play',
+                        'url': 'plugin://plugin.video.test/?action=play',
                         'is_playable': True,
                         'is_folder': False,
                         'subtitles': ['/path/to/subtitles.en.srt', '/path/to/subtitles.uk.srt'],
@@ -930,12 +930,29 @@ class Plugin(Addon):
         self._url = 'plugin://{0}/'.format(self.id)
         self._handle = None
         self.actions = {}
+        self._viewmodesdict = {"List": "50",
+                           "Biglist": "51",
+                           "Thumbnail": "500",
+                           "SmallThumb": "522",
+                           "PosterWrap": "501",
+                           "Fanart": "508",
+                           "Mediainfo": "504",
+                           "Mediainfo2": "503",
+                           "Mediainfo3": "515",
+                           "Wide": "505"}
+        self._viewmodes = namedtuple('Viewmodes', self._viewmodesdict.keys())(*self._viewmodesdict.values())
+
+
 
     def __str__(self):
         return '<Plugin {0}>'.format(sys.argv)
 
     def __repr__(self):
         return '<simpleplugin.Plugin object {0}>'.format(sys.argv)
+
+    @property
+    def views(self):
+        return namedtuple('viewmodes', self._viewmodesdict.keys(), rename=True)(self._viewmodes)
 
     @staticmethod
     def get_params(paramstring):
@@ -1024,11 +1041,11 @@ class Plugin(Addon):
         self._handle = int(sys.argv[1])
         params = self.get_params(sys.argv[2][1:])
         action = params.get('action', 'root')
-        self.log_debug(str(self))
-        self.log_debug('Actions: {0}'.format(str(self.actions.keys())))
-        self.log_debug('Called action "{0}" with params "{1}"'.format(
-            action, str(params))
-        )
+        #self.log_debug(str(self))
+        #self.log_debug('Actions: {0}'.format(str(self.actions.keys())))
+        #self.log_debug('Called action "{0}" with params "{1}"'.format(
+        #    action, str(params))
+        #)
         try:
             action_callable = self.actions[action]
         except KeyError:
@@ -1052,8 +1069,7 @@ class Plugin(Addon):
                 self.log_debug('The action "{0}" has not returned any valid data to process.'.format(action))
 
     @staticmethod
-    def create_listing(listing, succeeded=True, update_listing=False, cache_to_disk=False, sort_methods=None,
-                       view_mode=None, content=None, category=None):
+    def create_listing(listing, succeeded=True, update_listing=False, cache_to_disk=False, sort_methods=None, view_mode=51, content='episodes', category=None):
         """
         Create and return a context dict for a virtual folder listing
 
@@ -1080,10 +1096,36 @@ class Plugin(Addon):
             to create virtual folder listing in Kodi UI.
         :rtype: ListContext
         """
-        if view_mode is None:
-            view_mode = 500
-        return ListContext(listing, succeeded, update_listing, cache_to_disk,
-                           sort_methods, view_mode, content, category)
+        pname = None
+        if listing is not None:
+            if len(listing) > 0:
+                item = listing[0]
+                if not isinstance(item, dict):
+                    item = Plugin.get_params(item)
+                if item.get('action', None) is not None:
+                    pname = item.get('action', '')
+                if item.get('path', None) is not None:
+                    pname = item.get('path', item.get('url',''))
+                elif item.get('url', None) is not None:
+                    pname = item.get('url', item.get('path', ""))
+                else:
+                    pname = None
+        if pname is not None:
+            if pname.find('root') != -1 or pname == 'root':
+                view_mode = 51
+            elif pname.find('videosfortag') != -1 or pname == 'videosfortag':
+                view_mode = 51
+            elif pname.find('search') != -1 or pname == 'search':
+                view_mode = 51
+            elif pname.find('play') != -1 or pname == 'play':
+                view_mode = 500
+                update_listing = True
+                if len(listing) > 2:
+                    update_listing = False
+        if sort_methods is None:
+            from xbmcplugin import SORT_METHOD_UNSORTED, SORT_METHOD_VIDEO_SORT_TITLE_IGNORE_THE, SORT_METHOD_VIDEO_RUNTIME
+            sort_methods = [SORT_METHOD_UNSORTED, SORT_METHOD_VIDEO_SORT_TITLE_IGNORE_THE, SORT_METHOD_VIDEO_RUNTIME]
+        return ListContext(listing, succeeded, update_listing, cache_to_disk,sort_methods, view_mode, content, category)
 
     @staticmethod
     def resolve_url(path='', play_item=None, succeeded=True):
