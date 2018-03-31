@@ -45,6 +45,48 @@
   </extension>
 </addon>
 
+<addon id="plugin.video.bingvids" name="bingvids" version="0.6.0" provider-name="moedje">
+  <requires>
+    <import addon="xbmc.python" version="2.25.0" />
+    <import addon="script.module.kodiswift" version="0.0.8"/>
+    <import addon="script.module.requests" version="2.18.4"/>
+    <import addon="script.module.youtube.dl" optional="true"/>
+    <import addon="script.module.urlresolver" optional="true"/>
+    <import addon="script.module.simple.downloader" optional="true"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource" library="addon.py">
+    <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <language>en</language>
+    <summary lang="en">Search Bing for Videos</summary>
+    <description lang="en">Search the web for video's using Bing Video Search API advanced operators such as AND OR + - etc are supported and the full reference can be found at https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-web-api-v7-reference</description>
+    <disclaimer lang="en">Disclaimer for "bingvids"</disclaimer>
+  </extension>
+</addon>
+
+<addon id="script.module.youtube.dl" name="youtube-dl Control" version="17.1231.0" provider-name="Rick Phillips (ruuk)">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0" />
+        <import addon="script.module.addon.signals" version="0.0.1"/>
+    </requires>
+    <extension point="xbmc.python.script" library="control.py">
+        <provides>executable</provides>
+    </extension>
+    <extension point="xbmc.python.module" library="lib" />
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">Module providing access to youtube-dl video stream extraction</summary>
+        <description lang="en">Module providing access to youtube-dl video stream extraction for hundreds of sites. Version is based on youtube-dl date version: YY.MDD.V where V is the addon specific sub-version. Also provides downloading with the option for background downloading with a queue and queue manager.</description>
+        <summary lang="es">Módulo que proporciona acceso a YouTube-dl para la extracción de flujos de video</summary>
+        <description lang="en">Módulo que proporciona acceso a YouTube-dl para la extracción de flujos de video de cientos de sitios. La versión está basada en la versión de fecha youtube-dl: YY.MDD.V donde V es la subversión específica del complemento. También permite descargas con la opción de descarga en segundo plano con una cola y un administrador de colas.</description>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+        <forum>http://forum.xbmc.org/showthread.php?tid=200877</forum>
+        <source>http://github.com/ruuk/script.module.youtube.dl</source>
+    </extension>
+</addon>
+
 <addon id="plugin.video.largecamtube" name="largecamtube" provider-name="moedje" version="2.0.0">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -95,7 +137,7 @@
   </extension>
 </addon>
 
-<addon id="plugin.video.wsonline" name="WatchSeries-Online" provider-name="moedje" version="1.9.8">
+<addon id="plugin.video.wsonline" name="WatchSeries-Online" provider-name="moedje" version="1.9.9">
     <requires>
         <import addon="xbmc.python" version="2.24.0"/>
         <import addon="script.module.kodiswift"/>
@@ -120,9 +162,47 @@
     </extension>
 </addon>
 
+<addon id="plugin.video.watchseries" name="WatchSeries" version="2.0.0" provider-name="moedje">
+    <requires>
+        <import addon="xbmc.python" version="2.24.0"/>
+        <import addon="script.module.kodiswift"/>
+        <import addon="script.module.requests"/>
+        <import addon="script.module.urlresolver" optional="true"/>
+        <import addon="script.module.youtube.dl" optional="true"/>
+        <import addon="script.module.kodi-pdb" optional="true"/>
+        <import addon="script.module.web-pdb" optional="true" version="1.0"/>
+        <!-- <import addon="script.module.unidecode" optional="true"/> -->
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="addon.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <language>en</language>
+        <disclaimer lang="en">Disclaimer for "watchseries"</disclaimer>
+        <summary>Watchseries-Online Scrapper for video's on this site the</summary>
+        <description>Get the latest shows on website Watchseries-Online(.pl/.nl/.la...) allows for searching, saving
+            shows, auto-playing from source specified in the settings by you, and also can filter results, and sort
+            sources. This is the refactored version based off my WSONLINE plugin but I've cleaned the code up a lot and
+            moved to KODISWIFT from the XBMCSWIFT2 framework. Below is the previous changes since the first version of
+            this code.
+            [B]v2.0.0[/B] Updated hostname to watchseries-online.be v1.9.5 Fix Autoplay not marking source item as watched. v1.9.3 AutoPlay feature for your prefer host
+            tries to find first link matching your preferred host and play it. 1.8.3 up More bugfixes. 1.8: Fixed a
+            problem with addon only returning 1 result due to a change in the HTML of the WatchSeries-Online Website
+            V1.7.1 2017-05-06 Added filter results settings V1.6.9 Minor fixes/changes to make Save Show and Remove show
+            work better. Make Search Show work as currently doesn't. V1.5 2017-2-20: Parsers have been added to attempt
+            to grab details out of the name of the show such as the date, episode number and season. Formats the
+            listings to be standard for easy sorting and reading through including color to make date stand out. V1.2.0
+            2018-02-14: New playback and video file resolving fixing many bugs. Source Sorting and fave sources can be
+            set in settings. Updated to new watchseries-online host which is currently .PL and added this as a setting
+            that can be changed in the addon so I don't have to release an update each time they move servers.
+        </description>
+    </extension>
+</addon>
+
 <addon id="plugin.video.tvseries4u"
-version="0.0.1"
-name="TVSeries4u"
+version="0.1.0"
+name="TVSeries4U"
 provider-name="moedje">
 <requires>
   <import addon="xbmc.python" version="2.24.0"/>
@@ -253,25 +333,5 @@ provider-name="kodi-repo-gaymods">
   </assets>
   <news>Updated with latest artwork metadata</news>
 </extension>
-</addon>
-
-<addon id="script.module.simpleplugin"
-   name="SimplePlugin"
-   version="2.3.0"
-   provider-name="Roman V.M.">
-  <requires>
-    <import addon="xbmc.python" version="2.19.0"/>
-  </requires>
-  <extension point="xbmc.python.module" library="libs" />
-  <extension point="xbmc.addon.metadata">
-    <platform>all</platform>
-    <summary lang="en">SimplePlugin micro-framework</summary>
-    <description lang="en">SimplePlugin micro-framework that simplifies Kodi content plugin programming.</description>
-    <license>GNU GPL v.3</license>
-    <forum>http://forum.kodi.tv/showthread.php?tid=237532</forum>
-    <website>http://romanvm.github.io/script.module.simpleplugin</website>
-    <email>romanvm@yandex.ua</email>
-    <source>https://github.com/romanvm/script.module.simpleplugin</source>
-  </extension>
 </addon>
 </addons>
