@@ -201,7 +201,7 @@
 </addon>
 
 <addon id="plugin.video.tvseries4u"
-version="0.2.3"
+version="0.2.4"
 name="TVSeries4U"
 provider-name="moedje">
 <requires>
