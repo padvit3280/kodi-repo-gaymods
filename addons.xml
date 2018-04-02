@@ -201,17 +201,19 @@
 </addon>
 
 <addon id="plugin.video.tvseries4u"
-version="0.2.0"
+version="0.2.1"
 name="TVSeries4U"
 provider-name="moedje">
 <requires>
   <import addon="xbmc.python" version="2.24.0"/>
-  <import addon="script.module.simpleplugin" version="1.0+"/>
-  <import addon="script.module.requests"/>
   <import addon="script.module.urlresolver" optional="true"/>
   <import addon="script.module.youtube.dl" optional="true"/>
+  <!--
+  <import addon="script.module.simpleplugin" version="1.0+"/>
+  <import addon="script.module.requests"/>
   <import addon="script.module.kodi-pdb" optional="true"/>
   <import addon="script.module.web-pdb" optional="true"/>
+-->
 </requires>
 <extension point="xbmc.python.pluginsource" library="main.py">
   <provides>video</provides>
