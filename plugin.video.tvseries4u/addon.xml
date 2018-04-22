@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addon id="plugin.video.tvseries4u"
-version="0.3.0"
+version="0.3.2"
 name="TVSeries4U"
 provider-name="moedje">
 <requires>
@@ -12,7 +12,7 @@ provider-name="moedje">
   <import addon="script.module.requests"/>
   <import addon="script.module.kodi-pdb" optional="true"/>
   <import addon="script.module.web-pdb" optional="true"/>
--->
+  -->
 </requires>
 <extension point="xbmc.python.pluginsource" library="main.py">
   <provides>video</provides>
