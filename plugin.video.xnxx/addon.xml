@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addon id="plugin.video.xnxx"
-version="0.5.0"
+version="0.6.9"
 name="XNXX"
 provider-name="kodi-repo-gaymods">
 <requires>
   <import addon="xbmc.python" version="2.24.0"/>
   <import addon="script.module.requests" optional="false"/>
   <import addon="script.module.youtube.dl" optional="true"/>
-  <import addon="script.module.urlquick" />
+  <import addon="script.module.urlquick" optional="true"/>
   <!--
       <import addon="script.module.urlresolver" optional="true"/>
       <import addon="script.module.kodi-pdb" optional="true"/>
