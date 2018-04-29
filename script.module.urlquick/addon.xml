@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="script.module.urlquick" name="UrlQuick" version="0.9.3" provider-name="willforde,moedje">
+    <requires>
+        <import addon="xbmc.python" version="2.25.0"/>
+    </requires>
+    <extension point="xbmc.python.module" library="lib"/>
+    <extension point="xbmc.addon.metadata">
+        <summary lang="en_GB">Python Module URLQuick v0.9.3 by Willforde</summary>
+        <description lang="en_GB">A light-weight http client with requests like interface. Featuring persistent connections and caching support.
+        https://github.com/willforde/urlquick
+        </description>
+        <language>en</language>
+        <platform>linux osx windx</platform>
+        <license>MIT</license>
+        <website>www.alljer.com</website>
+        <email>j@alljer.com</email>
+        <source>https://github.com/willforde/urlquick</source>
+        <assets>
+            <icon>resources/icon.png</icon>
+            <fanart>resources/fanart.jpg</fanart>
+        </assets>
+    </extension>
+</addon>

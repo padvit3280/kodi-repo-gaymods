@@ -66,27 +66,6 @@
   </extension>
 </addon>
 
-<addon id="script.module.youtube.dl" name="youtube-dl Control" version="17.1231.0" provider-name="Rick Phillips (ruuk)">
-    <requires>
-        <import addon="xbmc.python" version="2.1.0" />
-        <import addon="script.module.addon.signals" version="0.0.1"/>
-    </requires>
-    <extension point="xbmc.python.script" library="control.py">
-        <provides>executable</provides>
-    </extension>
-    <extension point="xbmc.python.module" library="lib" />
-    <extension point="xbmc.addon.metadata">
-        <platform>all</platform>
-        <summary lang="en">Module providing access to youtube-dl video stream extraction</summary>
-        <description lang="en">Module providing access to youtube-dl video stream extraction for hundreds of sites. Version is based on youtube-dl date version: YY.MDD.V where V is the addon specific sub-version. Also provides downloading with the option for background downloading with a queue and queue manager.</description>
-        <summary lang="es">Módulo que proporciona acceso a YouTube-dl para la extracción de flujos de video</summary>
-        <description lang="en">Módulo que proporciona acceso a YouTube-dl para la extracción de flujos de video de cientos de sitios. La versión está basada en la versión de fecha youtube-dl: YY.MDD.V donde V es la subversión específica del complemento. También permite descargas con la opción de descarga en segundo plano con una cola y un administrador de colas.</description>
-        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
-        <forum>http://forum.xbmc.org/showthread.php?tid=200877</forum>
-        <source>http://github.com/ruuk/script.module.youtube.dl</source>
-    </extension>
-</addon>
-
 <addon id="plugin.video.largecamtube" name="largecamtube" provider-name="moedje" version="2.0.0">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -98,24 +77,6 @@
     <summary>Forked to gaymods Adult(18+) Gay videos from largecamtube.com</summary>
     <description>Adult(18+) videos from largecamtube.com</description>
     <platform>all</platform>
-  </extension>
-</addon>
-
-<addon id="script.module.pyperclip"
-       name="pyperclip"
-       version="1.5.27"
-       provider-name="moedje">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-  </requires>
-  <extension point="xbmc.python.module" library="lib"/>
-  <extension point="xbmc.addon.metadata">
-    <summary>Clipboard Python Module</summary>
-    <description>Cross Platform Python Module for interacting with the clipboard from https://github.com/asweigart/pyperclip Packaged as a module to allow XBMC / Kodi to interact with the clipboard.</description>
-    <platform>all</platform>
-    <license>Simplified BSD</license>
-    <source>https://github.com/asweigart/pyperclip.git</source>
-    <website>https://pypi.python.org/pypi/pyperclip</website>
   </extension>
 </addon>
 
@@ -234,6 +195,29 @@ provider-name="moedje">
     <description>Adult(18+) videos from OxoTube.com</description>
     <platform>all</platform>
   </extension>
+</addon>
+
+<addon id="script.module.urlquick" name="UrlQuick" version="0.9.3" provider-name="willforde,moedje">
+    <requires>
+        <import addon="xbmc.python" version="2.25.0"/>
+    </requires>
+    <extension point="xbmc.python.module" library="lib"/>
+    <extension point="xbmc.addon.metadata">
+        <summary lang="en_GB">Python Module URLQuick v0.9.3 by Willforde</summary>
+        <description lang="en_GB">A light-weight http client with requests like interface. Featuring persistent connections and caching support.
+        https://github.com/willforde/urlquick
+        </description>
+        <language>en</language>
+        <platform>linux osx windx</platform>
+        <license>MIT</license>
+        <website>www.alljer.com</website>
+        <email>j@alljer.com</email>
+        <source>https://github.com/willforde/urlquick</source>
+        <assets>
+            <icon>resources/icon.png</icon>
+            <fanart>resources/fanart.jpg</fanart>
+        </assets>
+    </extension>
 </addon>
 
 <addon id="plugin.video.tumblrv" name="TumblrV" provider-name="moedje" version="1.1.1">
