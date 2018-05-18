@@ -6,7 +6,10 @@ from calendar import month_name, month_abbr
 import os.path as path
 import re
 import urllib
-import urllib2
+try:
+    import urllib2
+except:
+    pass
 #from kodiswift import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod
 from xbmcswift2 import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod, common
 from xbmcswift2.common import download_page as DL
