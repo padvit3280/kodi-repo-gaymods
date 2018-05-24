@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.watchseries" name="WatchSeries" version="1.0.2" provider-name="moedje">
+<addon id="plugin.video.watchseries" name="WatchSeries" version="2.0.0" provider-name="moedje">
     <requires>
         <import addon="xbmc.python" version="2.24.0"/>
         <import addon="script.module.kodiswift"/>
@@ -17,13 +17,13 @@
         <platform>all</platform>
         <language>en</language>
         <disclaimer lang="en">Disclaimer for "watchseries"</disclaimer>
-        <summary>Watchseries-Online.pl Scrapper for video's on this site the</summary>
+        <summary>Watchseries-Online Scrapper for video's on this site the</summary>
         <description>Get the latest shows on website Watchseries-Online(.pl/.nl/.la...) allows for searching, saving
             shows, auto-playing from source specified in the settings by you, and also can filter results, and sort
             sources. This is the refactored version based off my WSONLINE plugin but I've cleaned the code up a lot and
             moved to KODISWIFT from the XBMCSWIFT2 framework. Below is the previous changes since the first version of
             this code.
-            [B]v1.9.5[/B] Fix Autoplay not marking source item as watched. v1.9.3 AutoPlay feature for your prefer host
+            [B]v2.0.0[/B] Updated hostname to watchseries-online.be v1.9.5 Fix Autoplay not marking source item as watched. v1.9.3 AutoPlay feature for your prefer host
             tries to find first link matching your preferred host and play it. 1.8.3 up More bugfixes. 1.8: Fixed a
             problem with addon only returning 1 result due to a change in the HTML of the WatchSeries-Online Website
             V1.7.1 2017-05-06 Added filter results settings V1.6.9 Minor fixes/changes to make Save Show and Remove show

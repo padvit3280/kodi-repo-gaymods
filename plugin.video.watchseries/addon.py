@@ -1,7 +1,7 @@
 from kodiswift import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod
 from resources.lib.addontools import WsolUtils, utils as WebUtils
 import ssl, os.path as path, json, re
-import webutil as WebUtils
+import webutil as WebUtilsLib
 import web_pdb
 
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -474,11 +474,6 @@ def play(url):
         return item
     else:
         plugin.set_resolved_url(url)  # url)
-        # plugurl = 'plugin://plugin.video.live.streamspro/?url={0}'.format(urllib.quote_plus(url))
-        # item = ListItem.from_dict(path=plugurl)
-        # item.add_stream_info('video', stream_values={})
-        # item.set_is_playable(True)
-        # plugin.notify(msg="RESOLVE FAIL: {0}".format(url.split('.', 1)[-1]),title="Trying {0}".format(item.path.split('.', 1)[-1]), delay=2000)
         return None
 
 

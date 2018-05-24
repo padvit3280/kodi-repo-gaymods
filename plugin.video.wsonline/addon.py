@@ -8,12 +8,12 @@ import requests
 import webutil as WebUtils
 #from xbmcswift2 import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod
 from kodiswift import Plugin, xbmc, ListItem
-from xbmcswift2 import download_page, clean_dict, SortMethod
+#from xbmcswift2 import download_page, clean_dict, SortMethod
 
 
 plugin = Plugin()
 ssl._create_default_https_context = ssl._create_unverified_context
-__BASEURL__ = 'https://watchseries-online.pl'
+__BASEURL__ = 'https://watchseries-online.be'
 __addondir__ = xbmc.translatePath(plugin.addon.getAddonInfo('path'))
 __datadir__ = xbmc.translatePath('special://profile/addon_data/{0}/'.format(plugin.id))
 __cookie__ = path.join(__datadir__, 'cookies.lwp')
@@ -81,7 +81,7 @@ def episode_makeitem(episodename, episodelink, dateadded=None):
     Latest 350, Saved Show, Category (Show listing of all episodes for that series) would all use this.
     '''
     infolbl = {}
-    spath = plugin.url_for(episode, name=episodename, url=episodelink)
+    sourcespath = plugin.url_for(episode, name=episodename, url=episodelink)
     img = "DefaultVideoFolder.png"
     seasonstr = ''
     try:
@@ -100,16 +100,19 @@ def episode_makeitem(episodename, episodelink, dateadded=None):
         if dateadded is not None:
             dateout = str(dateadded.replace(' ', '-')).strip()
             infolbl.update({"Date": dateout})
-        item = {'label': eplbl, 'label2': epdate, 'icon': img, 'thumbnail': img, 'path': spath}
+        #sourcespath = plugin.url_for(episode, name=episodename, url=episodelink)
+        playpath = plugin.url_for(endpoint=playfirst, url=episodelink)
+        item = {'label': eplbl, 'label2': epdate, 'icon': img, 'thumbnail': img, 'path': playpath}
         item.setdefault(item.keys()[0])
         li = ListItem.from_dict(**item)
         li.set_is_playable(is_playable=True)
-        li.is_folder = True
-        li.set_info(type='video', info_labels=infolbl)
+        li.is_folder = False
+        li.set_info(info_type='video', info_labels=infolbl)
         li.add_context_menu_items(
-            [('Autoplay', 'RunPlugin("{0}")'.format(plugin.url_for(endpoint=playfirst, url=episodelink)),)])
+            [('Sources', 'RunPlugin("{0}")'.format(sourcespath),)])
+            #[('Autoplay', 'RunPlugin("{0}")'.format(plugin.url_for(endpoint=playfirst, url=episodelink)),)])
     except:
-        li = ListItem(label=episodename, label2=episodelink, icon=img, thumbnail=img, path=spath)
+        li = ListItem(label=episodename, label2=episodelink, icon=img, thumbnail=img, path=sourcespath)
     return li
 
 
@@ -376,12 +379,14 @@ def latest(offset=0, urlpath='last-350-episodes'):
     # ur'<a.+?href="([^"]*?)">') reName = re.compile(strName) #ur'</span>([^<]*?)</a>')
     url = __BASEURL__ + '/' + urlpath  # '/last-350-episodes'
     fullhtml = DL(url)
-    html = fullhtml.partition("</nav>")[-1].split("</ul>", 1)[0]
-    strDate = ur"<li class='listEpisode'>(\d+ \d+ \d+) : "
-    strUrl = ur'<a.+?href="([^"]*?)">'
-    strName = ur'</span>([^<]*?)</a>'
-    regexstr = "{0}{1}.+?{2}".format(strDate, strUrl, strName)
-    matches = re.compile(regexstr).findall(html)
+    # html = fullhtml.partition("</nav>")[-1].split("</ul>", 1)[0]
+    html = fullhtml.partition("<ul class='listEpisodes'>")[-1].split("</ul>",1)[0].strip()
+    #strDate = r"<li>(\d+ \d+ \d+) : "
+    #strUrl = r'<a href="([^"]*?)"'
+    #strName = r'>(.+?)</a>'
+    #regexstr = r"{0}{1}.+?{2}".format(strDate, strUrl, strName)
+    regex = re.compile('<li>(\d+ \d+ \d+) : <a href="([^"]*?)".+?>(.+?)</a>')
+    matches = regex.findall(html) #re.compile(regexstr).findall(html)
     litems = []
     epdate = ''
     eptitle = ''
@@ -393,7 +398,6 @@ def latest(offset=0, urlpath='last-350-episodes'):
     for epdate, eplink, epname in matches:
         # if not filterout(epname, filtertxt):
         item = episode_makeitem(epname, eplink, epdate)
-        item.set_path(plugin.url_for(episode, name=epname, url=eplink))
         dateout = epdate.replace(' ', '-').strip()
         item.label += " [I][B][COLOR orange]{0}[/COLOR][/B][/I]".format(dateout)
         litems.append(item)
@@ -456,26 +460,22 @@ def queryshow(searchquery):
 @plugin.route('/category/<name>/<url>')
 def category(name='', url=''):
     html = ''
-    if not str(url).startswith('http') and len(url) > 8:
+    if not str(url).startswith('http'):
         url = __BASEURL__ + '/' + url
-        html = DL(url)
-    banner = None
-    try:
-        banner = str(html.split('id="banner_single"', 1)[0].rpartition('src="')[2].split('"', 1)[0])
-        if banner.startswith('/'): banner = __BASEURL__ + banner
-    except:
-        pass
-    if banner is None: banner = 'DefaultVideoFolder.png'
-    epre = re.compile(ur"href='(https?://watchseries-online.[a-z]+/episode/.+?)' .+?<span.+?</span>(.+?)</a>",
-                      re.DOTALL)
+    html = DL(url)
+    banner = 'DefaultVideoFolder.png'
+    epre = re.compile(ur'href="(https?://watchseries-online.[a-z]+/episode/.+?)" .+?<span.+?</span>(.+?)</a>')
     matches = epre.findall(html)
     litems = []
     if len(matches) > 1000: matches = matches[0:1000]
     for eplink, epname in matches:
-        item = episode_makeitem(epname, eplink)
-        item.path = plugin.url_for(episode, name=epname, url=eplink)
+        itempath = plugin.url_for(endpoint=episode, name=epname, url=eplink)
+        item = ListItem(label=epname, label2=eplink, icon='DefaultVideo.png', thumbnail='DefaultVideo.png',path=itempath)
         litems.append(item)
-    litems.sort(key=lambda litems: litems.label, reverse=True)
+        plugin.log.info(msg="** {0}\t{1}".format(epname, eplink))
+    plugin.notify(msg="Category {0}".format(name), title=str(len(litems)))
+    if plugin.get_setting(key='sortalpha', converter=bool):
+        litems.sort(key=lambda litems: litems.label, reverse=True)
     return litems
 
 
@@ -501,7 +501,7 @@ def episode(name='', url=''):
         for li in vitems:
             item = ListItem.from_dict(**li)
             item.set_is_playable(True)
-            item.set_info(type='video', info_labels={'Title': item.label, 'Plot': item.label2})
+            item.set_info(info_type='video', info_labels={'Title': item.label, 'Plot': item.label2})
             item.add_stream_info(stream_type='video', stream_values={})
             litems.append(item)
     else:
@@ -560,7 +560,7 @@ def playfirst(url=''):
         sitem.setdefault(sitem.keys()[0])
         item = ListItem.from_dict(**sitem)
         item.set_is_playable(True)
-        item.set_info(type='video', info_labels={'Title': item.label, 'Plot': item.label2})
+        item.set_info(info_type='video', info_labels={'Title': item.label, 'Plot': item.label2})
         item.add_stream_info(stream_type='video', stream_values={})
         plugin.notify(msg=link, title=name)
         #plugin.add_items([item])
@@ -580,7 +580,7 @@ def resolveurl():
         if len(url) > 0:
             item = ListItem(label=name, label2=url, icon='DefaultVideo.png', thumbnail='DefaultVideo.png', path=plugin.url_for(endpoint=play, url=url))
             item.set_is_playable(True)
-            item.set_info(type='video', info_labels={'Title': url, 'Plot': url})
+            item.set_info(info_type='video', info_labels={'Title': url, 'Plot': url})
             item.add_stream_info(stream_type='video', stream_values={})
             playable = play(url)
             plugin.notify(msg=playable.path, title="Playing..")
@@ -608,7 +608,8 @@ def play(url):
             item = ListItem.from_dict(path=resolved)
             item.add_stream_info('video', stream_values={})
             item.set_is_playable(True)
-            return item
+            plugin.play_video(item)
+            return None
     except:
         resolved = ''
         plugin.notify(msg="FAILED {0}".format(url.partition('.')[-1]), title="URLRESOLVER", delay=1000)
@@ -630,21 +631,18 @@ def play(url):
             item = ListItem.from_dict(path=resolved)
             item.add_stream_info('video', stream_values={})
             item.set_is_playable(True)
-            return item
+            plugin.play_video(item)
+            return None
     except:
         plugin.notify(msg="Failed: {0}".format(resolved.partition('.')[-1]), title="YOUTUBE-DL", delay=1000)
-
     if len(resolved) > 1:
         plugin.set_resolved_url(resolved)
         item = ListItem.from_dict(path=resolved)
-        return item
+        plugin.play_video(item)
+        return None
     else:
-        plugin.set_resolved_url(url)  # url)
-        # plugurl = 'plugin://plugin.video.live.streamspro/?url={0}'.format(urllib.quote_plus(url))
-        # item = ListItem.from_dict(path=plugurl)
-        # item.add_stream_info('video', stream_values={})
-        # item.set_is_playable(True)
-        # plugin.notify(msg="RESOLVE FAIL: {0}".format(url.split('.', 1)[-1]),title="Trying {0}".format(item.path.split('.', 1)[-1]), delay=2000)
+        plugin.set_resolved_url(url)
+        plugin.play_video(url)
         return None
 
 

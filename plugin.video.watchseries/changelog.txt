@@ -1,3 +1,7 @@
+v 2.0.0
+- Updated hostname to watchseries-online.be
+- Autoplay automatically instead of showing sources
+
 v 1.9.3
 - AutoPlay feature for your prefer host tries to find first link matching your preferred host and play it.
 - More bugfixes, Colors added to help view new dates
