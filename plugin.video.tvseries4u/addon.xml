@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addon id="plugin.video.tvseries4u"
-version="0.4.1"
+version="0.4.3"
 name="TVSeries4U"
 provider-name="moedje">
 <requires>
