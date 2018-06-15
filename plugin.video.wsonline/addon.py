@@ -374,16 +374,9 @@ def removeshow(name='', link=''):
 
 @plugin.route('/latest/<offset>/<urlpath>')
 def latest(offset=0, urlpath='last-350-episodes'):
-    # reDate = re.compile(strDate) #ur"<li class='listEpisode'>(\d+ \d+ \d+) :") reUrl = re.compile(strUrl)
-    # ur'<a.+?href="([^"]*?)">') reName = re.compile(strName) #ur'</span>([^<]*?)</a>')
     url = __BASEURL__ + '/' + urlpath  # '/last-350-episodes'
     fullhtml = DL(url)
-    # html = fullhtml.partition("</nav>")[-1].split("</ul>", 1)[0]
     html = fullhtml.partition("<ul class='listEpisodes'>")[-1].split("</ul>",1)[0].strip()
-    #strDate = r"<li>(\d+ \d+ \d+) : "
-    #strUrl = r'<a href="([^"]*?)"'
-    #strName = r'>(.+?)</a>'
-    #regexstr = r"{0}{1}.+?{2}".format(strDate, strUrl, strName)
     regex = re.compile('<li>(.+?): <a href="([^"]*?)".+?>(.+?)</a> ')
     matches = regex.findall(html) #re.compile(regexstr).findall(html)
     litems = []
@@ -401,12 +394,15 @@ def latest(offset=0, urlpath='last-350-episodes'):
         epnum = str(eplink.rpartition('-')[-1])
         if epnum == '2':
             epnum = str(eplink.replace('-{0}'.format(epnum),'').rpartition('-')[-1])
-            epnumtext = "[COLOR yellow]{0}[/COLOR] v2".format(epnum.upper())
+            epnumtext = "[COLOR red]{0}[/COLOR] v2".format(epnum.upper())
+        elif epnum.upper().find('S') == -1 and epnum.upper().find('E') == -1:
+            epnum = str(epname.rpartition('(')[-1]).rstrip(')').strip().replace(' ', '-')
+            epnumtext = "[COLOR yellow]{0}[/COLOR]".format(epnum.upper())
         else:
-            epnumtext = "[COLOR green]{0}[/COLOR]".format(epnum.upper())
+            epnumtext = "[COLOR yellow]{0}[/COLOR]".format(epnum.upper())
         name = epname.replace(epnum, '').replace(epnum.upper(), '').strip()
         #item.label += " [I][B][COLOR orange]{0}[/COLOR][/B][/I]".format(dateout)
-        item.label = "[COLOR white][B]{0}[/B][/COLOR] {1} [I][COLOR blue]{2}[/COLOR][/I]".format(name, epnumtext, dateout)
+        item.label = "[COLOR white][B]{0}[/B][/COLOR] {1} [I][COLOR orange]{2}[/COLOR][/I]".format(name, epnumtext, dateout)
         litems.append(item)
     litems.append(itemnext)
     return litems

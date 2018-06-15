@@ -98,7 +98,7 @@
   </extension>
 </addon>
 
-<addon id="plugin.video.wsonline" name="WatchSeries-Online" provider-name="moedje" version="2.1.0">
+<addon id="plugin.video.wsonline" name="WatchSeries-Online" provider-name="moedje" version="2.1.1">
     <requires>
         <import addon="xbmc.python" version="2.24.0"/>
         <import addon="script.module.kodiswift"/>
