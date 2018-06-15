@@ -51,8 +51,7 @@ def index():
 def DL(url):
     html = u''
     getWeb = WebUtils.CachedWebRequest(path.join(__datadir__, 'cookies.lwp'), __temp__)
-    html = getWeb.getSource(url, form_data=None, referer=__BASEURL__, xml=False, mobile=False).encode('latin',
-                                                                                                      errors='ignore')
+    html = getWeb.getSource(url, form_data=None, referer=__BASEURL__, xml=False, mobile=False).encode('latin', errors='ignore')
     return html
 
 
@@ -385,7 +384,7 @@ def latest(offset=0, urlpath='last-350-episodes'):
     #strUrl = r'<a href="([^"]*?)"'
     #strName = r'>(.+?)</a>'
     #regexstr = r"{0}{1}.+?{2}".format(strDate, strUrl, strName)
-    regex = re.compile('<li>(\d+ \d+ \d+) : <a href="([^"]*?)".+?>(.+?)</a>')
+    regex = re.compile('<li>(.+?): <a href="([^"]*?)".+?>(.+?)</a> ')
     matches = regex.findall(html) #re.compile(regexstr).findall(html)
     litems = []
     epdate = ''
@@ -393,13 +392,21 @@ def latest(offset=0, urlpath='last-350-episodes'):
     filtertxt = plugin.get_setting('filtertext')
     itemnext = {'label': 'Next ->', 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png',
                 'path': plugin.url_for(latest, offset=int(offset) + 400, urlpath=urlpath)}
-    if len(matches) > 1000:
-        matches = matches[0:1000]
+    if len(matches) > 500:
+        matches = matches[0:500]
     for epdate, eplink, epname in matches:
         # if not filterout(epname, filtertxt):
         item = episode_makeitem(epname, eplink, epdate)
         dateout = epdate.replace(' ', '-').strip()
-        item.label += " [I][B][COLOR orange]{0}[/COLOR][/B][/I]".format(dateout)
+        epnum = str(eplink.rpartition('-')[-1])
+        if epnum == '2':
+            epnum = str(eplink.replace('-{0}'.format(epnum),'').rpartition('-')[-1])
+            epnumtext = "[COLOR yellow]{0}[/COLOR] v2".format(epnum.upper())
+        else:
+            epnumtext = "[COLOR green]{0}[/COLOR]".format(epnum.upper())
+        name = epname.replace(epnum, '').replace(epnum.upper(), '').strip()
+        #item.label += " [I][B][COLOR orange]{0}[/COLOR][/B][/I]".format(dateout)
+        item.label = "[COLOR white][B]{0}[/B][/COLOR] {1} [I][COLOR blue]{2}[/COLOR][/I]".format(name, epnumtext, dateout)
         litems.append(item)
     litems.append(itemnext)
     return litems
