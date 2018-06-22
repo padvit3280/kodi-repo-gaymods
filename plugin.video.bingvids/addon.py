@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-web-api-v7-reference
-from kodiswift import Plugin, xbmc
+from kodiswift import Plugin, xbmc, ListItem
 from urllib import quote_plus as Quote, unquote_plus as Unquote
 import webutil
 import sys, os, os.path as path
@@ -8,8 +8,8 @@ import json
 plugin = Plugin()
 APIKEY=plugin.get_setting('apikey')
 tplWho = '( jovenes OR chavalo OR chavo OR amigo OR hombre OR hermano OR novinho OR chico OR chavalito )'
-tplWhat = '( mecos OR masturbo OR masturbandose OR batendo OR paja OR follando OR cogiendo OR cojiendo OR sobarse OR punheta OR verga OR lefa )'
-tplWhere = '( flagra OR flagrou OR trabajo OR publico OR biblioteca OR aula OR "en clase" OR escuela OR omnibus OR autobus OR viajandor )'
+tplWhat = '( mecos OR masturbo OR masturbandose OR batendo OR paja OR follando OR cogiendo OR cojiendo OR sobarse OR punheta OR verga OR lefa OR mear OR pipi )'
+tplWhere = '( flagra OR flagrou OR trabajo OR publico OR biblioteca OR aula OR atrapado OR escuela OR omnibus OR autobus OR viajandor )'
 tplWank = '( wank OR wanking OR wanked OR stroke OR stroking OR jerk OR jack OR masturbate OR masturbating OR cumming OR cum OR jackoff OR jerkoff OR handjob )'
 searchq = tplWhere + ' AND ' + tplWhat + ' ' + tplWho
 cpath = path.join(xbmc.translatePath('special://userdata'), 'cookies.lwp')
@@ -18,6 +18,7 @@ __addondir__ = xbmc.translatePath(plugin.addon.getAddonInfo('path'))
 __resdir__ = os.path.join(__addondir__, 'resources')
 __imgdir__ = os.path.join(__resdir__, 'images')
 __imgsearch__ = os.path.join(__imgdir__, 'search.png')
+__imgfav__ = os.path.join(__imgdir__, 'fav.png')
 __imgnext__ = os.path.join(__imgdir__, 'next.png')
 __imgback__ = os.path.join(__imgdir__, 'back.png')
 __imgtumblr__ = os.path.join(__imgdir__, 'tumblr.png')
@@ -42,15 +43,22 @@ def index():
         'path': plugin.url_for(endpoint=history),
         'is_playable': False
     }
+    itemfav = {
+        'label': 'Saved Videos',
+        'icon': __imgfav__, 'thumbnail': __imgfav__,
+        'path': plugin.url_for(endpoint=fav),
+        'is_playable': False
+    }
     litems = [itemnew]
     litems.append(itemlast)
     litems.append(itemhistory)
+    litems.append(itemfav)
     return litems
 
 @plugin.route('/search/<query>/<offset>')
 def search(query='', offset=0):
     litems = []
-    filterterms = '-chica -novinha'
+    filterterms = '-chica -novinha -she -girl -woman -lady'
     replacestr = ' -site:youtube.com -site:dailymotion.com {0}'.format(filterterms)
     origquery = query
     query += replacestr
@@ -59,15 +67,15 @@ def search(query='', offset=0):
     if freshon:
         burl = 'https://api.cognitive.microsoft.com/bing/v7.0/videos/search?freshness=Month&count=50&offset={0}&safeSearch=Off&subscription-key=a2bbbe20b19543b9ab6dee3bac81d3da&q={1}'.format(offset, Quote(query))
     jresults = dl.getSource(url=burl)
-    results = json.JSONDecoder(encoding='utf-8').decode(jresults)
+    results = json.loads(s=jresults)
     nextoff = results.get('nextOffset', 0)
     totalresults = results.get('totalEstimatedMatches', 0)
     for v in results.get('value', []):
-        ctxlist = []
         img = v.get('thumbnailUrl', 'defaultvideo.png')
         durat = v.get('duration', '')
         lbl2 = v.get('description', v.get('hostPageUrl', v.get('contentUrl', '')))
         lbl = v.get('name', '')
+        durationstr = v.get('duration', '')
         if len(durat) > 0:
             durationstr = durat[2:-1].replace('M', ':').replace('H', ':')
             durparts = durationstr.split(':')
@@ -83,14 +91,17 @@ def search(query='', offset=0):
             durparts = dp
             durationstr = "{0}:{1}:{2}".format(dp[0], dp[1], dp[2])
             lbl += " [COLOR yellow]({0})[/COLOR]".format(durationstr)
-        #playpath = plugin.url_for(endpoint=play, vurl=v.get('contentUrl', v.get('hostPageUrl', '')))
         vidhostedurl = v.get('contentUrl', v.get('hostPageUrl', ''))
         lbl2 += vidhostedurl
-        #playpath = "plugin://plugin.video.wsonline/play/" + Quote(vidhostedurl)
-        playpath = plugin.url_for(endpoint=play, vtitle=v.get('name', '').encode('latin'), vurl=vidhostedurl)
+        playpath = plugin.url_for(endpoint=play, vtitle=v.get('name', '').encode('utf8'), vurl=vidhostedurl)
         item = {'label': lbl, 'label2': lbl2, 'thumbnail': img, 'icon': img, 'path': playpath, 'is_folder': False, 'is_playable': True}
         pathdl = plugin.url_for(endpoint=download, vurl=vidhostedurl)
+        ctxlist = []
         citem = ('Download', 'RunPlugin({0})'.format(pathdl),)
+        ctxlist.append(citem)
+        idvid = v.get('videoId', 0)
+        pathfav = plugin.url_for(endpoint=fav_add, idvid=idvid)
+        citem = ('[COLOR yellow]SAVE[/COLOR]', 'RunPlugin({0})'.format(pathfav),)
         ctxlist.append(citem)
         xitem = plugin._listitemify(item)
         xitem.add_context_menu_items(items=ctxlist, replace_items=False)
@@ -99,7 +110,6 @@ def search(query='', offset=0):
         xitem.set_info(info_type='video', info_labels={'Title': lbl, 'Plot': lbl2, 'Duration': durationstr, 'Premiered': v.get('datePublished', '')})
         xitem.thumbnail = img
         xitem.icon = img
-        idvid = v.get('videoId', 0)
         if idvid is not 0:
             xitem.set_property(key='videoId', value=idvid)
             xitem.set_info(info_type='video', info_labels={'VideoID': idvid})
@@ -133,6 +143,7 @@ def query(searchfor='LAST'):
         return searchtxt
     searchtxt = gettext(textdefault=searchtxt)
     if len(searchtxt) > 1:
+        searchtxt = searchtxt.replace('"', '%22')
         plugin.set_setting(key='lastsearch', val=searchtxt)
         history_add(query=searchtxt)
         res = search(searchtxt, 0)
@@ -141,12 +152,6 @@ def query(searchfor='LAST'):
 
 @plugin.route('/history')
 def history():
-    item = {
-        'label': '1: ',
-        'icon': __imgsearch__, 'thumbnail': __imgsearch__,
-        'path': plugin.url_for(endpoint=search, query='', offset=0),
-        'is_playable': False
-    }
     litems = []
     litems = history_load()
     xitems = []
@@ -159,6 +164,7 @@ def history():
         xitem = plugin._listitemify(item)
         xitem.add_context_menu_items(items=ctxlist, replace_items=False)
         xitems.append(xitem)
+    plugin.set_view_mode(view_mode_id=501)
     return xitems
 
 
@@ -224,6 +230,112 @@ def history_del(num=0):
     else:
         plugin.notify(msg="ERROR deleting search #{0}".format(str(num)))
     xbmc.executebuiltin("Container.Refresh")
+
+
+@plugin.route('/fav')
+def fav():
+    litems = fav_load(as_listitem=True)
+    return litems
+
+@plugin.route('/fav/add/<idvid>')
+def fav_add(idvid=""):
+    burl = "https://api.cognitive.microsoft.com/bing/v7.0/videos/details?id={0}&subscription-key={1}&safeSearch=Off&modules=videoresult".format(
+        idvid, APIKEY)
+    xitem = None
+    litems = []
+    sitems = []
+    litems = fav_load()
+    jresults = dl.getSource(url=burl)
+    results = json.JSONDecoder(encoding='utf-8').decode(jresults)
+    v = results.get('videoResult', None)
+    if v is not None:
+        litem = new_viditem(v, as_dict=True)
+        litems.append(litem)
+    favpath = os.path.join(plugin.storage_path, 'fav.json')
+    favfile = file(favpath, mode='w')
+    json.dump(litems, fp=favfile)
+    favfile.close()
+    plugin.notify(msg="{0} [COLOR green]Saved to list[/COLOR]".format(v.get('name', idvid)), title="VIDEO SAVED")
+    return None
+
+
+@plugin.route('/fav/del/<idvid>')
+def fav_del(idvid=''):
+    litems = []
+    litems = list(history_load())
+    delitem = None
+    for item in litems:
+        hnum = item.get('label2', '0: ')
+        if hnum == idvid:
+            delitem = item
+            break
+    if delitem is not None:
+        litems.remove(delitem)
+        count = 1
+        items = []
+        histpath = os.path.join(plugin.storage_path, 'fav.json')
+        histfile = file(histpath, mode='w')
+        json.dump(litems, fp=histfile)
+        histfile.close()
+        plugin.notify(msg="DELETED #{0}: {1}".format(idvid, delitem.get('label', '')))
+    else:
+        plugin.notify(msg="ERROR deleting search #{0}".format(idvid))
+    xbmc.executebuiltin("Container.Refresh")
+
+
+def fav_load(as_listitem=False):
+    litems = []
+    xitems = []
+    histpath = os.path.join(plugin.storage_path, 'fav.json')
+    try:
+        if not os.path.exists(histpath) or not os.path.isfile(histpath):
+            histfile = file(histpath, mode='w')
+            json.dump(litems,fp=histfile)
+            histfile.close()
+            return litems
+        histfile = file(histpath, mode='r')
+        litems = json.load(fp=histfile)
+        histfile.close()
+    except:
+        plugin.log.error(msg="Error loading fav.json")
+        return []
+    if as_listitem:
+        for item in litems:
+            xitems.append(new_viditem(v=item))
+        litems = xitems
+    return litems
+
+
+def new_viditem(v={}, as_dict=False):
+    pathdl = plugin.url_for(endpoint=download, vurl=v.get('contentUrl', v.get('hostPageUrl', '')))
+    ctxlist = []
+    citem = ('Download', 'RunPlugin({0})'.format(pathdl),)
+    ctxlist.append(citem)
+    pathdel = plugin.url_for(endpoint=fav_del, idvid=v.get('videoId', ''))
+    citem = ('DELETE', 'RunPlugin({0})'.format(pathdel),)
+    ctxlist.append(citem)
+    img = v.get('thumbnail', v.get('thumbnailUrl', 'DefaultVideo.png'))
+    lbl = v.get('label', v.get('name', ''))
+    lbl2 = v.get('label2', v.get('videoId', ''))
+    vidpath = v.get('path', None)
+    if vidpath is None:
+        vidpath = plugin.url_for(endpoint=play, vtitle=v.get('name', lbl), vurl=v.get('contentUrl', v.get('hostPageUrl', lbl2)))
+    xitem = None
+    if not as_dict:
+        xitem = ListItem(label=lbl, label2=lbl2, icon=img, thumbnail=img, path=vidpath)
+        xitem.add_context_menu_items(items=ctxlist, replace_items=False)
+        xitem.playable = True
+        xitem.is_folder = False
+        xitem.set_info(info_type='video', info_labels={'Title': lbl, 'Plot': lbl2, 'Premiered': v.get('datePublished', '')})
+        xitem.thumbnail = img
+        xitem.icon = img
+        idvid = v.get('videoId', 0)
+        if idvid is not 0:
+            xitem.set_property(key='videoId', value=idvid)
+            xitem.set_info(info_type='video', info_labels={'VideoID': idvid})
+    else:
+        xitem = {'label': lbl, 'label2': lbl2, 'icon': img, 'thumbnail': img, 'is_playable': True, 'path': vidpath}
+    return xitem
 
 
 @plugin.route('/play/<vtitle>/<vurl>')
@@ -296,8 +408,7 @@ def download(vurl=None):
 
 
 if __name__ == '__main__':
+    viewmode = int(plugin.get_setting('viewmode'))
     plugin.run()
     plugin.set_content(content='episodes')
-    viewmode = 500
-    viewmode = int(plugin.get_setting('viewmode'))
     plugin.set_view_mode(viewmode)

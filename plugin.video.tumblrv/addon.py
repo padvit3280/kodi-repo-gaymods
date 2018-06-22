@@ -167,7 +167,7 @@ def dashboard(offset=0):
     startat = 100
     off = 0
     newestid = 0
-    nextoff = int(offset) + 100
+    nextoff = int(offset) - 100
     strpage = (nextoff/100)+1
     startid = 0
     try:
@@ -555,12 +555,14 @@ def dashboard_getitems(startoffset, max=60):
             pass
     return litems
 
+
 def lbl2id(txt):
     try:
         id = int(txt.partition('|')[0])
     except:
         id = 0
     return id
+
 
 def get_lastid():
     lastid = 0
@@ -619,7 +621,6 @@ def shouldUpdate(checkDashboardId=True, checkFollowing=False):
         plugin.log.error(msg=errmsg)
         needsupdate = True
     return True
-
 
 
 def dashboard_broken(offset=0):
@@ -851,8 +852,6 @@ def blogs_following(offset=0):
     desc = ''
     strpage = (((int(offset) + 100) / 100))+1
     inforesp = tclient.info()
-    #print (inforesp)
-    #plugin.log.info(inforesp)
     totalfollow = int(inforesp.get('user', {}).get('following', 0))
     nextoff = int(offset) + 100
     nextoffmax = nextoff*2
