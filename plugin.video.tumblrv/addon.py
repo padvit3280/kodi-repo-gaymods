@@ -19,7 +19,10 @@ __imgtumblr__ = os.path.join(__imgdir__, 'tumblr.png')
 tagpath = os.path.join(xbmc.translatePath('special://profile/addon_data/'), 'plugin.video.tumblrv', 'tagslist.json')
 weekdelta = datetime.timedelta(days=7)
 updatedelta = datetime.timedelta(minutes=10)
-import web_pdb
+try:
+    import web_pdb
+except:
+    web_pdb = None
 
 
 def doDebug():
