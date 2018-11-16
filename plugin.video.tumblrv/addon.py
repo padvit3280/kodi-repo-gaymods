@@ -121,7 +121,7 @@ def index():
         litems.append(itemfollowing)
         litems.append(itemliked)
         if doDebug():
-            itemdebug = ListItem(label="Debug Tests", thumbnail="DefaultTags.png", icon="DefaultTags.png", path=plugin.url_for(debugtest))
+            itemdebug = ListItem(label="Debug Tests", thumbnail="DefaultFolder.png", icon="DefaultTags.png", path=plugin.url_for(debugtest))
             litems.append(itemdebug)
     #itemargs = {'offset': 0, 'lastid':0}
         #itemdashvids = makeitem(name='Dashboard Videos', img=__imgtumblr__,  path='dashboard', kwargs=itemargs)
@@ -269,6 +269,56 @@ def setup_get():
     except:
         plugin.notify("Problem with the Tumblr OAUTH details", "Tumblr Login Failed")
 
+def make_viditems(listlikes=[]):
+    litems= []
+    alltags=[]
+    for item in listlikes:
+        if item.get('type', '') == 'video':
+            b = {}
+            b.update(item)
+            lbl = ""
+            lbl2 = ""
+            img = item.get('thumbnail_url', item.get('image_permalink', item.get('image_permalink', "")))
+            alltags.extend(item.get('tags', []))
+            if img == '':
+                img = __imgtumblr__
+            try:
+                if len(b.get('slug', '')) > 0:
+                    lbl = b.get('slug', '')
+                elif len(b.get('title', '')) > 0:
+                    lbl = b.get('title', '')
+                elif len(b.get('caption', '')) > 0:
+                    lbl = Strip(b.get('caption', ''))
+                elif len(b.get('summary', '')) > 0:
+                    lbl = b.get('summary', '')
+                elif len(b.get('source_title', '')) > 0:
+                    lbl = b.get('source_title', '')
+                else:
+                    lbl = b.get('short_url', '')
+                if len(item.get('summary', '')) > 0:
+                    lbl2 = item.get('summary', '')
+                else:
+                    lbl2 = item.get('blog_name', "") + " / " + item.get('source_title', '') + "(" + item.get(
+                        'slug_name', '') + ")"
+            except:
+                lbl = b.get(b.keys()[0], "")
+                lbl2 = b.get(b.keys()[-1], "")
+            vidurl = item.get('video_url', "")
+            if vidurl is not None and len(vidurl) > 10:
+                litem = ListItem(label=lbl, label2=lbl2, icon=img, thumbnail=img, path=vidurl)
+                litem.playable = True
+                litem.is_folder = False
+                if item.get('date', '') is not None:
+                    rdate = str(item.get('date', '')).split(' ', 1)[0].strip()
+                litem.set_info(info_type='video', info_labels={'Date': rdate})
+                litem.set_art({'poster': img, 'thumbnail': img, 'fanart': img})
+                pathdl = plugin.url_for(endpoint=download, urlvideo=vidurl)
+                litem.add_context_menu_items([('Download', 'RunPlugin({0})'.format(pathdl)), ])
+                litems.append(litem)
+    #savetags(alltags)
+    #litems.append(nextitem)
+    return litems
+
 
 @plugin.route('/liked/<offset>')
 def liked(offset=0):
@@ -277,18 +327,19 @@ def liked(offset=0):
     alltags = []
     litems = []
     listlikes = []
-    strpage = str(((int(offset) + 20) / 20))
+    strpage = str(((int(offset) + 40) / 40))
     nextitem = ListItem(label="Next Page -> #{0}".format(int(strpage) + 1), label2="Liked Videos", icon=__imgnext__,
-                        thumbnail=__imgnext__, path=plugin.url_for(liked, offset=int(20 + int(offset))))
+                        thumbnail=__imgnext__, path=plugin.url_for(liked, offset=int(40 + int(offset))))
     nextitem.set_art({'poster': __imgnext__, 'thumbnail': __imgnext__, 'fanart': __imgnext__})
     nextitem.is_folder = True
     # litems = [nextitem]
-    results = tclient.likes(limit=20, offset=int(offset))
+    results = tclient.likes(limit=40, offset=int(offset))
     if results is not None:
         if results.get('liked_posts', '') is not None:
             listlikes = results.get('liked_posts', '')
         else:
             listlikes = results.get(results.keys()[-1])
+    '''
     for item in listlikes:
         if item.get('type', '') == 'video':
             b = {}
@@ -333,6 +384,8 @@ def liked(offset=0):
                 litem.add_context_menu_items([('Download', 'RunPlugin({0})'.format(pathdl)), ])
                 litems.append(litem)
     savetags(alltags)
+    '''
+    litems = make_viditems(listlikes)
     litems.append(nextitem)
     return litems
 
@@ -460,6 +513,9 @@ def dashboard_items(results=[]):
     alltags = []
     litems = []
     c = 0
+
+    newitems = []
+    newitems = make_viditems(results)
     for item in results:
         c = c + 1
         vidurl = item.get('video_url', '')
@@ -529,8 +585,9 @@ def dashboard_items(results=[]):
             plugin.log.error(msg=ex)
             #print ("**ERROR CREATING DASHBOARD ITEMS**\n**{0}**\n--{1}--".format(str(ex)), str(item.values()))
             plugin.notify(ex)
-    savetags(alltags)
-    return litems #, alltags
+    #savetags(alltags)
+    #return litems #, alltags
+    return newitems
 
 
 def dashboard_getitems(startoffset, max=60):
@@ -1130,8 +1187,8 @@ if __name__ == '__main__':
     plugin.run()
     ctxlist = []
     plugin.set_content(content='movies')
-    viewmodel = 504
-    viewmodet = 504
+    viewmodel = 500
+    viewmodet = 500
     viewmodel = int(plugin.get_setting('viewmodelist'))
     viewmodet = int(plugin.get_setting('viewmodethumb'))
     plugin.set_view_mode(viewmodel)
