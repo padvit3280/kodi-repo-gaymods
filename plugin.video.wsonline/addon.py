@@ -6,10 +6,11 @@ from urllib import quote_plus
 import ssl
 import requests
 import webutil as WebUtils
+import base64
 #from xbmcswift2 import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod
 from kodiswift import Plugin, xbmc, ListItem
 #from xbmcswift2 import download_page, clean_dict, SortMethod
-
+import urlquick
 
 plugin = Plugin()
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -66,8 +67,7 @@ def makecatitem(name, link, removelink=False):
     # if removelink:
     #    litem.add_context_menu_items([('Remove Saved Show', 'RunPlugin("{0}")'.format(plugin.url_for(removeshow, name=name, link=itempath)),)])
     # else:
-    litem.add_context_menu_items(
-        [('Save Show', 'RunPlugin("{0}")'.format(plugin.url_for(saveshow, name=name, link=link)),)])
+    litem.add_context_menu_items([('Save Show', 'RunPlugin("{0}")'.format(plugin.url_for(saveshow, name=name, link=link)),)])
     return litem
 
 
@@ -377,8 +377,11 @@ def latest(offset=0, urlpath='last-350-episodes'):
     url = __BASEURL__ + '/' + urlpath  # '/last-350-episodes'
     fullhtml = DL(url)
     html = fullhtml.partition("<ul class='listEpisodes'>")[-1].split("</ul>",1)[0].strip()
-    regex = re.compile('<li>(.+?): <a href="([^"]*?)".+?>(.+?)</a> ')
+    regex = re.compile('<li.+?>(.+?): <a href="([^"]*?)".+?>(.+?)</a> ')
     matches = regex.findall(html) #re.compile(regexstr).findall(html)
+    if len(matches) == 0:
+        regex = re.compile(ur'<li class="listEpisode">.+?<a href="([^"]*?)".+?>.+?</span>.+?"([^"]*?)"')
+        matches = regex.findall(html)  # re.compile(regexstr).findall(html)
     litems = []
     epdate = ''
     eptitle = ''
@@ -432,6 +435,7 @@ def query(searchquery):
     litems = []
     for slink, sname in matches:
         litems.append(makecatitem(sname, slink))
+    '''
     html = fullhtml.partition("</nav>")[-1].split("</ul>", 1)[0]
     strDate = ur"<li class='listEpisode'>(\d+ \d+ \d+) : "
     strUrl = ur'<a.+?href="([^"]*?)">'
@@ -446,6 +450,7 @@ def query(searchquery):
         dateout = epdate.replace(' ', '-').strip()
         item.label += " [I][B][COLOR orange]{0}[/COLOR][/B][/I]".format(dateout)
         litems.append(item)
+    '''
     plugin.notify(msg="Search {0}".format(urlsearch), title="{0} {1}".format(str(len(litems)), searchquery))
     return litems
 
@@ -558,6 +563,9 @@ def playfirst(url=''):
     linklist = findvidlinks(html, findhost=prefhost)
     if len(linklist) > 0:
         name, link = linklist[0]
+        if link.find('linkOut') != -1:
+            urlout = url.split('id=')[-1]
+            link = base64.decode(urlout)
         itempath = plugin.url_for(play, url=link)
         sitem = dict(label=name, label2=link, icon='DefaultFolder.png', thumbnail='DefaultFolder.png', path=itempath)
         sitem.setdefault(sitem.keys()[0])
@@ -595,6 +603,9 @@ def resolveurl():
 
 @plugin.route('/play/<url>')
 def play(url):
+    if url.find('linkOut') != -1:
+        urlout = url.split('id=')[-1]
+        url = base64.decode(urlout)
     resolved = ''
     stream_url = ''
     item = None
