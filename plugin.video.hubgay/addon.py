@@ -6,6 +6,7 @@ from calendar import month_name, month_abbr
 import os.path as path
 import re
 import urllib
+from urlquick import get as UrlGet
 try:
     import urllib2
 except:
@@ -224,8 +225,9 @@ def parseVideosUrl(url):
     # req = urllib2.Request(url=url, data=None, headers=headers)
     # resp = urllib2.urlopen(req).read()
     try:
-        resp = download_page(url)
-        obj = json.loads(resp.decode('latin', 'ignore'))
+        webresp = UrlGet(url) # download_page(url)
+        obj = webresp.json()
+        #obj = json.loads(resp.decode('latin', 'ignore'))
         assert isinstance(obj, dict)
         obj = clean_dict(obj)
         if url.find('xtube.com') != -1:
@@ -574,19 +576,20 @@ def getAPIURLS(sitename=None):
     :return: URL of API for sitename specified or DICT(sitename: URL, sitename2: URL)
     """
     b = "http://www."
+    a = "http://api."
     sitecatsapis = dict(spankwire=b+"spankwire.com/api/HubTrafficApiCall?data=getCategoriesList&output=json&segment=gay",
                         xtube=b+"xtube.com/webmaster/api.php?action=getCategoryList",
                         youporn=b+"youporn.com/api/webmasters/categories/",
                         gaytube=b+"gaytube.com/api/webmasters/categories/",
                         pornhub=b+"pornhub.com/webmasters/categories",
-                        redtube="http://api.redtube.com/?data=redtube.Categories.getCategoriesList&output=json",
-                        tube8="http://api.tube8.com/api.php?action=getcategorieslist&output=json")
+                        redtube=a+"redtube.com/?data=redtube.Categories.getCategoriesList&output=json",
+                        tube8=a+"tube8.com/api.php?action=getcategorieslist&output=json")
     siteapis = dict(
         gaytube=b+"gaytube.com/api/webmasters/search/?ordering=newest&period=alltime&thumbsize=preview&category=&page=1&search=&tags[]=&count=250",
         pornhub=b+"pornhub.com/webmasters/search?id=44bc40f3bc04f65b7a35&category=gay&ordering=newest&tags[]=gay&search=&page=1&thumbsize=large",
-        redtube="http://api.redtube.com/?data=redtube.Videos.searchVideos&output=json&thumbsize=big&ordering=newest&page=1&search=&tags[]=gay&category=&period=alltime",
-        spankwire=b + "spankwire.com/api/HubTrafficApiCall?data=searchVideos&output=json&ordering=newest&page=1&segment=gay&count=100&search=&tags=gay&thumbsize=big",
-        tube8="http://api.tube8.com/api.php?action=searchVideos&output=json&ordering=newest&search=gay&thumbsize=big&page=1&orientation=gay",
+        redtube=a+"redtube.com/?data=redtube.Videos.searchVideos&output=json&thumbsize=big&ordering=newest&page=1&search=&tags[]=gay&category=&period=alltime",
+        spankwire=b+"spankwire.com/api/HubTrafficApiCall?data=searchVideos&output=json&ordering=newest&page=1&segment=gay&count=100&search=&tags=gay&thumbsize=big",
+        tube8=a+"tube8.com/api.php?action=searchVideos&output=json&ordering=newest&search=gay&thumbsize=big&page=1&orientation=gay",
         xtube=b+"xtube.com/webmaster/api.php?action=getVideosBySearchParams&tags=&ordering=newest&thumbsize=400x300&fields=title,tags,duration,thumbnail,url,embed,categories&search=gay&category=&page=1&count=100",
         youporn=b+"youporn.com/api/webmasters/search?search=&page=1&ordering=newest&tags[]=gay&category=&thumbsize=big",
         motherless=b+"motherless.com/feeds/tags/gay/videos?format=json&limit=250&offset=0",
@@ -600,9 +603,9 @@ def getAPIURLS(sitename=None):
     urls_straight = dict(
         gaytube=b + "gaytube.com/api/webmasters/search/?ordering=newest&period=alltime&thumbsize=all&count=100&page=1&search=&tags[]=",
         pornhub=b + "pornhub.com/webmasters/search?id=44bc40f3bc04f65b7a35&category=&ordering=newest&tags[]=&search=&page=1&thumbsize=medium",
-        redtube="http://api.redtube.com/?data=redtube.Videos.searchVideos&output=json&thumbsize=medium&ordering=newest&page=1&search=&tags[]=&category=&period=alltime",
+        redtube=a + "redtube.com/?data=redtube.Videos.searchVideos&output=json&thumbsize=medium&ordering=newest&page=1&search=&tags[]=&category=&period=alltime",
         spankwire=b + "spankwire.com/api/HubTrafficApiCall?data=searchVideos&output=json&ordering=newest&page=1&segment=straight&count=100&search=&tags=&thumbsize=all",
-        tube8="http://api.tube8.com/api.php?action=searchVideos&output=json&ordering=newest&search=&thumbsize=big&page=1&orientation=straight",
+        tube8=a + "tube8.com/api.php?action=searchVideos&output=json&ordering=newest&search=&thumbsize=big&page=1&orientation=straight",
         xtube=b + "xtube.com/webmaster/api.php?action=getVideosBySearchParams&tags=&ordering=newest&thumbsize=400x300&fields=title,tags,duration,thumbnail,url,embed,categories&search=&category=&page=1&count=100",
         youporn=b + "youporn.com/api/webmasters/search?search=&page=1&ordering=newest&tags[]=&category=&thumbsize=medium",
         motherless=b+"motherless.com/feeds/search/{0}/videos?format=json&offset=0&limit=250&sort=date")

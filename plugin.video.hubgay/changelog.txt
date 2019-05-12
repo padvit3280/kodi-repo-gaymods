@@ -1,3 +1,10 @@
+v 1.3.4
+- Fix PorkyTube returning no results
+
+v 1.3.3
+- Fixed Fire Stick installation failure for addon.
+- Updated URLQuick to v0.9.4 for compatibility with Fire Stick fixing HUBGay addon which relies on URLQuick
+
 v 1.3.0
 - Continue implementing new play and resolver changes
 - Add download context menu back to items
