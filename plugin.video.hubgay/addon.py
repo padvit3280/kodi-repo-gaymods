@@ -6,6 +6,7 @@ from calendar import month_name, month_abbr
 import os.path as path
 import re
 import urllib
+#import urlquick
 from urlquick import get as UrlGet
 try:
     import urllib2
@@ -13,7 +14,7 @@ except:
     pass
 #from kodiswift import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod
 from xbmcswift2 import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod, common
-from xbmcswift2.common import download_page as DL
+#from xbmcswift2.common import download_page as DL
 
 import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -226,8 +227,13 @@ def parseVideosUrl(url):
     # resp = urllib2.urlopen(req).read()
     try:
         webresp = UrlGet(url) # download_page(url)
-        obj = webresp.json()
-        #obj = json.loads(resp.decode('latin', 'ignore'))
+        if webresp is None or webresp.json() is None:
+            resp = download_page(url)
+            obj = json.loads(resp.decode('latin', 'ignore'))
+        else:
+            obj = webresp.json()
+            if obj is None:
+                obj = json.loads(webresp.content.decode('latin', 'ignore'))
         assert isinstance(obj, dict)
         obj = clean_dict(obj)
         if url.find('xtube.com') != -1:
@@ -235,7 +241,13 @@ def parseVideosUrl(url):
             for i in obj.iterkeys(): tlist.append(obj.get(i))
             return tlist
     except:
-        pass
+        try:
+            resp = urllib2.urlopen(url)
+            #resp = download_page(url)
+            obj = json.loads(resp.decode('latin', 'ignore'))
+            obj = clean_dict(obj)
+        except:
+            pass
     try:
         newobj = []
         assert isinstance(obj, list)
