@@ -161,7 +161,7 @@
 </addon>
 
 <addon id="plugin.video.tvseries4u"
-version="0.4.3"
+version="0.5.0"
 name="TVSeries4U"
 provider-name="moedje">
 <requires>
@@ -180,7 +180,7 @@ provider-name="moedje">
 </extension>
 <extension point="xbmc.addon.metadata">
   <summary lang="en">TVSeries4u.com scrapper</summary>
-  <description lang="en">Uses the ROMANVM SimplePlugin micro-framework to scrape links from tvseries4u.com.</description>
+  <description lang="en">V0.5.0 Added Watchseries.ovf Uses the ROMANVM SimplePlugin micro-framework to scrape links from tvseries4u.com.</description>
   <disclaimer lang="en">Not to be used for any illegal activities.</disclaimer>
 </extension>
 </addon>
