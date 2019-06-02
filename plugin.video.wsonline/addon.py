@@ -7,9 +7,7 @@ from urllib import quote_plus
 import ssl
 import requests
 import webutil as WebUtils
-#from xbmcswift2 import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod
 from kodiswift import Plugin, xbmc, ListItem
-#from xbmcswift2 import download_page, clean_dict, SortMethod
 
 
 plugin = Plugin()
@@ -31,6 +29,8 @@ def index():
     plugin.set_content('episodes')
     itemlatest = {'label': 'Latest Episodes', 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png',
                   'path': plugin.url_for(latest, offset=0, urlpath='last-350-episodes')}
+    itemcategory= {'label': 'Category', 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png',
+                   'path': plugin.url_for(search, dopaste=False)}
     itemlatest2 = {'label': 'Other Shows', 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png',
                    'path': plugin.url_for(category, name="not-in-homepage", url="category/not-in-homepage")}
     itemsaved = {'label': 'Saved Shows', 'path': plugin.url_for(saved), 'icon': 'DefaultFolder.png',
@@ -42,6 +42,7 @@ def index():
                   'path': plugin.url_for(search, dopaste=bool(False))}
     # itemsearchpasted = {'label': 'Search (Paste Clipboard)', 'icon': __imgsearch__, 'thumbnail': __imgsearch__, 'path': plugin.url_for(search, paste=True)}
     litems.append(itemlatest)
+    litems.append(itemcategory)
     litems.append(itemlatest2)  # searchpasted)
     litems.append(itemsaved)
     litems.append(itemsearch)
@@ -242,6 +243,9 @@ def findvidlinks(html='', findhost=None):
     for link in matches:
         url = re.compile(ur'href="(.+)">', re.DOTALL + re.S).findall(str(link))[0]
         if url is not None:
+            if url.find('linkOut') != -1:
+                urlout = url.split('?id=')[-1]
+                url = base64.b64decode(urlout)            
             host = str(url.lower().split('://', 1)[-1])
             host = host.replace('www.', '')
             host = str(host.split('.', 1)[0]).title()
@@ -411,11 +415,15 @@ def latest(offset=0, urlpath='last-350-episodes'):
 
 @plugin.route('/search/<dopaste>')
 def search(dopaste=False):
+    searchtxt = ''
     searchtxt = plugin.get_setting('lastsearch')
     searchtxt = plugin.keyboard(searchtxt, 'Search Watchseries-Online', False)
     if len(searchtxt) > 1:
         plugin.set_setting(key='lastsearch', val=searchtxt)
-        return query(searchquery=searchtxt)
+        #return query(searchquery=searchtxt)
+        #return query(searchquery=searchtxt)
+        caturl = '/category/' + searchtxt.replace(' ', '-')
+        return category(name=searchtxt, url=caturl)
     else:
         return []
 
@@ -468,15 +476,16 @@ def category(name='', url=''):
         url = __BASEURL__ + '/' + url
     html = DL(url)
     banner = 'DefaultVideoFolder.png'
-    epre = re.compile(ur'href="(https?://watchseries-online.[a-z]+/episode/.+?)" .+?<span.+?</span>(.+?)</a>')
+    epre = re.compile(ur'href="(https?://www?1?\.watchseries-online.[a-z]+/episode/.+?)" .+?<span.+?</span>(.+?)</a>')
     matches = epre.findall(html)
     litems = []
     if len(matches) > 1000: matches = matches[0:1000]
     for eplink, epname in matches:
         itempath = plugin.url_for(endpoint=episode, name=epname, url=eplink)
-        item = ListItem(label=epname, label2=eplink, icon='DefaultVideo.png', thumbnail='DefaultVideo.png',path=itempath)
+        #item = ListItem(label=epname, label2=eplink, icon='DefaultVideo.png', thumbnail='DefaultVideo.png',path=itempath)
+        item = episode_makeitem(epname, eplink)
         litems.append(item)
-        plugin.log.info(msg="** {0}\t{1}".format(epname, eplink))
+        #plugin.log.info(msg="** {0}\t{1}".format(epname, eplink))
     plugin.notify(msg="Category {0}".format(name), title=str(len(litems)))
     if plugin.get_setting(key='sortalpha', converter=bool):
         litems.sort(key=lambda litems: litems.label, reverse=True)
@@ -559,6 +568,9 @@ def playfirst(url=''):
     linklist = findvidlinks(html, findhost=prefhost)
     if len(linklist) > 0:
         name, link = linklist[0]
+	if link.find('linkOut') != -1:
+            urlout = link.split('?id=')[-1]
+            link = base64.b64decode(urlout)
         #itempath = plugin.url_for(play, url=link)
         itempath = plugin.url_for(play, url=link)
         sitem = dict(label=name, label2=link, icon='DefaultFolder.png', thumbnail='DefaultFolder.png', path=itempath)
@@ -600,7 +612,6 @@ def play(url):
     if url.find('linkOut') != -1:
         urlout = url.split('?id=')[-1]
         url = base64.b64decode(urlout)
-        plugin.notify(msg=urlout, title=url)
     resolved = ''
     stream_url = ''
     item = None

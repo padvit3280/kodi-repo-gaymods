@@ -6,15 +6,16 @@ from calendar import month_name, month_abbr
 import os.path as path
 import re
 import urllib
-#import urlquick
+import urlquick
 from urlquick import get as UrlGet
 try:
     import urllib2
 except:
     pass
+
 #from kodiswift import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod
 from xbmcswift2 import Plugin, xbmc, ListItem, download_page, clean_dict, SortMethod, common
-#from xbmcswift2.common import download_page as DL
+from xbmcswift2.common import download_page as DL
 
 import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -66,10 +67,12 @@ def makeVideoItems(itemlist, sitename=None):
             reldate = ''
             SITE = ''
             if sitename is not None:
+                if sitename == 'surfgay':
+                    sitename = 'surfgayvideos'
                 SITE = sitename
             else:
                 sitename = ''
-                SITE = ''
+                SITE = ''            
             if vitem.has_key('video'):
                 vid = vitem.get('video')
             else:
@@ -94,7 +97,7 @@ def makeVideoItems(itemlist, sitename=None):
                     if vid.has_key('default_thumb'):
                         thumbnail = vid.get('default_thumb')
                     elif vid.has_key('main_thumb'):
-                        thumbnail = vid.get('main_thumb') #.replace('http://','')
+                        thumbnail = vid.get('main_thumb').replace(' ', '%20')
                     elif vid.has_key('thumbnail'):
                         if thumbnail == '':
                             thumbnail = vid.get('thumbnail')
@@ -177,29 +180,33 @@ def makeVideoItems(itemlist, sitename=None):
                         if vitem.get('thumbs').has_key('big'):
                             thumbslist = vitem.get('thumbs').get('big')
                             thumb2 = thumbslist[-1]
-                    lbl += '\n{0} [COLOR yellow]{1}[/COLOR] [COLOR red]{2}[/COLOR]'.format(SITE, length, pubdate )
+                    lbl += ' {0} [COLOR yellow]{1}[/COLOR]\n[COLOR red]{2}[/COLOR]'.format(SITE, length, pubdate )
                 except:
                     xbmc.log("*****ERROR MAKING VIDEO ITEM PARSING FIELDS LOOPING TO NEXT ITEMS\n---- {0}\n".format(str(vid)))
-                lbl2 = "{0} * {1} * ID:{2}".format(plotstring, tagstring, vidid)
-                thumbnail = thumbnail.replace(' ', '%20')
-                if len(vtitle) < 1:
+                #thumbnail = thumbnail.replace(' ', '%20')
+                plotstring += "\n" + thumbnail + ' '
+                lbl2 = "ID: {2} * Tags: {1} * {0}  ".format(plotstring, tagstring, vidid)                
+                if len(vtitle) < 3:
                     vtitle = vurl.partition('.com')[0]
                     #vtitle = urllib2.unquote(vtitle).replace('http://', '').partition('.')[2]
-                vpath = plugin.url_for(play, title=vtitle, video=thumbnail, url=vurl) #.encode('utf-8', 'ignore'))
+                vpath = plugin.url_for(play, title=vtitle, video=thumbnail, url=vurl) #.encode('utf-8', 'ignore'))                
+                #xli = ListItem(label=lbl, label2=lbl2, icon=thumbnail, thumbnail=thumbnail, path=vpath) #.encode('utf-8', 'ignore'))
                 xli = ListItem(label=lbl, label2=lbl2, icon=thumbnail, thumbnail=thumbnail, path=vpath) #.encode('utf-8', 'ignore'))
                 xli.thumbnail = thumbnail
                 xli.icon = thumbnail
-                xli.poster = thumbnail
+                xli.poster = vitem.get('main_thumb', 'DefaultVideo.png')
+                #xli.set_art({'thumbnail': thumbnail, 'poster': thumbnail, 'icon': thumbnail})
                 infolbl = {'Duration': lengthnum, 'Genre': SITE, 'Plot': plotstring + tagstring, 'Rating': views, 'Premiered': reldate, 'Year': reldate, 'Title': title}
                 xli.set_info('video', info_labels=infolbl)
-                if thumb2 != '':
-                    if len(thumbslist) > 0:
-                        xli.poster = thumbslist[0]
-                        xli.thumbnail = thumbslist[1]
-                        xli.icon = thumbslist[2]
-                        #xli.set_art({'fanart': thumbslist[-1]})
-                    else:
-                        xli.poster = thumb2
+                #thumb2 = ''
+                #if thumb2 != '':
+                #    if len(thumbslist) > 0:
+                #        xli.poster = thumbslist[0]
+                #        xli.thumbnail = thumbslist[1]
+                #        xli.icon = thumbslist[2]
+                #        #xli.set_art({'fanart': thumbslist[-1]})
+                #    else:
+                #        xli.poster = thumb2
                         #xli.set_art({'fanart': thumb2})
                 xli.playable = True
                 litems.append(xli)
@@ -218,22 +225,27 @@ def parseVideosUrl(url):
     """
     obj = dict()
     resp = None
+    webresp = None
     if url.find('xtube.com') != -1 or url.find('motherless') != -1: obj = []
-    # headers = {}
-    # headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.71 Safari/537.36'})
-    # headers.update({'Accept': 'application/json,text/x-json,text/x-javascript,text/javascript,text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8;charset=utf-8'})#;charset=utf8'})
-    # headers.update({'Accept-Language': 'en-US,en;q=0.5'})
-    # req = urllib2.Request(url=url, data=None, headers=headers)
+    headers = {}
+    headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.71 Safari/537.36'})
+    headers.update({'Accept': 'application/json,text/x-json,text/x-javascript,text/javascript,text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8;charset=utf-8'})#;charset=utf8'})
+    headers.update({'Accept-Language': 'en-US,en;q=0.5'})    
     # resp = urllib2.urlopen(req).read()
     try:
-        webresp = UrlGet(url) # download_page(url)
-        if webresp is None or webresp.json() is None:
-            resp = download_page(url)
-            obj = json.loads(resp.decode('latin', 'ignore'))
-        else:
-            obj = webresp.json()
-            if obj is None:
-                obj = json.loads(webresp.content.decode('latin', 'ignore'))
+        try:
+            req = urllib.request.Request(url, data=None, headers=headers)
+            webresp = urlopen(req)
+            resp = webresp.read()
+        except:
+            try:
+                from urllib2 import Request
+                req = Request(url, headers=headers)
+                webresp = urllib2.urlopen(req)  
+                resp = webresp.read()      
+            except:
+                pass
+        obj = json.loads(resp.decode('latin', 'ignore'))
         assert isinstance(obj, dict)
         obj = clean_dict(obj)
         if url.find('xtube.com') != -1:
@@ -242,12 +254,10 @@ def parseVideosUrl(url):
             return tlist
     except:
         try:
-            resp = urllib2.urlopen(url)
-            #resp = download_page(url)
-            obj = json.loads(resp.decode('latin', 'ignore'))
-            obj = clean_dict(obj)
+            webresp = urlquick.get(url)  # download_page(url)
+            obj = webresp.json()
         except:
-            pass
+            obj = None            
     try:
         newobj = []
         assert isinstance(obj, list)
@@ -292,6 +302,15 @@ def savejson(obj, filename):
         f.close()
     except:
         pass
+
+
+def myvidster():
+    url = ""
+    resp = urlquick.get(url)
+    src = resp.content
+    html = src.rpartition('<ul class="slides clearfix">')[-1].split('<div class="pagination">',1)[0]
+    matches = re.findall('href="(.+?)">(.+?)</a>', html)
+
 
 
 def catlist_tube8(isGay=True):
@@ -607,7 +626,9 @@ def getAPIURLS(sitename=None):
         motherless=b+"motherless.com/feeds/tags/gay/videos?format=json&limit=250&offset=0",
         motherless_search=b+"motherless.com/feeds/search/gay+{0}/videos?format=json&sort=date&offset=0&limit=250",
         porkytube=b+"porkytube.com/api/?output=json&command=media.newest&type=videos&offset=0&page=1&amount=500",
-        porkytube_search=b+"porkytube.com/api/?output=json&command=media.search&q={0}&type=videos&offset=0&page=1&amount=500")
+        porkytube_search=b+"porkytube.com/api/?output=json&command=media.search&q={0}&type=videos&offset=0&page=1&amount=500",
+        surfgay=b+"surfgayvideo.com/api/?output=json&command=media.newest&type=videos&offset=0&page=1&amount=500",        
+        surfgay_search=b+"surfgayvideo.com/api/?output=json&command=media.search&q={0}&type=videos&offset=0&page=1&amount=500")
         #porn5=b+'porn5.com/api/videos/find.json?cats=gay&limit=250&page=1&search=&order=date',
         #bonertube=b + 'bonertube.com/api/?output=json&command=media.newest&type=videos&offset=0&page=1&amount=500',
         #bonertube_search=b+'bonertube.com/api/?output=json&command=media.search&q={0}&type=videos&offset=0&page=1&amount=500')
@@ -934,10 +955,10 @@ def index():
     itemallcats.setdefault(itemallcats.keys()[0])
     itemstream.setdefault(itemstream.keys()[0])
     itemsearch.setdefault(itemsearch.keys()[0])
-    allitems.append(itemtumblr)
     allitems.append(itemallcats)
-    allitems.append(itemstream)
+    allitems.append(itemtumblr)    
     allitems.append(itemsearch)
+    allitems.append(itemstream)
     return finish(allitems)
 
 
