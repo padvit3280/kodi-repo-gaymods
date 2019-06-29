@@ -161,7 +161,7 @@
 </addon>
 
 <addon id="plugin.video.tvseries4u"
-version="1.0.8"
+version="1.0.9"
 name="TVSeries4U"
 provider-name="moedje">
 <requires>
@@ -183,6 +183,27 @@ provider-name="moedje">
   <description lang="en">[B]V0.8.0[/B]: MyVidster Added. 0.6.x: Watchseries.ovf improvements V0.5.0 Added Watchseries.ovf Uses the ROMANVM SimplePlugin micro-framework to scrape links from tvseries4u.com.</description>
   <disclaimer lang="en">Not to be used for any illegal activities.</disclaimer>
 </extension>
+</addon>
+
+<addon id="script.module.resolveurl" name="ResolveURL" version="5.0.33" provider-name="jsergio">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0" />
+        <import addon="plugin.video.youtube" optional="true" />
+        <import addon="script.module.python.twitch" optional="true" />
+        <import addon="script.module.cryptopy" version="1.2.6" optional="true" />
+        <import addon="plugin.video.gdrive" optional="true" />
+    </requires>
+    <extension point="xbmc.python.module" library="lib" />
+    <extension point="xbmc.python.pluginsource" library="lib/default.py" />
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en">Resolve common video host URL's to be playable in XBMC/Kodi.</summary>
+        <summary lang="es">Resolver enlaces a videos de sitios populares para poder reproducirlos en XBMC/Kodi.</summary>
+        <summary lang="hr">Prilagodi najčešće URL-ove video izvora kako bi radili u XBMC/Kodiju.</summary>
+        <summary lang="el">Επίλυση συνδέσμων κοινών εξυπηρετητών σε μορφή βίντεο ικανό για αναπαραγωγή στο XBMC/Kodi.</summary>
+        <description lang="en">Resolve common video host URL's to be playable in XBMC/Kodi, simplify addon development of video plugins requiring multi video hosts.</description>
+        <description lang="hr">Prilagodi najčešće URL-ove video izvora kako bi radili u XBMC/Kodiju, pojednostavnjuje razvoj priključaka za video dodatke koji zahtjevaju višestruke video izvore.</description>
+    </extension>
 </addon>
 
 <addon id="plugin.video.oxo" name="Oxo" provider-name="moedje forked pcd@xtrend-alliance" version="1.2.1">
