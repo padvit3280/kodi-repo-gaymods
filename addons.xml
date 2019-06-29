@@ -270,9 +270,9 @@ provider-name="moedje">
   </extension>
 </addon>
 
-<addon id="plugin.video.hubgay" name="HubGAY" provider-name="moedje" version="1.4.3">
+<addon id="plugin.video.hubgay" name="HubGAY" provider-name="moedje" version="1.4.4">
     <requires>
-        <import addon="xbmc.python" version="2.26.0"/>
+        <import addon="xbmc.python" version="2.25.0"/>
         <import addon="script.module.xbmcswift2"/>
         <import addon="script.module.urlresolver"/>
         <import addon="script.module.urlquick"/>
