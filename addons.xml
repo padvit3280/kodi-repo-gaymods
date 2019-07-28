@@ -168,9 +168,8 @@ provider-name="moedje">
   <import addon="xbmc.python" version="2.24.0"/>
   <import addon="script.module.urlresolver" optional="true"/>
   <import addon="script.module.youtube.dl" optional="true"/>
-  <!--
-  <import addon="script.module.simpleplugin" version="1.0+"/>
-  <import addon="script.module.requests"/>
+  <import addon="script.module.pil" />
+ <!--  <import addon="script.module.requests"/>
   <import addon="script.module.kodi-pdb" optional="true"/>
   <import addon="script.module.web-pdb" optional="true"/>
   -->
@@ -388,6 +387,29 @@ provider-name="kodi-repo-gaymods">
     <screenshot>resources\screenshot-03.jpg</screenshot>
   </assets>
   <news>Updated with latest artwork metadata</news>
+</extension>
+</addon>
+
+<addon id="plugin.video.myvidster"
+version="0.0.1"
+name="MyVidster"
+provider-name="moedje">
+<requires>
+  <import addon="xbmc.python" version="2.24.0"/>
+  <import addon="script.module.urlresolver" optional="true"/>
+  <import addon="script.module.youtube.dl" optional="true"/>
+  <import addon="script.module.pil" optional="true"/>
+ <!--
+  -->
+</requires>
+<extension point="xbmc.python.pluginsource" library="main.py">
+  <provides>video</provides>
+</extension>
+<extension point="xbmc.addon.metadata">
+  <summary lang="en">MyVidster</summary>
+  <description lang="en">Player for MyVidster.Com video's. [B]V0.0.1[/B] Initial release only pulls from my user feed. Also doesn't correctly manage to pull all favorite thumbnail images if they are adult content.  Search is also not yet
+  </description>
+  <disclaimer lang="en">Not to be used for any illegal activities.</disclaimer>
 </extension>
 </addon>
 </addons>
