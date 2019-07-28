@@ -367,13 +367,14 @@ provider-name="kodi-repo-gaymods">
 </addon>
 
 <addon id="plugin.video.myvidster"
-version="0.0.1"
+version="0.0.2"
 name="MyVidster"
 provider-name="moedje">
 <requires>
   <import addon="xbmc.python" version="2.24.0"/>
-  <import addon="script.module.urlresolver" optional="true"/>
+  <import addon="script.module.urlquick" optional="true"/>
   <import addon="script.module.youtube.dl" optional="true"/>
+  <import addon="script.module.urlresolver" optional="true"/>
   <import addon="script.module.pil" optional="true"/>
  <!--
   -->
@@ -383,7 +384,7 @@ provider-name="moedje">
 </extension>
 <extension point="xbmc.addon.metadata">
   <summary lang="en">MyVidster</summary>
-  <description lang="en">Player for MyVidster.Com video's. [B]V0.0.1[/B] Initial release only pulls from my user feed. Also doesn't correctly manage to pull all favorite thumbnail images if they are adult content.  Search is also not yet
+  <description lang="en">Player for MyVidster.Com video's. [B]V0.0.2[/B] Initial release only pulls from my user feed. Also doesn't correctly manage to pull all favorite thumbnail images if they are adult content.  Search is also not yet
   </description>
   <disclaimer lang="en">Not to be used for any illegal activities.</disclaimer>
 </extension>
