@@ -9,6 +9,14 @@ import requests
 import webutil as WebUtils
 from kodiswift import Plugin, xbmc, ListItem
 
+urlresolver = None
+try:
+    import resolveurl as urlresolver
+except:
+    try:
+        import urlresolver as urlresolver
+    except:
+        urlresolver = None
 
 plugin = Plugin()
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -22,31 +30,39 @@ __imgsearch__ = path.join(__resdir__, 'search.png')
 __savedjson__ = path.join(xbmc.translatePath(plugin.addon.getAddonInfo('profile')), 'savedshows.json')
 getWeb = WebUtils.CachedWebRequest(path.join(__datadir__, 'cookies.lwp'), __temp__)
 
+# Category Could be changed to use Category Sitemap
+# https://watchseries-online.be/category-sitemap.xml
+
 
 @plugin.route('/')
 def index():
     litems = []
     plugin.set_content('episodes')
-    itemlatest = {'label': 'Latest Episodes', 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png',
+    imgtpl = __imgsearch__.replace('search.png','folder-{0}.png')
+    imglatest = imgtpl.format('latest')
+    imgplay = imgtpl.format('play')
+    imgcat = imgtpl.format('cat')
+    imgsearch = imgtpl.format('search')
+    imgother = imgtpl.format('blank')
+    itemlatest = {'label': 'Latest Episodes', 'icon': imglatest, 'thumbnail': imglatest,
                   'path': plugin.url_for(latest, offset=0, urlpath='last-350-episodes')}
-    itemcategory= {'label': 'Category', 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png',
+    itemplay = {'label': 'Play URL [I](Try\'s Finding Playable Source with [B]ResolveURL Module[/B][/I])[/I]',
+                'icon': imgplay, 'thumbnail': imgplay, 'path': plugin.url_for(endpoint=resolveurl)}
+    itemcategory= {'label': 'Category', 'icon': imgcat, 'thumbnail': imgcat,
                    'path': plugin.url_for(search, dopaste=False)}
-    itemlatest2 = {'label': 'Other Shows', 'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png',
-                   'path': plugin.url_for(category, name="not-in-homepage", url="category/not-in-homepage")}
-    itemsaved = {'label': 'Saved Shows', 'path': plugin.url_for(saved), 'icon': 'DefaultFolder.png',
-                 'thumbnail': 'DefaultFolder.png'}
-    itemplay = {'label': 'Resolve URL and Play (URLresolver required)',
-                'path': plugin.url_for(endpoint=resolveurl),
-                'icon': 'DefaultFolder.png', 'thumbnail': 'DefaultFolder.png'}
-    itemsearch = {'label': 'Search', 'icon': __imgsearch__, 'thumbnail': __imgsearch__,
+    itemsearch = {'label': 'Search', 'icon': imgsearch, 'thumbnail': imgsearch,
                   'path': plugin.url_for(search, dopaste=bool(False))}
+    itemothers = {'label': 'Other Shows', 'icon': imgother, 'thumbnail': imgother,
+                   'path': plugin.url_for(category, name="not-in-homepage", url="category/not-in-homepage")}
+    itemsaved = {'label': '[COLOR red][I]Saved Shows (Broken)[/I][/COLOR]', 'path': plugin.url_for(saved), 'icon': 'DefaultFolder.png',
+                 'thumbnail': 'DefaultFolder.png'}
     # itemsearchpasted = {'label': 'Search (Paste Clipboard)', 'icon': __imgsearch__, 'thumbnail': __imgsearch__, 'path': plugin.url_for(search, paste=True)}
     litems.append(itemlatest)
-    litems.append(itemcategory)
-    litems.append(itemlatest2)  # searchpasted)
-    litems.append(itemsaved)
-    litems.append(itemsearch)
     litems.append(itemplay)
+    litems.append(itemcategory)
+    litems.append(itemsearch)
+    litems.append(itemothers)
+    #litems.append(itemsaved)
     return litems
 
 
@@ -616,14 +632,16 @@ def play(url):
     stream_url = ''
     item = None
     try:
-        import urlresolver
-        resolved = urlresolver.HostedMediaFile(url).resolve()
-        if not resolved or resolved == False or len(resolved) < 1:
+        if urlresolver is not None:
             resolved = urlresolver.resolve(url)
-            if resolved is None or len(resolved) < 1:
-                resolved = urlresolver.resolve(urllib.unquote(url))
+        #import urlresolver
+        #resolved = urlresolver.HostedMediaFile(url).resolve()
+        #if not resolved or resolved == False or len(resolved) < 1:
+        #    resolved = urlresolver.resolve(url)
+        #    if resolved is None or len(resolved) < 1:
+        #        resolved = urlresolver.resolve(urllib.unquote(url))
         if len(resolved) > 1:
-            plugin.notify(msg="PLAY {0}".format(resolved.partition('.')[-1]), title="URLRESOLVER", delay=1000)
+            plugin.notify(msg="PLAY {0}".format(resolved.split('://',1)[-1]), title="URLRESOLVER", delay=1000)
             plugin.set_resolved_url(resolved)
             item = ListItem.from_dict(path=resolved)
             item.add_stream_info('video', stream_values={})
@@ -632,7 +650,7 @@ def play(url):
             return None
     except:
         resolved = ''
-        plugin.notify(msg="FAILED {0}".format(url.partition('.')[-1]), title="URLRESOLVER", delay=1000)
+        plugin.notify(msg="FAILED {0}".format(url), title="URLResolver", delay=1000)
     try:
         import YDStreamExtractor
         info = YDStreamExtractor.getVideoInfo(url, resolve_redirects=True)
@@ -646,7 +664,7 @@ def play(url):
         if len(stream_url) > 1:
             resolved = stream_url
         if len(resolved) > 1:
-            plugin.notify(msg="Playing: {0}".format(resolved.partition('.')[-1]), title="YOUTUBE-DL", delay=1000)
+            plugin.notify(msg="PLAY: {0}".format(resolved.split('://', 1)[-1]), title="YOUTUBE-DL", delay=1000)
             plugin.set_resolved_url(resolved)
             item = ListItem.from_dict(path=resolved)
             item.add_stream_info('video', stream_values={})
