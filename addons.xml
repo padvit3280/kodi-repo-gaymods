@@ -322,7 +322,7 @@ REQUIRED [B]Script.Module.URLResolver, Simple.Downloader, YouTubeDL, and KODIswi
 </addon>
 
 <addon id="plugin.video.xnxx"
-version="1.0.3"
+version="1.0.4"
 name="XNXX"
 provider-name="kodi-repo-gaymods">
 <requires>
@@ -341,7 +341,7 @@ provider-name="kodi-repo-gaymods">
 </extension>
 <extension point="xbmc.addon.metadata">
   <summary lang="en">XNXX.com Adult Plugin</summary>
-  <description lang="en">Plugin to view video's from the adult XNXX.Com porn site. [B]V1.0.2[/B] Starting to fix addon to work with redesign of the website. Searh now returns results and thumbnails and plays. Filters, Sorting, and other settings have changed and need to be reset if you already had this addon as they have removed some sorting options.  V0.4.0 First release basic working first release[/B]</description>
+  <description lang="en">Plugin to view video's from the adult XNXX.Com porn site. [B]V1.0.4[/B] Starting to fix addon to work with redesign of the website. Searh now returns results and thumbnails and plays. Filters, Sorting, and other settings have changed and need to be reset if you already had this addon as they have removed some sorting options.  V0.4.0 First release basic working first release[/B]</description>
   <disclaimer lang="en">ADULTS ONLY CONTENT FROM www.xnxx.com.</disclaimer>
   <assets>
     <icon>icon.png</icon>
