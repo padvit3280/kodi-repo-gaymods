@@ -1,3 +1,21 @@
+v 3.0.1
+- Swapped from script.module.urlresolver to a fork called script.module.resolveurl by jsergio123 repo: https://github.com/jsergio123/script.module.resolveurl
+- New folder icons
+- Reordering of the main menu and removed some long broken parts
+- Updated Play code to hopefully work better with new ResolveURL and fix double playing issue and failures
+
+v 2.3.0
+- Added Category for a specific show name.
+
+v 2.1.0
+- Fixed page parsing with new date form and format labels with episode/season and date add Fixed for updated page HTML
+
+v 1.9.8/7
+- changed defaullt action to autoplay instead of showing sources. Sources is now on context menu.
+
+v 1.9.5/6
+- Fix Autoplay not marking source item as watched.
+
 v 1.9.3
 - AutoPlay feature for your prefer host tries to find first link matching your preferred host and play it.
 - More bugfixes, Colors added to help view new dates

@@ -105,7 +105,14 @@ def episode_makeitem(episodename, episodelink, dateadded=None):
         eptitle, epdate, epnum = formatshow(episodename)
         eplbl = formatlabel(eptitle, epdate, epnum)
         plotstr = "{0} ({1}): {2} {3}".format(epdate, epnum, eptitle, episodelink)
-        infolbl = {'EpisodeName': epdate, 'Title': eptitle, 'Plot': plotstr}
+        epdate = epdate.strip('-')
+        try:
+            import dateutil
+            asdate = dateutil.parser.parse(epdate)
+            premdate = asdate.isoformat().split('T',1)[0]
+        except:
+            premdate = "2000-01-01"
+        infolbl = {'Premiered': premdate, 'TVShowTitle': eptitle, 'Plot': plotstr}
         if len(epnum) > 0:
             showS, showE = findepseason(epnum)
             snum = int(showS)
@@ -114,20 +121,16 @@ def episode_makeitem(episodename, episodelink, dateadded=None):
             if snum > 0 and epnum > 0:
                 epdate = "S{0}e{1}".format(snum, epnum)
                 infolbl.update({'PlotOutline': epdate})
-        if dateadded is not None:
-            dateout = str(dateadded.replace(' ', '-')).strip()
-            infolbl.update({"Date": dateout})
         #sourcespath = plugin.url_for(episode, name=episodename, url=episodelink)
-        playpath = plugin.url_for(endpoint=playfirst, url=episodelink)
-        item = {'label': eplbl, 'label2': epdate, 'icon': img, 'thumbnail': img, 'path': playpath}
+        playpath = plugin.url_for(endpoint=playfirst, url=episodelink.encode('utf-8', 'ignore'))
+        item = {'label': eplbl, 'label2': epdate, 'icon': img, 'thumbnail': img, 'path': playpath.encode('utf-8', 'ignore')}
         item.setdefault(item.keys()[0])
         li = ListItem.from_dict(**item)
         li.set_is_playable(is_playable=True)
         li.is_folder = False
         li.set_info(info_type='video', info_labels=infolbl)
-        li.add_context_menu_items(
-            [('Sources', 'RunPlugin("{0}")'.format(sourcespath),)])
-            #[('Autoplay', 'RunPlugin("{0}")'.format(plugin.url_for(endpoint=playfirst, url=episodelink)),)])
+        #li.add_context_menu_items([('Sources', 'RunPlugin("{0}")'.format(sourcespath),)])
+        #[('Autoplay', 'RunPlugin("{0}")'.format(plugin.url_for(endpoint=playfirst, url=episodelink)),)])
     except:
         li = ListItem(label=episodename, label2=episodelink, icon=img, thumbnail=img, path=sourcespath)
     return li
@@ -251,9 +254,11 @@ def find_episodes(fullhtml='', noDate=False):
     return litems
 
 
-def findvidlinks(html='', findhost=None):
+def findvidlinks(html='', findhosts=[]):
     matches = re.compile(ur'<div class="play-btn">.*?</div>', re.DOTALL).findall(html)
     vids = []
+    filtered = []
+    findhost = findhosts[0]
     if findhost is not None:
         findhost = findhost.lower()
     for link in matches:
@@ -264,13 +269,19 @@ def findvidlinks(html='', findhost=None):
                 url = base64.b64decode(urlout)            
             host = str(url.lower().split('://', 1)[-1])
             host = host.replace('www.', '')
+            #host = host.partition('.')[1:]
             host = str(host.split('.', 1)[0]).title()
             label = "{0} [COLOR blue]{1}[/COLOR]".format(host, url.rpartition('/')[-1])
             vids.append((label, url,))
-            if findhost is not None:
-                if url.lower().find(findhost) != -1:
-                    return [(label, url,)]
-    return vids
+            for findhost in findhosts:
+                if url.lower().find(findhost.lower()) != -1:
+                    filtered.append((label, url,))
+    vids.sort()
+    if len(filtered) < 1:
+        return vids
+    else:
+        filtered.sort()
+        return filtered
 
 
 def sortSourceItems(litems=[]):
@@ -546,82 +557,124 @@ def playfirst(url=''):
     idx = 0
     if len(url) < 1:
         return None
-    thispath = plugin.url_for(endpoint=play, url=url)
-    selItem = None
-    outtxt = "Not Found"
-    try:
-        for fitem in plugin.added_items:
-            if fitem.selected == True or fitem.path.find(thispath) != -1:
-                try:
-                    plugin.set_resolved_url(fitem)
-                    fitem.is_playable(True)
-                    fitem.played(True)
-                except:
-                    pass
-                selItem = fitem
-                plugin.notify(msg=selItem.label, title="Found item")
-                break
-    except:
-        selItem = None
-    if selItem is not None:
-        try:
-            selItem.set_is_playable(True)
-            selItem.set_played(was_played=True)
-            outtxt = selItem.label + " " + selItem.label2
-        except:
-            outtxt = str(repr(selItem))
-    plugin.notify(msg=outtxt, title=str(idx))
     html = DL(url)
     prefhost = ''
     sourceslist = []
+    blockedlist = []
     stext = plugin.get_setting('topSources')
+    btext = plugin.get_setting('blockedSources')
     if len(stext) < 1:
-        prefhost = 'thevideo'
+        prefhost = 'vidoza'
     else:
-        sourceslist = stext.split(',')
-        prefhost = sourceslist[0]
+        stext = stext.lower()
+        stext = stext.strip(',')
+        if stext.find(',') == -1:
+            sourceslist.append(stext)
+        else:
+            sourceslist = stext.split(',')
+        prefhost = sourceslist[0].lower()
+    btext = plugin.get_setting('blockedSources')
+    if len(btext) < 1:
+       blockedlist.append('vshare')
+    else:
+        btext = btext.lower()
+        btext = btext.strip(',')
+        if btext.find(',') == -1:
+            blockedlist.append(btext)
+        else:
+            blockedlist = btext.split(',')
     litems = []
-    linklist = findvidlinks(html, findhost=prefhost)
-    if len(linklist) > 0:
-        name, link = linklist[0]
-	if link.find('linkOut') != -1:
-            urlout = link.split('?id=')[-1]
-            link = base64.b64decode(urlout)
-        #itempath = plugin.url_for(play, url=link)
-        itempath = plugin.url_for(play, url=link)
-        sitem = dict(label=name, label2=link, icon='DefaultFolder.png', thumbnail='DefaultFolder.png', path=itempath)
-        sitem.setdefault(sitem.keys()[0])
-        item = ListItem.from_dict(**sitem)
-        item.set_is_playable(True)
-        item.set_info(info_type='video', info_labels={'Title': item.label, 'Plot': item.label2})
-        item.add_stream_info(stream_type='video', stream_values={})
-        plugin.notify(msg=link, title=name)
-        #plugin.add_items([item])
-        item.set_played(was_played=True)
-        #plugin.add_items([plugin.set_resolved_url(link)])#.as_tuple())])
-        plugin.play_video(item)
-        return [plugin.set_resolved_url(item)]
-        #return [playurl(name=name, url=link)]
-        # return plugin.finish(items=[plugin.set_resolved_url(item=play(link))])
+    name = ''
+    link = ''
+    linklistall = []
+    linklistall = findvidlinks(html, findhosts=sourceslist)
+    if len(linklistall) > 0:
+        for fitem in linklistall:
+            lname,purl = fitem
+            for source in blockedlist:
+                lbl,hurl = source
+                if purl.find(hurl) == -1:
+                    linklist.append(fitem)
+        if len(linklist) < 1: linklist = linklistall
+        for fitem in linklist:
+            vname,vurl = fitem
+            for source in sourceslist:
+                if vurl.find(source) != -1:
+                    name = vname
+                    link = vurl
+                    break
+                #foundhost = findahost(linklist, source)
+                #if foundhost is not None:
+                #    name, link = foundhost
+                #    break
+            if len(link) > 0:
+                break
+        if len(link) < 1:
+            name, link = linklist[0]
+    xbmc.log("Source {0} {1}".format(name, link))
+    plugin.notify(msg="#{0} {1}".format(str(len(linklist)), sourceslist[:]), title=link)
+    #if link.find('linkOut') != -1:
+    #    urlout = link.split('?id=')[-1]
+    #    link = base64.b64decode(urlout)
+    return play(url=link.encode('utf-8', 'ignore'))
+    '''
+    #itempath = plugin.url_for(play, url=link)
+    itempath = plugin.url_for(play, url=link)
+    sitem = dict(label=name, label2=link, icon='DefaultFolder.png', thumbnail='DefaultFolder.png', path=itempath)
+    sitem.setdefault(sitem.keys()[0])
+    item = ListItem.from_dict(**sitem)
+    item.set_is_playable(True)
+    item.set_info(info_type='video', info_labels={'Title': item.label, 'Plot': item.label2})
+    item.add_stream_info(stream_type='video', stream_values={})
+    plugin.notify(msg=link, title=name)
+    #plugin.add_items([item])
+    item.set_played(was_played=True)
+    #plugin.add_items([plugin.set_resolved_url(link)])#.as_tuple())])
+    plugin.set_resolved_url(item)
+    return plugin.play_video(item)
+    #return [plugin.set_resolved_url(item)]
+    #return [playurl(name=name, url=link)]
+    # return plugin.finish(items=[plugin.set_resolved_url(item=play(link))])
+    '''
+
+
+def findahost(linklist=[], prefhost=""):
+    for fitem in linklist:
+        lb, vu = fitem
+        xbmc.log("Lookin for host: {0} in {1}".format(prefhost, vu))
+        vu = vu.lower()
+        if vu.find(prefhost) != -1:
+            return (lb,vu,)
+    return None
 
 
 @plugin.route('/resolveurl')
 def resolveurl():
+    playable = None
+    resolved = ""
     url = plugin.keyboard(default='', heading='Video Page URL')
     if url is not None:
         name = url
         if len(url) > 0:
+            url = url.encode('utf-8', 'ignore')
             item = ListItem(label=name, label2=url, icon='DefaultVideo.png', thumbnail='DefaultVideo.png', path=plugin.url_for(endpoint=play, url=url))
-            item.set_is_playable(True)
+            item.playable = True
             item.set_info(info_type='video', info_labels={'Title': url, 'Plot': url})
             item.add_stream_info(stream_type='video', stream_values={})
             playable = play(url)
-            plugin.notify(msg=playable.path, title="Playing..")
-            plugin.play_video(playable)
+
+            try:
+                resolved = urlresolver.resolve(url)
+            except:
+                resolved = ""
+            plugin.notify(msg=resolved, title="Playing..")
+            return plugin.play_video(playable)
     #plugin.redirect(plugin.url_for(index))
-    plugin.clear_added_items()
-    plugin.end_of_directory()
+    #plugin.clear_added_items()
+    #plugin.end_of_directory()
     #return None
+    return None
+
 
 @plugin.route('/play/<url>')
 def play(url):
@@ -633,13 +686,53 @@ def play(url):
     item = None
     try:
         if urlresolver is not None:
+            stream_url = urlresolver.resolve(url)
+        if len(stream_url) > 1:
+            resolved = stream_url
+    except:
+        plugin.notify(msg="{0}".format(url), title="URLResolver FAILED", delay=1000)
+    if len(resolved) < 1:
+        plugin.notify(msg="{0}".format(url), title="Trying YouTube-DL", delay=1000)
+        try:
+            import YDStreamExtractor
+            info = YDStreamExtractor.getVideoInfo(url, resolve_redirects=True)
+            stream_url = info.streamURL()
+            if len(stream_url) < 1 or stream_url.find('http') == -1:
+                for s in info.streams():
+                    try:
+                        stream_url = s['xbmc_url'].encode('utf-8', 'ignore')
+                        xbmc.log(msg="**YOUTUBE-DL Stream found: {0}".format(stream_url))
+                    except:
+                        pass
+                if len(stream_url) > 1:
+                    resolved = stream_url
+            else:
+                resolved = stream_url
+        except:
+            plugin.notify(msg="{0}".format(url), title="YOUTUBE-DL Failed", delay=1000)
+    if len(resolved) < 1:
+        plugin.notify(msg="{0}".format(url), title="FAILED TO RESOLVE", delay=1000)
+        return None
+    else:
+        vidurl = resolved.encode('utf-8', 'ignore')
+        item = ListItem.from_dict(path=vidurl)
+        item.add_stream_info('video', stream_values={})
+        item.set_is_playable(True)
+        plugin.set_resolved_url(item)
+        return plugin.play_video(item)
+
+
+@plugin.route('/playold/<url>')
+def playold(url):
+    if url.find('linkOut') != -1:
+        urlout = url.split('?id=')[-1]
+        url = base64.b64decode(urlout)
+    resolved = ''
+    stream_url = ''
+    item = None
+    try:
+        if urlresolver is not None:
             resolved = urlresolver.resolve(url)
-        #import urlresolver
-        #resolved = urlresolver.HostedMediaFile(url).resolve()
-        #if not resolved or resolved == False or len(resolved) < 1:
-        #    resolved = urlresolver.resolve(url)
-        #    if resolved is None or len(resolved) < 1:
-        #        resolved = urlresolver.resolve(urllib.unquote(url))
         if len(resolved) > 1:
             plugin.notify(msg="PLAY {0}".format(resolved.split('://',1)[-1]), title="URLRESOLVER", delay=1000)
             plugin.set_resolved_url(resolved)
