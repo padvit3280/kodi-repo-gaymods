@@ -322,7 +322,7 @@ REQUIRED [B]Script.Module.URLResolver, Simple.Downloader, YouTubeDL, and KODIswi
 </addon>
 
 <addon id="plugin.video.xnxx"
-version="1.1.5"
+version="1.1.6"
 name="XNXX"
 provider-name="kodi-repo-gaymods">
 <requires>
