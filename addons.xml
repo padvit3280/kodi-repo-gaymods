@@ -66,6 +66,27 @@
   </extension>
 </addon>
 
+<addon id="plugin.video.newtumbl"
+version="0.0.1"
+name="NewTumbl"
+provider-name="moedje">
+<requires>
+  <import addon="xbmc.python" version="2.24.0"/>
+  <import addon="script.module.urlquick" optional="true"/>
+  <import addon="script.module.youtube.dl" optional="true"/>
+  <import addon="script.module.resolveurl" optional="true"/>
+</requires>
+<extension point="xbmc.python.pluginsource" library="main.py">
+  <provides>video</provides>
+</extension>
+<extension point="xbmc.addon.metadata">
+  <summary lang="en">NewTumbl</summary>
+  <description lang="en">Player for NewTumbl.Com Blogs video's. [B]V0.0.1[/B] First Release
+  </description>
+  <disclaimer lang="en">Not to be used for any illegal activities.</disclaimer>
+</extension>
+</addon>
+
 <addon id="plugin.video.largecamtube" name="largecamtube" provider-name="moedje" version="2.0.0">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -322,7 +343,7 @@ REQUIRED [B]Script.Module.URLResolver, Simple.Downloader, YouTubeDL, and KODIswi
 </addon>
 
 <addon id="plugin.video.xnxx"
-version="1.1.6"
+version="1.1.7"
 name="XNXX"
 provider-name="kodi-repo-gaymods">
 <requires>
