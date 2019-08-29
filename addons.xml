@@ -67,7 +67,7 @@
 </addon>
 
 <addon id="plugin.video.newtumbl"
-version="0.2.3"
+version="0.2.4"
 name="NewTumbl"
 provider-name="moedje">
 <requires>
@@ -85,6 +85,42 @@ provider-name="moedje">
   </description>
   <disclaimer lang="en">Not to be used for any illegal activities.</disclaimer>
 </extension>
+</addon>
+
+<addon id="plugin.video.resolveurl-tester" name="ResolveURL Tester" version="1.1.0" provider-name="Twilight0">
+    <requires>
+        <import addon="xbmc.python" version="2.24.0"/>
+        <import addon="script.module.tulip" version="2.3.6"/>
+        <import addon="script.module.resolveurl" version="5.0.31"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="main.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <reuselanguageinvoker>false</reuselanguageinvoker>
+        <summary lang="en">ResolveURL Tester</summary>
+        <description lang="en_GB">This addon can play and test various video and audio content from various sources supported by ResolveURL library.</description>
+        <disclaimer lang="en_GB">This addon does not provide any content, its sole purpose is to resolve web urls with the help of ResolveURL library</disclaimer>
+        <language>en</language>
+        <license>GNU GPL, version 2</license>
+        <website>https://twitter.com/TwilightZer0</website>
+        <source>https://github.com/Twilight0/plugin.video.resolveurl-tester</source>
+        <size>106257</size>
+        <news>[B]1.1.0[/B] - 29-05-2019
+- Added a setting to force a specific host (useful for testing universal resolvers)
+  > As url you must provide media id only
+
+[B]1.0.1[/B] - 25-05-2019
+- Added "set title and play" context menu item
+- Other minor tweaks
+
+[B]1.0.0[/B] - 16-05-2019
+- Initial version</news>
+        <assets>
+            <icon>icon.png</icon>
+        </assets>
+    </extension>
 </addon>
 
 <addon id="plugin.video.largecamtube" name="largecamtube" provider-name="moedje" version="2.0.0">
@@ -119,13 +155,14 @@ provider-name="moedje">
   </extension>
 </addon>
 
-<addon id="plugin.video.wsonline" name="WatchSeries-Online" provider-name="moedje" version="3.1.2">
+<addon id="plugin.video.wsonline" name="WatchSeries-Online" provider-name="moedje" version="3.2.0">
     <requires>
         <import addon="xbmc.python" version="2.24.0"/>
         <import addon="script.module.kodiswift"/>
         <import addon="script.module.xbmcswift2"/>
         <import addon="script.module.requests" optional="false"/>
-        <import addon="script.module.resolveurl" version="5.0.00+"/>
+        <import addon="script.module.resolveurl" version="5.0.00+" optional="true"/>
+        <import addon="plugin.video.resolveurl-tester" version="1.1.0+" optional="true"/>
         <import addon="script.module.urlresolver" optional="true"/>
         <import addon="script.module.youtube.dl" optional="true"/>
         <import addon="script.module.unidecode" optional="true"/>
@@ -142,6 +179,20 @@ provider-name="moedje">
             [B]v3.1.2[/B] Fixed the selection of hosting sources based on settings list, also allows to filter out hosts you don't want to use in settings. This appears to be working well and playing episodes that previously wouldn't play, or tried a source not in the list of top sources and that I knew didn't work. v3.0.1: Swapped from script.module.urlresolver to a fork called script.module.resolveurl by jsergio123 repo: https://github.com/jsergio123/script.module.resolveurl Also added new icons, reordered the main menu, and changed the play code around a bit to hopefully work better and resolve more hosts with ResolveURL module.
             v2.3.0 Added Category for a specific show name. 2.1.0: Fixed page parsing with new date form and format labels with episode/season and date add Fixed for updated page HTML v1.9.8/7 changed defaullt action to autoplay instead of showing sources. Sources is now on context menu. v1.9.5/6 Fix Autoplay not marking source item as watched. v1.9.3 AutoPlay feature for your prefer host tries to find first link matching your preferred host and play it. 1.8.3 up More bugfixes. 1.8: Fixed a problem with addon only returning 1 result due to a change in the HTML  of the WatchSeries-Online Website V1.7.1 2017-05-06 Added filter results settings V1.6.9 Minor fixes/changes to make Save Show and Remove show work better. Make Search Show work as currently doesn't. V1.5 2017-2-20: Parsers have been added to attempt to grab details out of the name of the show such as the date, episode number and season. Formats the listings to be standard for easy sorting and reading through including color to make date stand out. V1.2.0 2018-02-14: New playback and video file resolving fixing many bugs. Source Sorting and fave sources can be set in settings. Updated to new watchseries-online host which is currently .PL and added this as a setting that can be changed in the addon so I don't have to release an update each time they move servers.
         </description>
+    </extension>
+</addon>
+
+    <addon id="repository.twilight0.libs" name="Twilight0 Libs Repository" version="1.0.0" provider-name="Twilight0">
+        <extension point="xbmc.addon.repository" name="Twilight0 Libs Repository">
+            <info compressed="false">http://raw.githubusercontent.com/Twilight0/repo.twilight0.libs/master/_zips/addons.xml</info>
+            <checksum>http://raw.githubusercontent.com/Twilight0/repo.twilight0.libs/master/_zips/addons.xml.md5</checksum>
+            <datadir zip="true">http://raw.githubusercontent.com/Twilight0/repo.twilight0.libs/master/_zips/</datadir>
+            <hashes>false</hashes>
+        </extension>
+        <extension point="xbmc.addon.metadata">
+            <summary>Repository for library addons</summary>
+            <description>Repository for library addons</description>
+            <platform>all</platform>
     </extension>
 </addon>
 
