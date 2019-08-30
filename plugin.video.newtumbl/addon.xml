@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addon id="plugin.video.newtumbl"
-version="0.2.2"
+version="0.3.8"
 name="NewTumbl"
 provider-name="moedje">
 <requires>
@@ -14,7 +14,7 @@ provider-name="moedje">
 </extension>
 <extension point="xbmc.addon.metadata">
   <summary lang="en">NewTumbl</summary>
-  <description lang="en">Player for NewTumbl.Com Blogs video's. [B]V0.2.0[/B] Currently able to display newTumbl Dashboard (Feed) and Search Tagged Video's. Next Feature Followed Blogs, Searh Blogs, Display a Blogs Posts
+  <description lang="en">Player for NewTumbl.Com Blogs video's. [B]V0.3.0[/B] Search Blogs V0.2.0 Currently able to display newTumbl Dashboard (Feed) and Search Tagged Video's. Next Feature Followed Blogs, Searh Blogs, Display a Blogs Posts
   </description>
   <disclaimer lang="en">Not to be used for any illegal activities.</disclaimer>
 </extension>
