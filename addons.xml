@@ -67,7 +67,7 @@
 </addon>
 
 <addon id="plugin.video.newtumbl"
-version="0.4.9"
+version="0.5.0"
 name="NewTumbl"
 provider-name="moedje">
 <requires>
@@ -80,7 +80,8 @@ provider-name="moedje">
 </extension>
 <extension point="xbmc.addon.metadata">
   <summary lang="en">NewTumbl</summary>
-  <description lang="en">Player for NewTumbl.Com Blogs video's. [B]V0.4.0[/B] Followed and Liked, Followed Blogs, Followed Tags  V0.3.0 Search Blogs V0.2.0 Currently able to display newTumbl Dashboard (Feed) and Search Tagged Video's. Next Feature Followed Blogs, Searh Blogs, Display a Blogs Posts
+  <description lang="en">Player for NewTumbl.Com Set your User Token and UserID in Settings to pull your Content. You can find this in your cookies will add more instructions soon if this is to technical for you as I hope to automate this login process.
+    [B]V0.5.0[/B] Followed Blogs, Followed Tags, Search for Blogs, Search Videos by Tag, View Blog Videos, and Liked Videos all working. Downloading working v0.4.0 Started to add Following sections, liked, and tags  V0.3.0 Search Blogs V0.2.0 Currently able to display newTumbl Dashboard (Feed) and Search Tagged Video's. Next Feature Followed Blogs, Searh Blogs, Display a Blogs Posts
   </description>
   <disclaimer lang="en">Not to be used for any illegal activities.</disclaimer>
 </extension>
