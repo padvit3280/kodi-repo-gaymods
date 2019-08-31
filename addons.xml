@@ -67,14 +67,13 @@
 </addon>
 
 <addon id="plugin.video.newtumbl"
-version="0.3.8"
+version="0.3.9"
 name="NewTumbl"
 provider-name="moedje">
 <requires>
   <import addon="xbmc.python" version="2.24.0"/>
   <import addon="script.module.urlquick" optional="true"/>
   <import addon="script.module.youtube.dl" optional="true"/>
-  <import addon="script.module.resolveurl" optional="true"/>
 </requires>
 <extension point="xbmc.python.pluginsource" library="main.py">
   <provides>video</provides>
