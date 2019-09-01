@@ -234,6 +234,30 @@ provider-name="moedje">
     </extension>
 </addon>
 
+<addon id="plugin.video.tvseries4u"
+version="1.2.0"
+name="TVSeries4U"
+provider-name="moedje">
+<requires>
+  <import addon="xbmc.python" version="2.24.0"/>
+  <import addon="script.module.resolveurl" version="5.0.00+" optional="true"/>
+  <import addon="script.module.youtube.dl" optional="true"/>
+ <!-- <import addon="script.module.pil" optional="true"/>
+ <import addon="script.module.requests"/>
+  <import addon="script.module.kodi-pdb" optional="true"/>
+  <import addon="script.module.web-pdb" optional="true"/>
+  -->
+</requires>
+<extension point="xbmc.python.pluginsource" library="main.py">
+  <provides>video</provides>
+</extension>
+<extension point="xbmc.addon.metadata">
+  <summary lang="en">TVSeries4u: Watchseries.ovf</summary>
+  <description lang="en">[B]V1.2.0[/B] Fixing WatchSeries.OVF. Formally tvseries4u and testbed for my MyVidster addon. Uses the ROMANVM SimplePlugin micro-framework to scrape links from tvseries4u.com.</description>
+  <disclaimer lang="en">Not to be used for any illegal activities.</disclaimer>
+</extension>
+</addon>
+
 <addon id="script.module.resolveurl" name="ResolveURL" version="5.0.33" provider-name="jsergio">
     <requires>
         <import addon="xbmc.python" version="2.1.0" />
