@@ -67,7 +67,7 @@
 </addon>
 
 <addon id="plugin.video.newtumbl"
-version="0.5.3"
+version="0.5.6"
 name="NewTumbl"
 provider-name="moedje">
 <requires>
@@ -484,7 +484,7 @@ REQUIRED [B]Script.Module.URLResolver, Simple.Downloader, YouTubeDL, and KODIswi
 </addon>
 
 <addon id="plugin.video.xnxx"
-version="1.2.0"
+version="1.2.1"
 name="XNXX"
 provider-name="kodi-repo-gaymods">
 <requires>
