@@ -67,7 +67,7 @@
 </addon>
 
 <addon id="plugin.video.newtumbl"
-version="0.5.9"
+version="0.5.91"
 name="NewTumbl"
 provider-name="moedje">
 <requires>
