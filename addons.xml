@@ -366,7 +366,7 @@ REQUIRED [B]Script.Module.URLResolver, Simple.Downloader, YouTubeDL, and KODIswi
 </addon>
 
 <addon id="plugin.video.wsOVF"
-version="1.0.2"
+version="1.0.3"
 name="WatchSeriesOVF"
 provider-name="moedje">
 <requires>
