@@ -366,7 +366,7 @@ REQUIRED [B]Script.Module.URLResolver, Simple.Downloader, YouTubeDL, and KODIswi
 </addon>
 
 <addon id="plugin.video.wsOVF"
-version="1.0.5"
+version="1.1.0"
 name="WatchSeriesOVF"
 provider-name="moedje">
 <requires>
@@ -381,7 +381,7 @@ provider-name="moedje">
 </extension>
 <extension point="xbmc.addon.metadata">
   <summary lang="en">WatchSeries.OVF</summary>
-  <description lang="en">[B]V1.0.0[/B]Renamed from old TVSeries4U addon which died long ago. Uses the ROMANVM SimplePlugin micro-framework to scrape links from watchseries.ovf</description>
+  <description lang="en">[B]V1.1.0[/B]Renamed from old TVSeries4U addon which died long ago. Fixed changes made to watchseries websites that broke addon. Uses the ROMANVM SimplePlugin micro-framework to scrape links from watchseries.ovf</description>
   <disclaimer lang="en">Not to be used for any illegal activities.</disclaimer>
 </extension>
 </addon>
