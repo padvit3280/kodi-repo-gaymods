@@ -1,0 +1,4 @@
+<settings>
+    <setting default="" id="lastsearch" label="Last Search" type="text" values="" visible="true"/>
+    <setting default="" id="downloadpath" label="Download Path" type="folder" values="" visible="true"/>
+</settings>

@@ -1,0 +1,553 @@
+NewTumbl.com API
+https://www.newtumbl.com/android-chrome-256x256.png
+
+API Endpoints
+
+
+https://api-ro.newtumbl.com/sp/NewTumbl/search_Dash_Posts_Aux
+https://api-ro.newtumbl.com/sp/NewTumbl/search_Site_Blogs_Aux
+https://api-ro.newtumbl.com/sp/NewTumbl/search_Site_Posts_Aux
+https://api-ro.newtumbl.com/sp/NewTumbl/search_Blog_Posts_Aux
+https://api-ro.newtumbl.com/sp/NewTumbl/search_User_Posts_Like_Aux
+https://api-ro.newtumbl.com/sp/NewTumbl/search_User_Posts_Favorite_Aux
+https://api-rw.newtumbl.com/sp/NewTumbl/search_User_Blogs_Follow_Aux
+https://api-rw.newtumbl.com/sp/NewTumbl/get_User_FollowTags
+https://api-rw.newtumbl.com/sp/NewTumbl/get_User_Settings
+https://api-ro.newtumbl.com/sp/NewTumbl/get_Blog_Marquee
+
+https://api-rw.newtumbl.com/sp/NewTumbl/set_FollowBlog_Insert
+
+
+API Template and Endpoints
+
+apiGetEndpoints = [
+    "search_Dash_Posts_Aux", 
+    "search_Site_Blogs_Aux", 
+    "search_Site_Posts_Aux",     
+    "search_Blog_Posts_Aux",     
+    "search_User_Posts_Like_Aux", 
+    "search_User_Posts_Favorite_Aux", 
+    "search_User_Blogs_Follow_Aux",
+    "get_User_FollowTags",    
+    "get_User_FollowBlogs",
+    "get_User_Settings",    
+    "get_Blog_Marquee",
+    "get_Blog_Settings",
+    "search_Post_Notes_Aux",    
+    "search_Dash_Activity_Aux"
+]
+
+apiSetEndpoints = [
+	"set_FollowBlog_Insert",
+	"set_FollowTag_Insert",
+	"set_Post_Compose",
+	"set_Post_Delete",
+	"set_HideBlog_Delete","set_HideBlog_Insert","set_User_Spam","set_PostPart_Insert","set_PostPart_Delete",
+	"set_PostPart_Order", "set_Post_Read", "set_Post_Rating","set_Post_Clone", "set_Flag_Delete","set_Flag_Insert","set_Like_Delete",
+	"set_Like_Insert", "set_Favorite_Delete", "set_Favorite_Insert", "set_Post_Reblog", "set_Blog_Appearance", "set_Blog_Ratinng"
+]
+
+
+curl 'https://api-ro.newtumbl.com/sp/NewTumbl/search_User_Posts_Favorite' \
+-XPOST \
+-H 'Accept: */*' \
+-H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' \
+-H 'Origin: https://newtumbl.com' \
+-H 'Content-Length: 206' \
+-H 'Accept-Language: en-gb' \
+-H 'Host: api-ro.newtumbl.com' \
+-H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.2 Safari/605.1.15' \
+-H 'Referer: https://newtumbl.com/favorite' \
+-H 'Accept-Encoding: br, gzip, deflate' \
+-H 'Connection: keep-alive' \
+--data 'json=%7B%22Params%22%3A%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIxGlw8z3ghxRULdpn1QSCaBe_tXs88va6_Ue9gZNE3%22%2C391932%2Cnull%2Cnull%2C0%2C50%2C0%2Cnull%2C0%2C%22%22%2C0%2C0%2C0%2C0%2C0%2Cnull%2Cnull%5D%7D'
+
+
+curl 'https://api-rw.newtumbl.com/sp/NewTumbl/set_Blog_Appearance' \
+-XPOST \
+-H 'Accept: */*' \
+-H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' \
+-H 'Origin: https://www.newtumbl.com' \
+-H 'Content-Length: 184' \
+-H 'Accept-Language: en-gb' \
+-H 'Host: api-rw.newtumbl.com' \
+-H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.2 Safari/605.1.15' \
+-H 'Referer: https://www.newtumbl.com/blog/settings' \
+-H 'Accept-Encoding: br, gzip, deflate' \
+-H 'Connection: keep-alive' \
+--data 'json=%7B%22Params%22%3A%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIxGlw8z3ghxRULdpn1QSCaBe_tXs88va6_Ue9gZNE3%22%2C391932%2C%22Untitled%22%2C%22%22%2C0%2C15774966%2C0%2C-1%2C-1%2C0%5D%7D'
+
+
+curl 'https://api-rw.newtumbl.com/sp/NewTumbl/get_Blog_Settings' \
+-XPOST \
+-H 'Accept: */*' \
+-H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' \
+-H 'Origin: https://www.newtumbl.com' \
+-H 'Content-Length: 125' \
+-H 'Accept-Language: en-gb' \
+-H 'Host: api-rw.newtumbl.com' \
+-H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.2 Safari/605.1.15' \
+-H 'Referer: https://www.newtumbl.com/blog/settings' \
+-H 'Accept-Encoding: br, gzip, deflate' \
+-H 'Connection: keep-alive' \
+--data 'json=%7B%22Params%22%3A%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIxGlw8z3ghxRULdpn1QSCaBe_tXs88va6_Ue9gZNE3%22%2C391932%5D%7D'
+["get_Blog_Marquee","search_Site_Blogs","search_Site_Posts","search_Dash_Activity","search_Dash_Posts","search_Blog_Posts","search_User_Posts_Like","search_User_Posts_Favorite","search_Post_Notes"]
+
+Dashboard Videos
+curl 'https://api-ro.newtumbl.com/sp/NewTumbl/search_Site_Posts_Aux' -H 'Accept: */*' -H 'Referer: https://newtumbl.com/search/' -H 'DNT: 1' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36' -H 'Sec-Fetch-Mode: cors' -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data 'json=%7B%22Params%22%3A%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I%22%2C391932%2Cnull%2Cnull%2C0%2C50%2C0%2Cnull%2C0%2C%22%22%2C0%2C0%2C0%2C0%2C0%2Cnull%2Cnull%5D%7D' --compressed
+
+curl 'https://api-ro.newtumbl.com/sp/NewTumbl/search_Site_Posts_Aux' -H 'Accept: */*' -H 'Referer: https://newtumbl.com/search/' -H 'DNT: 1' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36' -H 'Sec-Fetch-Mode: cors' -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data 'json=%7B%22Params%22%3A%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I%22%2C391932%2Cnull%2Cnull%2C0%2C50%2C0%2Cnull%2C0%2C%22%22%2C1%2C5%2C7%2C0%2C0%2Cnull%2Cnull%5D%7D' --compressed
+curl 'https://api-ro.newtumbl.com/sp/NewTumbl/search_Site_Posts_Aux' -H 'Accept: */*' -H 'Referer: https://newtumbl.com/search/' -H 'DNT: 1' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36' -H 'Sec-Fetch-Mode: cors' -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data 'json=%7B%22Params%22%3A%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I%22%2C391932%2Cnull%2C%222019-08-11T23%3A48%3A10.1334934%22%2C1%2C50%2C0%2Cnull%2C0%2C%22%22%2C1%2C5%2C7%2C0%2C0%2Cnull%2Cnull%5D%7D' --compressed
+curl 'https://api-ro.newtumbl.com/sp/NewTumbl/search_Site_Posts_Aux' -H 'Accept: */*' -H 'Referer: https://newtumbl.com/search/' -H 'DNT: 1' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36' -H 'Sec-Fetch-Mode: cors' -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data 'json=%7B%22Params%22%3A%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I%22%2C391932%2Cnull%2C%222019-08-11T23%3A48%3A10%22%2C2%2C50%2C0%2Cnull%2C0%2C%22%22%2C1%2C5%2C7%2C0%2C0%2Cnull%2Cnull%5D%7D' --compressed
+
+Video's from July
+curl 'https://api-ro.newtumbl.com/sp/NewTumbl/search_Site_Posts_Aux' -H 'Accept: */*' -H 'Referer: https://newtumbl.com/search/' -H 'DNT: 1' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36' -H 'Sec-Fetch-Mode: cors' -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data 'json=%7B%22Params%22%3A%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I%22%2C391932%2Cnull%2Cnull%2C0%2C50%2C0%2C%222019-07-31T23%3A00%3A00.0000000%22%2C0%2C%22%22%2C1%2C5%2C7%2C0%2C0%2Cnull%2Cnull%5D%7D' --compressed
+
+Video's Posted in July
+json: {"Params":["[{IPADDRESS}]","FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I",391932,null,null,0,50,0,"2019-07-31T23:00:00.0000000",0,"",1,5,7,0,0,null,null]}
+curl 'https://api-ro.newtumbl.com/sp/NewTumbl/search_Site_Posts_Aux' -H 'Accept: */*' -H 'Referer: https://newtumbl.com/search/' -H 'DNT: 1' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36' -H 'Sec-Fetch-Mode: cors' -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data 'json=%7B%22Params%22%3A%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I%22%2C391932%2Cnull%2Cnull%2C0%2C50%2C0%2C%222019-07-31T23%3A00%3A00.0000000%22%2C0%2C%22%22%2C1%2C5%2C7%2C0%2C0%2Cnull%2Cnull%5D%7D' --compressed
+
+
+Post View Settings
+
+PostViewSetting = [
+"sSort",
+"sFilter",
+"nPage",
+"nPerPage"
+] 
+
+View Tagged Posts
+
+json: {"Params":["[{IPADDRESS}]","FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I",391932,null,"2019-08-11T23:37:24.1512796",1,50,0,null,0,"#TAGHERE",1,5,0,0,0,null,null]}
+curl 'https://api-ro.newtumbl.com/sp/NewTumbl/search_Site_Posts_Aux' -H 'Accept: */*' -H 'Referer: https://newtumbl.com/tagged/teen' -H 'DNT: 1' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36' -H 'Sec-Fetch-Mode: cors' -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data 'json=%7B%22Params%22%3A%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I%22%2C391932%2Cnull%2C%222019-08-11T23%3A37%3A24.1512796%22%2C1%2C50%2C0%2Cnull%2C0%2C%22%23teen%22%2C1%2C5%2C0%2C0%2C0%2Cnull%2Cnull%5D%7D' --compressed
+
+
+"https://up0.newtumbl.com/sba/" + Cookie.Get("LoginToken")
+https://up0.newtumbl.com/sba/FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I
+
+
+FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I
+
+Follow Blog
+https://api-rw.newtumbl.com/sp/NewTumbl/set_FollowBlog_Insert
+json: {"Params":["[{IPADDRESS}]","FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I",391932,163769,""]}
+curl 'https://api-rw.newtumbl.com/sp/NewTumbl/set_FollowBlog_Insert' -H 'Accept: */*' -H 'Referer: https://public.newtumbl.com/' -H 'DNT: 1' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36' -H 'Sec-Fetch-Mode: cors' -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data 'json=%7B%22Params%22%3A%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I%22%2C391932%2C163769%2C%22%22%5D%7D' --compressed
+
+
+All Posts on a Blog
+https://api-ro.newtumbl.com/sp/NewTumbl/search_Blog_Posts_Aux
+{"Params":["[{IPADDRESS}]","FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I",391932,null,null,0,50,0,null,0,"",0,0,0,0,0,163769,null]}
+curl 'https://api-ro.newtumbl.com/sp/NewTumbl/search_Blog_Posts_Aux' -H 'Accept: */*' -H 'Referer: https://public.newtumbl.com/' -H 'DNT: 1' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36' -H 'Sec-Fetch-Mode: cors' -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data 'json=%7B%22Params%22%3A%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I%22%2C391932%2Cnull%2Cnull%2C0%2C50%2C0%2Cnull%2C0%2C%22%22%2C0%2C0%2C0%2C0%2C0%2C163769%2Cnull%5D%7D' --compressed
+
+Search Blogs Follow
+{"Params":["[{IPADDRESS}]","FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I",391932,null,null,0,25,0,null,0,"",0,0,0,1,0,null,null]}
+
+Get User Settings
+https://api-rw.newtumbl.com/sp/NewTumbl/get_User_Settings
+
+search_Dash_Activity_Aux
+
+Like
+json: {"Params":["[{IPADDRESS}]","FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I",391932,null,null,0,50,0,null,0,"",0,0,2,0,0,null,null]}
+
+Follow
+json: {"Params":["[{IPADDRESS}]","FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I",391932,null,null,0,50,0,null,0,"",0,0,4,0,0,null,null]}
+
+
+
+DashPosts Requests Fields
+{"Params":["[{IPADDRESS}]","FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I",391932,null,null,0,50,0,null,0,"SEARCHTERM",1,5,7,0,1,null,null]}
+DashPosts Videos
+{"Params":["[{IPADDRESS}]","FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I",391932,null,null,0,50,0,null,0,"",1,5,7,0,1,null,null]}
+DashPosts All
+{"Params":["[{IPADDRESS}]","FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I",391932,null,null,0,50,0,null,0,"",1,5,0,0,1,null,null]}
+
+https://api-rw.newtumbl.com/sp/NewTumbl/set_FollowTag_Insert
+
+curl 'https://api-rw.newtumbl.com/sp/NewTumbl/get_User_FollowBlogs' -H 'Accept: */*' -H 'Referer: https://newtumbl.com/follow' -H 'DNT: 1' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36' -H 'Sec-Fetch-Mode: cors' -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data 'json=%7B%22Params%22%3A%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I%22%5D%7D' --compressed
+{"Params":["[{IPADDRESS}]","FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I",391932,null,null,0,50,0,null,0,"",0,0,0,0,1,null,null]}
+
+Search Posts Params:
+{"Params":["[{IPADDRESS}]","FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I",391932,null,null,0,50,0,null,0,"",1,5,7,0,0,null,null]}
+{"Params":["[{IPADDRESS}]","FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I",391932,null,null,0,50,0,null,0,"SEARCHTERM",1,5,7,0,0,null,null]}
+
+
+UserLikes
+https://api-ro.newtumbl.com/sp/NewTumbl/search_User_Posts_Like_Aux
+
+Videos only:
+json: {"Params":["[{IPADDRESS}]","FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I",391932,null,null,0,50,0,null,0,"",1,5,7,0,0,null,null]}
+
+Search:
+{"Params":["[{IPADDRESS}]","FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I",391932,null,null,0,50,0,null,0,"SEARCHTERM",1,5,7,0,0,null,null]}
+
+All Liked:
+json: {"Params":["[{IPADDRESS}]","FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I",391932,null,null,0,50,0,null,0,"",0,0,0,0,0,null,null]}
+
+curl 'https://api-rw.newtumbl.com/sp/NewTumbl/get_User_FollowTags' -H 'Accept: */*' -H 'Referer: https://newtumbl.com/dashboard' -H 'DNT: 1' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36' -H 'Sec-Fetch-Mode: cors' -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data 'json=%7B%22Params%22%3A%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I%22%5D%7D' --compressed ;
+curl 'https://api-ro.newtumbl.com/sp/NewTumbl/search_Dash_Posts_Aux' -H 'Accept: */*' -H 'Referer: https://newtumbl.com/dashboard' -H 'DNT: 1' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36' -H 'Sec-Fetch-Mode: cors' -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data 'json=%7B%22Params%22%3A%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I%22%2C391932%2Cnull%2Cnull%2C0%2C25%2C0%2Cnull%2C0%2C%22%22%2C0%2C0%2C0%2C0%2C0%2Cnull%2Cnull%5D%7D' --compressed ;
+curl 'https://api-ro.newtumbl.com/sp/NewTumbl/search_User_Posts_Like_Aux' -H 'Accept: */*' -H 'Referer: https://newtumbl.com/like' -H 'DNT: 1' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36' -H 'Sec-Fetch-Mode: cors' -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data 'json=%7B%22Params%22%3A%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I%22%2C391932%2Cnull%2Cnull%2C0%2C50%2C0%2Cnull%2C0%2C%22%22%2C1%2C5%2C7%2C0%2C0%2Cnull%2Cnull%5D%7D' --compressed
+curl 'https://api-ro.newtumbl.com/sp/NewTumbl/search_User_Posts_Like_Aux' -H 'Accept: */*' -H 'Referer: https://newtumbl.com/like' -H 'DNT: 1' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36' -H 'Sec-Fetch-Mode: cors' -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data 'json=%7B%22Params%22%3A%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I%22%2C391932%2Cnull%2Cnull%2C0%2C50%2C0%2Cnull%2C0%2C%22train%22%2C1%2C5%2C7%2C0%2C0%2Cnull%2Cnull%5D%7D' --compressed
+
+curl 'https://api-rw.newtumbl.com/sp/NewTumbl/get_Post_Compose' -H 'Accept: */*' -H 'Referer: https://newtumbl.com/dashboard' -H 'DNT: 1' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36' -H 'Sec-Fetch-Mode: cors' -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data 'json=%7B%22Params%22%3A%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I%22%2C0%2C10416364%5D%7D' --compressed ;
+curl 'https://api-rw.newtumbl.com/sp/NewTumbl/set_Post_Compose' -H 'Accept: */*' -H 'Referer: https://newtumbl.com/dashboard' -H 'DNT: 1' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36' -H 'Sec-Fetch-Mode: cors' -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data 'json=%7B%22Params%22%3A%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I%22%2C391932%2C7%5D%7D' --compressed ;
+curl 'https://api-rw.newtumbl.com/sp/NewTumbl/set_Post_Delete' -H 'Accept: */*' -H 'Referer: https://newtumbl.com/dashboard' -H 'DNT: 1' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36' -H 'Sec-Fetch-Mode: cors' -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data 'json=%7B%22Params%22%3A%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I%22%2C0%2C10416364%5D%7D' --compressed
+
+sURL = "https://" + sHost + ".newtumbl.com/img" + sPath + Base32(SHA256(sPath)).slice(0, 24) + sThumb + "." + sExt
+
+
+
+get_User_FollowTags
+https://api-rw.newtumbl.com/sp/NewTumbl/get_User_FollowTags
+
+Request:
+json: {"Params":["[{IPADDRESS}]","FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I"]}
+encoded: json=%7B%22Params%22%3A%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I%22%5D%7D
+
+
+TumblUser
+
+
+
+https://api-ro.newtumbl.com/sp/NewTumbl/search_Dash_Posts_Aux
+
+curl 'https://api-ro.newtumbl.com/sp/NewTumbl/search_Dash_Posts_Aux' -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data 'json=%7B%22Params%22%3A%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I%22%2C391932%2Cnull%2Cnull%2C0%2C50%2C0%2Cnull%2C0%2C%22%22%2C0%2C0%2C0%2C0%2C1%2Cnull%2Cnull%5D%7D' --compressed
+
+{"Params":["[{IPADDRESS}]","FzCWMJIxGlw8z3ghxRULdpn1QSCaBe_tXs88va6_Ue9gZNE3","exhib",""]}
+
+{"Params":["[{IPADDRESS}]","FzCWMJIxGlw8z3ghxRULdpn1QSCaBe_tXs88va6_Ue9gZNE3","exhib",""]}
+
+Params=%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIxGlw8z3ghxRULdpn1QSCaBe_tXs88va6_Ue9gZNE3%22%2C%22exhib%22%2C%22%22%5D
+
+
+
+https://api-rw.newtumbl.com/sp/NewTumbl/set_FollowTag_Insert?Params=%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIxGlw8z3ghxRULdpn1QSCaBe_tXs88va6_Ue9gZNE3%22%2C%22exhib%22%2C%22%22%5D
+
+
+$
+0
+1
+2
+ACTIVITY
+ARRANGE
+ARRANGE_ACTIVITY
+ARRANGE_POST
+ASK
+Arrange
+BASE
+BLOCK_prototype
+BLOG
+BLOG_HANDLE_ON
+BLOG_ON
+CHOOSER
+COMMENT
+COMPOSE
+COOKIE
+Clean
+Cookie
+DATABASE
+DB
+DISCOVERY
+Data_Post
+Data_Session
+FEEDBACK
+FOLLOW
+FORM
+FORM_Init
+Filter
+FlaggingGuideline
+Follow_Object
+GoogleAnalyticsObject
+HMAC_SHA256_MAC
+HMAC_SHA256_finalize
+HMAC_SHA256_init
+HMAC_SHA256_write
+INPUT_QUILL
+INPUT_TEXT
+INPUT_TEXTAREA
+Include
+Init_Filter_Dash
+Init_Filter_Dash_Categories
+Init_Header_Dash
+MEDIA
+MENU
+MESSAGE
+MESSAGING
+MODAL
+MODEL_BASE
+Menu
+Model
+NAV
+NOTE
+Nav
+OBSERVABLE
+PAGE
+PART_prototype
+PM
+POPMAN
+POST
+POST_ON
+Page
+ParseTags
+PhotoSwipe
+PhotoSwipeUI_Default
+Popup
+Post_Compose
+QuickScroll
+Quill
+RATING
+RERATE
+RatingGuideline
+SBC_PROXYMODEL_DB
+SBC_PROXYMODEL_RTS
+SEARCH
+SELECTOR
+SHA256_Ch
+SHA256_H
+SHA256_Hash_Byte_Block
+SHA256_Hash_Word_Block
+SHA256_K
+SHA256_Maj
+SHA256_Sigma0
+SHA256_Sigma1
+SHA256_buf
+SHA256_finalize
+SHA256_hash
+SHA256_hexchars
+SHA256_init
+SHA256_len
+SHA256_sigma0
+SHA256_sigma1
+SHA256_write
+Search
+Search_Convert
+Search_Convert_Data
+Search_Find
+SubmitSearch
+Swap_Filter_Dash
+TRAY_BASE
+Template_Copy
+Template_Select
+UPLOAD
+USER
+WELCOME
+Welcome
+XTAB
+_fbq
+alert
+applicationCache
+array_to_hex_string
+asSection
+atob
+blur
+btoa
+caches
+cancelAnimationFrame
+captureEvents
+clearInterval
+clearTimeout
+clientInformation
+close
+closed
+closure_lm_478459
+confirm
+crypto
+customElements
+dataLayer
+defaultStatus
+defaultstatus
+devicePixelRatio
+document
+event
+fbq
+fetch
+find
+focus
+frameElement
+frames
+g_aTab
+g_ajResult
+g_ajTab
+g_asFlag
+g_asFlagLong
+g_asFlaggingGuideline
+g_asRatingGuideline
+g_nTab
+g_sClass_Body
+g_szBlogId
+g_szDomain
+g_szDomain_Base
+ga
+gaData
+gaGlobal
+gaplugins
+getComputedStyle
+getMatchedCSSRules
+getSelection
+google
+googleTranslateElementInit
+google_tag_data
+google_tag_manager
+history
+indexedDB
+innerHeight
+innerWidth
+isSecureContext
+jAnchor
+jQuery
+length
+localStorage
+location
+locationbar
+lurl
+matchMedia
+menubar
+moveBy
+moveTo
+name
+navigator
+offscreenBuffering
+onActive
+onClick_Activity
+onClick_Catcher
+onClick_Category
+onClick_Filter
+onClick_Post
+onClick_Search
+onClick_Tab
+onComplete_Discovery
+onEmpty_Feed
+onKeyUp_Search
+onPage
+onSearch
+onSession
+onabort
+onanimationcancel
+onanimationend
+onanimationiteration
+onanimationstart
+onbeforeunload
+onblur
+oncanplay
+oncanplaythrough
+onchange
+onclick
+oncontextmenu
+oncuechange
+ondblclick
+ondrag
+ondragend
+ondragenter
+ondragleave
+ondragover
+ondragstart
+ondrop
+ondurationchange
+onemptied
+onended
+onerror
+onfocus
+onhashchange
+oninput
+oninvalid
+onkeydown
+onkeypress
+onkeyup
+onlanguagechange
+onload
+onloadeddata
+onloadedmetadata
+onloadstart
+onmessage
+onmousedown
+onmouseenter
+onmouseleave
+onmousemove
+onmouseout
+onmouseover
+onmouseup
+onmousewheel
+onoffline
+ononline
+onpagehide
+onpageshow
+onpause
+onplay
+onplaying
+onpopstate
+onprogress
+onratechange
+onrejectionhandled
+onreset
+onresize
+onscroll
+onseeked
+onseeking
+onselect
+onstalled
+onstorage
+onsubmit
+onsuspend
+ontimeupdate
+ontoggle
+ontransitioncancel
+ontransitionend
+ontransitionrun
+ontransitionstart
+onunhandledrejection
+onunload
+onvolumechange
+onwaiting
+open
+openDatabase
+opener
+origin
+outerHeight
+outerWidth
+pageXOffset
+pageYOffset
+parent
+performance
+personalbar
+postMessage
+print
+prompt
+queueMicrotask
+releaseEvents
+requestAnimationFrame
+resizeBy
+resizeTo
+safari
+screen
+screenLeft
+screenTop
+screenX
+screenY
+scroll
+scrollBy
+scrollTo
+scrollX
+scrollY
+scrollbars
+self
+sessionStorage
+setInterval
+setTimeout
+showModalDialog
+speechSynthesis
+status
+statusbar
+stop
+string_to_array
+styleMedia
+tagsInput
+toolbar
+top
+webkitCancelAnimationFrame
+webkitCancelRequestAnimationFrame
+webkitConvertPointFromNodeToPage
+webkitConvertPointFromPageToNode
+webkitIndexedDB
+webkitRequestAnimationFrame
+window

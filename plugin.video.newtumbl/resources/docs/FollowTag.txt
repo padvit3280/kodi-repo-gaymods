@@ -1,0 +1,78 @@
+set_FollowTag_Insert
+https://api-rw.newtumbl.com/sp/NewTumbl/set_FollowTag_Insert 
+Address: 13.66.172.19:443
+
+Request
+:method: POST
+:scheme: https
+:authority: api-rw.newtumbl.com
+:path: /sp/NewTumbl/set_FollowTag_Insert
+Accept: */*
+Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+Origin: https://ballweights4fun.newtumbl.com
+Content-Length: 139
+Accept-Language: en-gb
+Host: api-rw.newtumbl.com
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.2 Safari/605.1.15
+Referer: https://ballweights4fun.newtumbl.com/tagged/exhib
+Accept-Encoding: br, gzip, deflate
+Connection: keep-alive
+
+Response
+:status: 200
+Content-Type: application/json; charset=utf-8
+Pragma: no-cache
+Expires: -1
+Access-Control-Allow-Origin: *
+Date: Sun, 11 Aug 2019 18:34:04 GMT
+Content-Length: 313
+Cache-Control: no-cache
+Server: Microsoft-IIS/10.0
+x-powered-by: ASP.NET
+x-aspnet-version: 4.0.30319
+
+Request Data
+MIME Type: application/x-www-form-urlencoded; charset=UTF-8
+
+{"Params":["[{IPADDRESS}]","FzCWMJIxGlw8z3ghxRULdpn1QSCaBe_tXs88va6_Ue9gZNE3","exhib",""]}
+
+{
+    "Params": [
+        "[{IPADDRESS}]",
+        "FzCWMJIxGlw8z3ghxRULdpn1QSCaBe_tXs88va6_Ue9gZNE3",
+        "exhib",
+        ""
+    ]
+}
+
+Response:
+{
+    "nResult": "-2",
+    "aResultSet": [
+        {
+            "aRow": [
+                {
+                    "dwError": 2,
+                    "szError": "Tag is already followed"
+                }
+            ],
+            "nTotalRows": 1,
+            "aField": [
+                {
+                    "sName": "dwError",
+                    "oMin": 2,
+                    "oMax": 2,
+                    "sType": "Int32",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "szError",
+                    "oMin": "Tag is already followed",
+                    "oMax": "Tag is already followed",
+                    "sType": "String",
+                    "bNumeric": false
+                }
+            ]
+        }
+    ]
+}

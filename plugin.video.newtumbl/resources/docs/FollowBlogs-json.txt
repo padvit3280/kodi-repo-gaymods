@@ -1,0 +1,1186 @@
+search_User_Blogs_Follow_Aux
+https://api-rw.newtumbl.com/sp/NewTumbl/search_User_Blogs_Follow_Aux
+json: {"Params":["[{IPADDRESS}]","FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I",391932,null,null,0,25,0,null,0,"",0,0,0,1,0,null,null]}
+
+
+curl 'https://api-rw.newtumbl.com/sp/NewTumbl/search_User_Blogs_Follow_Aux' -H 'Accept: */*' -H 'Referer: https://newtumbl.com/feed' -H 'DNT: 1' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36' -H 'Sec-Fetch-Mode: cors' -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' --data 'json=%7B%22Params%22%3A%5B%22%5B%7BIPADDRESS%7D%5D%22%2C%22FzCWMJIw6mi8gl6pU6LgpGMcncAg75JIqnqBsiGK2tytG76I%22%2C391932%2Cnull%2Cnull%2C0%2C25%2C0%2Cnull%2C0%2C%22%22%2C0%2C0%2C0%2C1%2C0%2Cnull%2Cnull%5D%7D' --compressed
+
+
+{
+    "nResult": "0",
+    "aResultSet": [
+        {
+            "aRow": [
+            ]
+        },
+        {
+            "aRow": [
+                {
+                    "dtCreated": "2000-01-01T00:00:00",
+                    "qwMediaIx": 0,
+                    "bMediaTypeIx": 0,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 0,
+                    "nHeight": 0,
+                    "nSize": 0,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-02-02T13:58:25.7761037",
+                    "qwMediaIx": 357850,
+                    "bMediaTypeIx": 2,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 400,
+                    "nHeight": 400,
+                    "nSize": 24468,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-02-02T13:58:38.2174771",
+                    "qwMediaIx": 357859,
+                    "bMediaTypeIx": 2,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 770,
+                    "nHeight": 355,
+                    "nSize": 123745,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-04-28T10:54:09.7333902",
+                    "qwMediaIx": 4429863,
+                    "bMediaTypeIx": 3,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 500,
+                    "nHeight": 362,
+                    "nSize": 191589,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-05-08T04:51:12.0810325",
+                    "qwMediaIx": 5226525,
+                    "bMediaTypeIx": 2,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 525,
+                    "nHeight": 600,
+                    "nSize": 75805,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-05-09T18:08:50.408998",
+                    "qwMediaIx": 5359530,
+                    "bMediaTypeIx": 2,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 3024,
+                    "nHeight": 4032,
+                    "nSize": 1747492,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-05-10T16:32:54.5276906",
+                    "qwMediaIx": 5440833,
+                    "bMediaTypeIx": 2,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 1900,
+                    "nHeight": 250,
+                    "nSize": 449506,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-05-10T16:53:38.2320346",
+                    "qwMediaIx": 5442386,
+                    "bMediaTypeIx": 2,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 408,
+                    "nHeight": 413,
+                    "nSize": 27669,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-05-12T06:08:27.3234991",
+                    "qwMediaIx": 5575345,
+                    "bMediaTypeIx": 2,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 1280,
+                    "nHeight": 313,
+                    "nSize": 136810,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-05-12T17:21:44.8711524",
+                    "qwMediaIx": 5615232,
+                    "bMediaTypeIx": 2,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 500,
+                    "nHeight": 523,
+                    "nSize": 50071,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-05-12T17:52:09.4662058",
+                    "qwMediaIx": 5617116,
+                    "bMediaTypeIx": 2,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 1008,
+                    "nHeight": 924,
+                    "nSize": 215450,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-05-16T13:36:05.7211673",
+                    "qwMediaIx": 5960279,
+                    "bMediaTypeIx": 2,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 668,
+                    "nHeight": 667,
+                    "nSize": 298838,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-05-20T17:37:26.7924754",
+                    "qwMediaIx": 6338189,
+                    "bMediaTypeIx": 2,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 1280,
+                    "nHeight": 720,
+                    "nSize": 74083,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-05-20T17:37:30.3019781",
+                    "qwMediaIx": 6338194,
+                    "bMediaTypeIx": 2,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 700,
+                    "nHeight": 525,
+                    "nSize": 9347,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-05-22T14:58:06.3600585",
+                    "qwMediaIx": 6508225,
+                    "bMediaTypeIx": 2,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 540,
+                    "nHeight": 405,
+                    "nSize": 140100,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-05-29T16:50:46.0981893",
+                    "qwMediaIx": 7156216,
+                    "bMediaTypeIx": 2,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 720,
+                    "nHeight": 1280,
+                    "nSize": 140969,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-06-06T22:43:25.7107219",
+                    "qwMediaIx": 7958877,
+                    "bMediaTypeIx": 3,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 120,
+                    "nHeight": 120,
+                    "nSize": 12739,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-06-11T14:02:10.2102157",
+                    "qwMediaIx": 8441595,
+                    "bMediaTypeIx": 2,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 1199,
+                    "nHeight": 671,
+                    "nSize": 200853,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-06-11T22:27:30.3917017",
+                    "qwMediaIx": 8484082,
+                    "bMediaTypeIx": 2,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 270,
+                    "nHeight": 270,
+                    "nSize": 16870,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-06-11T22:28:19.6343505",
+                    "qwMediaIx": 8484146,
+                    "bMediaTypeIx": 2,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 640,
+                    "nHeight": 371,
+                    "nSize": 87603,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-07-09T08:17:51.8720375",
+                    "qwMediaIx": 11444220,
+                    "bMediaTypeIx": 2,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 553,
+                    "nHeight": 553,
+                    "nSize": 52986,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-07-13T13:07:30.6971794",
+                    "qwMediaIx": 11912927,
+                    "bMediaTypeIx": 2,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 480,
+                    "nHeight": 640,
+                    "nSize": 171595,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-07-13T13:12:33.6336286",
+                    "qwMediaIx": 11913339,
+                    "bMediaTypeIx": 2,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 1096,
+                    "nHeight": 1329,
+                    "nSize": 536101,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-08-04T08:56:24.7333888",
+                    "qwMediaIx": 14436740,
+                    "bMediaTypeIx": 2,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 559,
+                    "nHeight": 559,
+                    "nSize": 62628,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-08-04T09:21:28.4545864",
+                    "qwMediaIx": 14438574,
+                    "bMediaTypeIx": 2,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 1909,
+                    "nHeight": 715,
+                    "nSize": 310703,
+                    "bStatus": 0
+                },
+                {
+                    "dtCreated": "2019-08-07T17:32:39.4702469",
+                    "qwMediaIx": 14868973,
+                    "bMediaTypeIx": 2,
+                    "dwIPAddressIx": 0,
+                    "dwUserIx": 0,
+                    "szBody": "",
+                    "szSub": "",
+                    "nWidth": 1076,
+                    "nHeight": 1076,
+                    "nSize": 275866,
+                    "bStatus": 0
+                }
+            ],
+            "nTotalRows": 26,
+            "aField": [
+                {
+                    "sName": "dtCreated",
+                    "oMin": "2000-01-01T00:00:00",
+                    "oMax": "2019-08-07T17:32:39.4702469",
+                    "sType": "DateTime",
+                    "bNumeric": false
+                },
+                {
+                    "sName": "qwMediaIx",
+                    "oMin": 0,
+                    "oMax": 14868973,
+                    "sType": "Int64",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "bMediaTypeIx",
+                    "oMin": 0,
+                    "oMax": 3,
+                    "sType": "Byte",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "dwIPAddressIx",
+                    "oMin": 0,
+                    "oMax": 0,
+                    "sType": "Int32",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "dwUserIx",
+                    "oMin": 0,
+                    "oMax": 0,
+                    "sType": "Int32",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "szBody",
+                    "oMin": "",
+                    "oMax": "",
+                    "sType": "String",
+                    "bNumeric": false
+                },
+                {
+                    "sName": "szSub",
+                    "oMin": "",
+                    "oMax": "",
+                    "sType": "String",
+                    "bNumeric": false
+                },
+                {
+                    "sName": "nWidth",
+                    "oMin": 0,
+                    "oMax": 3024,
+                    "sType": "Int16",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "nHeight",
+                    "oMin": 0,
+                    "oMax": 4032,
+                    "sType": "Int16",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "nSize",
+                    "oMin": 0,
+                    "oMax": 1747492,
+                    "sType": "Int32",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "bStatus",
+                    "oMin": 0,
+                    "oMax": 0,
+                    "sType": "Byte",
+                    "bNumeric": true
+                }
+            ]
+        },
+        {
+            "aRow": [
+                {
+                    "dtCreated": "2019-04-28T10:13:27.4223991",
+                    "dwBlogIx": 160776,
+                    "szBlogId": "ballweights4fun",
+                    "dwUserIx": 159643,
+                    "szTitle": "xpose me & other hot stuff",
+                    "szDescription": "",
+                    "bPrimary": 1,
+                    "bPrivate": 0,
+                    "bStatus": 0,
+                    "bIconShape": 0,
+                    "qwMediaIx_Icon": 5226525,
+                    "qwMediaIx_Banner": 6508225,
+                    "qwMediaIx_Background": 0,
+                    "dwColor_Background": 6513507,
+                    "dwColor_Foreground": -1,
+                    "bRatingIx": 4,
+                    "bNoIndex": 0,
+                    "bHide": 0,
+                    "bFollow": 1,
+                    "bBlock": 0
+                },
+                {
+                    "dtCreated": "2019-05-23T19:44:43.4376268",
+                    "dwBlogIx": 228732,
+                    "szBlogId": "somelikeithot",
+                    "dwUserIx": 206866,
+                    "szTitle": "Some Like It Hot 🔥",
+                    "szDescription": "Hot and Sexy Men of all kinds!! Thousands of Gay and Erotic Pictures, gifs, & videos! ",
+                    "bPrimary": 1,
+                    "bPrivate": 0,
+                    "bStatus": 0,
+                    "bIconShape": 0,
+                    "qwMediaIx_Icon": 7156216,
+                    "qwMediaIx_Banner": 0,
+                    "qwMediaIx_Background": 0,
+                    "dwColor_Background": -1,
+                    "dwColor_Foreground": -1,
+                    "bRatingIx": 4,
+                    "bNoIndex": 0,
+                    "bHide": 0,
+                    "bFollow": 1,
+                    "bBlock": 0
+                },
+                {
+                    "dtCreated": "2019-08-04T08:42:41.5913152",
+                    "dwBlogIx": 380093,
+                    "szBlogId": "slutmachine",
+                    "dwUserIx": 355159,
+                    "szTitle": "Hot gay porn",
+                    "szDescription": "(NSNW) Your daily portion of hot men pics and vids. All of the content reblogged from oldTumbl.",
+                    "bPrimary": 1,
+                    "bPrivate": 0,
+                    "bStatus": 0,
+                    "bIconShape": 0,
+                    "qwMediaIx_Icon": 14436740,
+                    "qwMediaIx_Banner": 14438574,
+                    "qwMediaIx_Background": 0,
+                    "dwColor_Background": -1,
+                    "dwColor_Foreground": -1,
+                    "bRatingIx": 4,
+                    "bNoIndex": 0,
+                    "bHide": 0,
+                    "bFollow": 1,
+                    "bBlock": 0
+                },
+                {
+                    "dtCreated": "2019-05-09T14:40:15.5770518",
+                    "dwBlogIx": 205594,
+                    "szBlogId": "inpublic",
+                    "dwUserIx": 40285,
+                    "szTitle": "",
+                    "szDescription": "This one is for all the fantasies not taken. A vicarious look at exhibitionism. \nFrom the bulge you never could fondle to the ignored advances from strangers.\n  What if you did?",
+                    "bPrimary": 1,
+                    "bPrivate": 0,
+                    "bStatus": 0,
+                    "bIconShape": 0,
+                    "qwMediaIx_Icon": 5442386,
+                    "qwMediaIx_Banner": 5440833,
+                    "qwMediaIx_Background": 0,
+                    "dwColor_Background": -1,
+                    "dwColor_Foreground": -1,
+                    "bRatingIx": 4,
+                    "bNoIndex": 0,
+                    "bHide": 0,
+                    "bFollow": 1,
+                    "bBlock": 0
+                },
+                {
+                    "dtCreated": "2019-06-11T21:57:48.8325945",
+                    "dwBlogIx": 259162,
+                    "szBlogId": "malevoyeur",
+                    "dwUserIx": 236393,
+                    "szTitle": "Male Voyeur",
+                    "szDescription": "Photos & Videos of all kinds of males. Submissions welcome. ",
+                    "bPrimary": 1,
+                    "bPrivate": 0,
+                    "bStatus": 0,
+                    "bIconShape": 0,
+                    "qwMediaIx_Icon": 8484082,
+                    "qwMediaIx_Banner": 8484146,
+                    "qwMediaIx_Background": 0,
+                    "dwColor_Background": 3673580,
+                    "dwColor_Foreground": 16775927,
+                    "bRatingIx": 4,
+                    "bNoIndex": 0,
+                    "bHide": 0,
+                    "bFollow": 1,
+                    "bBlock": 0
+                },
+                {
+                    "dtCreated": "2019-06-30T10:34:34.8209196",
+                    "dwBlogIx": 311625,
+                    "szBlogId": "robind",
+                    "dwUserIx": 287981,
+                    "szTitle": "Untitled",
+                    "szDescription": "",
+                    "bPrimary": 1,
+                    "bPrivate": 0,
+                    "bStatus": 0,
+                    "bIconShape": 1,
+                    "qwMediaIx_Icon": 11444220,
+                    "qwMediaIx_Banner": 0,
+                    "qwMediaIx_Background": 0,
+                    "dwColor_Background": -1,
+                    "dwColor_Foreground": -1,
+                    "bRatingIx": 4,
+                    "bNoIndex": 0,
+                    "bHide": 0,
+                    "bFollow": 1,
+                    "bBlock": 0
+                },
+                {
+                    "dtCreated": "2019-08-07T17:24:51.7594528",
+                    "dwBlogIx": 386270,
+                    "szBlogId": "publicdickdisplay",
+                    "dwUserIx": 361200,
+                    "szTitle": "Untitled",
+                    "szDescription": "",
+                    "bPrimary": 1,
+                    "bPrivate": 0,
+                    "bStatus": 0,
+                    "bIconShape": 0,
+                    "qwMediaIx_Icon": 14868973,
+                    "qwMediaIx_Banner": 0,
+                    "qwMediaIx_Background": 0,
+                    "dwColor_Background": -1,
+                    "dwColor_Foreground": -1,
+                    "bRatingIx": 4,
+                    "bNoIndex": 0,
+                    "bHide": 0,
+                    "bFollow": 1,
+                    "bBlock": 0
+                },
+                {
+                    "dtCreated": "2019-05-11T11:10:25.082425",
+                    "dwBlogIx": 209185,
+                    "szBlogId": "public-traffic",
+                    "dwUserIx": 148610,
+                    "szTitle": "Subway",
+                    "szDescription": "exposed men  Flashers  Subway Metro Bus exhibitimist",
+                    "bPrimary": 0,
+                    "bPrivate": 0,
+                    "bStatus": 0,
+                    "bIconShape": 0,
+                    "qwMediaIx_Icon": 5615232,
+                    "qwMediaIx_Banner": 5575345,
+                    "qwMediaIx_Background": 0,
+                    "dwColor_Background": 6052442,
+                    "dwColor_Foreground": -1,
+                    "bRatingIx": 4,
+                    "bNoIndex": 0,
+                    "bHide": 0,
+                    "bFollow": 1,
+                    "bBlock": 0
+                },
+                {
+                    "dtCreated": "2019-07-13T13:01:21.8972723",
+                    "dwBlogIx": 338870,
+                    "szBlogId": "publicsexfll",
+                    "dwUserIx": 292833,
+                    "szTitle": " PUBLICsexFLL",
+                    "szDescription": "Some of my public sex pics or videos and some of shit I find on the web. Gloryholes, parks, tearooms etc.   I live in Fort Lauderdale and up for getting fucked raw on video in public or private. ",
+                    "bPrimary": 0,
+                    "bPrivate": 0,
+                    "bStatus": 0,
+                    "bIconShape": 0,
+                    "qwMediaIx_Icon": 11912927,
+                    "qwMediaIx_Banner": 11913339,
+                    "qwMediaIx_Background": 0,
+                    "dwColor_Background": -1,
+                    "dwColor_Foreground": -1,
+                    "bRatingIx": 4,
+                    "bNoIndex": 0,
+                    "bHide": 0,
+                    "bFollow": 1,
+                    "bBlock": 0
+                },
+                {
+                    "dtCreated": "2019-04-28T10:26:08.2894934",
+                    "dwBlogIx": 160792,
+                    "szBlogId": "public-places",
+                    "dwUserIx": 148610,
+                    "szTitle": "PublicToilets & Cruising Places",
+                    "szDescription": "Gay - Public Toilet - Cruising - Spying - Toiletsex - MEN - Glory Holes\n - Understall - Cum - Sperm - WC - Rest Area - Public Cock - Action - NSFW.\n\n",
+                    "bPrimary": 0,
+                    "bPrivate": 0,
+                    "bStatus": 0,
+                    "bIconShape": 0,
+                    "qwMediaIx_Icon": 5617116,
+                    "qwMediaIx_Banner": 4429863,
+                    "qwMediaIx_Background": 0,
+                    "dwColor_Background": 10473143,
+                    "dwColor_Foreground": -1,
+                    "bRatingIx": 4,
+                    "bNoIndex": 0,
+                    "bHide": 0,
+                    "bFollow": 1,
+                    "bBlock": 0
+                },
+                {
+                    "dtCreated": "2019-02-02T12:41:43.6128946",
+                    "dwBlogIx": 35941,
+                    "szBlogId": "publicjerker",
+                    "dwUserIx": 35941,
+                    "szTitle": "Publicjerker",
+                    "szDescription": "i'm an exhibitionist. i love to be naked and have sex in public. \nmy videos contains sex with men that i met on my naked outdoor adventures ! \nlinks to my videos at my website http://publicjerker.com",
+                    "bPrimary": 1,
+                    "bPrivate": 0,
+                    "bStatus": 0,
+                    "bIconShape": 0,
+                    "qwMediaIx_Icon": 357850,
+                    "qwMediaIx_Banner": 357859,
+                    "qwMediaIx_Background": 0,
+                    "dwColor_Background": -1,
+                    "dwColor_Foreground": -1,
+                    "bRatingIx": 4,
+                    "bNoIndex": 0,
+                    "bHide": 0,
+                    "bFollow": 1,
+                    "bBlock": 0
+                },
+                {
+                    "dtCreated": "2019-05-16T11:44:18.2121519",
+                    "dwBlogIx": 217196,
+                    "szBlogId": "publiclad80",
+                    "dwUserIx": 195856,
+                    "szTitle": "Untitled",
+                    "szDescription": "",
+                    "bPrimary": 1,
+                    "bPrivate": 0,
+                    "bStatus": 0,
+                    "bIconShape": 0,
+                    "qwMediaIx_Icon": 5960279,
+                    "qwMediaIx_Banner": 0,
+                    "qwMediaIx_Background": 0,
+                    "dwColor_Background": -1,
+                    "dwColor_Foreground": -1,
+                    "bRatingIx": 4,
+                    "bNoIndex": 0,
+                    "bHide": 0,
+                    "bFollow": 1,
+                    "bBlock": 0
+                },
+                {
+                    "dtCreated": "2019-04-19T21:28:59.7208117",
+                    "dwBlogIx": 144689,
+                    "szBlogId": "public-sex",
+                    "dwUserIx": 144116,
+                    "szTitle": "Public Sex",
+                    "szDescription": "This is my porn blog that is focused on sex in public places.  If you have a story about a time you had sex in public, please tell me it and let me know if I can share it!",
+                    "bPrimary": 1,
+                    "bPrivate": 0,
+                    "bStatus": 0,
+                    "bIconShape": 1,
+                    "qwMediaIx_Icon": 7958877,
+                    "qwMediaIx_Banner": 8441595,
+                    "qwMediaIx_Background": 0,
+                    "dwColor_Background": -1,
+                    "dwColor_Foreground": -1,
+                    "bRatingIx": 4,
+                    "bNoIndex": 0,
+                    "bHide": 0,
+                    "bFollow": 1,
+                    "bBlock": 0
+                },
+                {
+                    "dtCreated": "2019-05-20T17:36:38.501537",
+                    "dwBlogIx": 224043,
+                    "szBlogId": "publicxxx",
+                    "dwUserIx": 102967,
+                    "szTitle": "Public Fun",
+                    "szDescription": "Nudity and sex in front of other people",
+                    "bPrimary": 0,
+                    "bPrivate": 0,
+                    "bStatus": 0,
+                    "bIconShape": 0,
+                    "qwMediaIx_Icon": 6338189,
+                    "qwMediaIx_Banner": 6338194,
+                    "qwMediaIx_Background": 0,
+                    "dwColor_Background": 9715029,
+                    "dwColor_Foreground": -1,
+                    "bRatingIx": 4,
+                    "bNoIndex": 0,
+                    "bHide": 0,
+                    "bFollow": 1,
+                    "bBlock": 0
+                },
+                {
+                    "dtCreated": "2019-02-09T04:45:00.7621813",
+                    "dwBlogIx": 45390,
+                    "szBlogId": "publicraw",
+                    "dwUserIx": 45390,
+                    "szTitle": "Breeding fags outdoors",
+                    "szDescription": "I use cumdump fags. I stealth fuck condom boys. I breed every single hole I fuck - even your boyfriend. ",
+                    "bPrimary": 1,
+                    "bPrivate": 0,
+                    "bStatus": 0,
+                    "bIconShape": 0,
+                    "qwMediaIx_Icon": 5359530,
+                    "qwMediaIx_Banner": 0,
+                    "qwMediaIx_Background": 0,
+                    "dwColor_Background": -1,
+                    "dwColor_Foreground": -1,
+                    "bRatingIx": 4,
+                    "bNoIndex": 0,
+                    "bHide": 0,
+                    "bFollow": 1,
+                    "bBlock": 0
+                }
+            ],
+            "nTotalRows": 15,
+            "aField": [
+                {
+                    "sName": "dtCreated",
+                    "oMin": "2019-02-02T12:41:43.6128946",
+                    "oMax": "2019-08-07T17:24:51.7594528",
+                    "sType": "DateTime",
+                    "bNumeric": false
+                },
+                {
+                    "sName": "dwBlogIx",
+                    "oMin": 35941,
+                    "oMax": 386270,
+                    "sType": "Int32",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "szBlogId",
+                    "oMin": "ballweights4fun",
+                    "oMax": "somelikeithot",
+                    "sType": "String",
+                    "bNumeric": false
+                },
+                {
+                    "sName": "dwUserIx",
+                    "oMin": 35941,
+                    "oMax": 361200,
+                    "sType": "Int32",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "szTitle",
+                    "oMin": "",
+                    "oMax": "xpose me & other hot stuff",
+                    "sType": "String",
+                    "bNumeric": false
+                },
+                {
+                    "sName": "szDescription",
+                    "oMin": "",
+                    "oMax": "This one is for all the fantasies not taken. A vicarious look at exhibitionism. \nFrom the bulge you never could fondle to the ignored advances from strangers.\n  What if you did?",
+                    "sType": "String",
+                    "bNumeric": false
+                },
+                {
+                    "sName": "bPrimary",
+                    "oMin": 0,
+                    "oMax": 1,
+                    "sType": "Byte",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "bPrivate",
+                    "oMin": 0,
+                    "oMax": 0,
+                    "sType": "Byte",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "bStatus",
+                    "oMin": 0,
+                    "oMax": 0,
+                    "sType": "Byte",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "bIconShape",
+                    "oMin": 0,
+                    "oMax": 1,
+                    "sType": "Byte",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "qwMediaIx_Icon",
+                    "oMin": 357850,
+                    "oMax": 14868973,
+                    "sType": "Int64",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "qwMediaIx_Banner",
+                    "oMin": 0,
+                    "oMax": 14438574,
+                    "sType": "Int64",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "qwMediaIx_Background",
+                    "oMin": 0,
+                    "oMax": 0,
+                    "sType": "Int64",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "dwColor_Background",
+                    "oMin": -1,
+                    "oMax": 10473143,
+                    "sType": "Int32",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "dwColor_Foreground",
+                    "oMin": -1,
+                    "oMax": 16775927,
+                    "sType": "Int32",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "bRatingIx",
+                    "oMin": 4,
+                    "oMax": 4,
+                    "sType": "Byte",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "bNoIndex",
+                    "oMin": 0,
+                    "oMax": 0,
+                    "sType": "Byte",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "bHide",
+                    "oMin": 0,
+                    "oMax": 0,
+                    "sType": "Int32",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "bFollow",
+                    "oMin": 1,
+                    "oMax": 1,
+                    "sType": "Int32",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "bBlock",
+                    "oMin": 0,
+                    "oMax": 0,
+                    "sType": "Int32",
+                    "bNumeric": true
+                }
+            ]
+        },
+        {
+            "aRow": [
+            ]
+        },
+        {
+            "aRow": [
+            ]
+        },
+        {
+            "aRow": [
+            ]
+        },
+        {
+            "aRow": [
+            ]
+        },
+        {
+            "aRow": [
+                {
+                    "dtOrigin": "2019-08-11T21:09:18.4070257"
+                }
+            ],
+            "nTotalRows": 1,
+            "aField": [
+                {
+                    "sName": "dtOrigin",
+                    "oMin": "2019-08-11T21:09:18.4070257",
+                    "oMax": "2019-08-11T21:09:18.4070257",
+                    "sType": "DateTime",
+                    "bNumeric": false
+                }
+            ]
+        },
+        {
+            "aRow": [
+                {
+                    "dtCreated": "2019-08-11T18:32:33.8841729",
+                    "dwBlogIx": 391932,
+                    "dwBlogIx_Dst": 160776,
+                    "dwTagIx": null,
+                    "bOrder": null,
+                    "szTagId": null
+                },
+                {
+                    "dtCreated": "2019-08-10T22:42:48.2323657",
+                    "dwBlogIx": 391932,
+                    "dwBlogIx_Dst": 228732,
+                    "dwTagIx": null,
+                    "bOrder": null,
+                    "szTagId": null
+                },
+                {
+                    "dtCreated": "2019-08-10T21:25:02.4672921",
+                    "dwBlogIx": 391932,
+                    "dwBlogIx_Dst": 380093,
+                    "dwTagIx": null,
+                    "bOrder": null,
+                    "szTagId": null
+                },
+                {
+                    "dtCreated": "2019-08-10T21:17:34.6438738",
+                    "dwBlogIx": 391932,
+                    "dwBlogIx_Dst": 205594,
+                    "dwTagIx": null,
+                    "bOrder": null,
+                    "szTagId": null
+                },
+                {
+                    "dtCreated": "2019-08-10T21:06:58.2632942",
+                    "dwBlogIx": 391932,
+                    "dwBlogIx_Dst": 259162,
+                    "dwTagIx": null,
+                    "bOrder": null,
+                    "szTagId": null
+                },
+                {
+                    "dtCreated": "2019-08-10T21:03:55.3184562",
+                    "dwBlogIx": 391932,
+                    "dwBlogIx_Dst": 311625,
+                    "dwTagIx": null,
+                    "bOrder": null,
+                    "szTagId": null
+                },
+                {
+                    "dtCreated": "2019-08-10T21:02:47.4616672",
+                    "dwBlogIx": 391932,
+                    "dwBlogIx_Dst": 386270,
+                    "dwTagIx": null,
+                    "bOrder": null,
+                    "szTagId": null
+                },
+                {
+                    "dtCreated": "2019-08-10T21:02:45.787162",
+                    "dwBlogIx": 391932,
+                    "dwBlogIx_Dst": 209185,
+                    "dwTagIx": null,
+                    "bOrder": null,
+                    "szTagId": null
+                },
+                {
+                    "dtCreated": "2019-08-10T21:02:38.0353745",
+                    "dwBlogIx": 391932,
+                    "dwBlogIx_Dst": 338870,
+                    "dwTagIx": null,
+                    "bOrder": null,
+                    "szTagId": null
+                },
+                {
+                    "dtCreated": "2019-08-10T21:02:31.7066917",
+                    "dwBlogIx": 391932,
+                    "dwBlogIx_Dst": 160792,
+                    "dwTagIx": null,
+                    "bOrder": null,
+                    "szTagId": null
+                },
+                {
+                    "dtCreated": "2019-08-10T21:02:16.9510587",
+                    "dwBlogIx": 391932,
+                    "dwBlogIx_Dst": 35941,
+                    "dwTagIx": null,
+                    "bOrder": null,
+                    "szTagId": null
+                },
+                {
+                    "dtCreated": "2019-08-10T21:02:13.6992888",
+                    "dwBlogIx": 391932,
+                    "dwBlogIx_Dst": 217196,
+                    "dwTagIx": null,
+                    "bOrder": null,
+                    "szTagId": null
+                },
+                {
+                    "dtCreated": "2019-08-10T21:02:08.2240276",
+                    "dwBlogIx": 391932,
+                    "dwBlogIx_Dst": 144689,
+                    "dwTagIx": null,
+                    "bOrder": null,
+                    "szTagId": null
+                },
+                {
+                    "dtCreated": "2019-08-10T21:02:05.4549751",
+                    "dwBlogIx": 391932,
+                    "dwBlogIx_Dst": 224043,
+                    "dwTagIx": null,
+                    "bOrder": null,
+                    "szTagId": null
+                },
+                {
+                    "dtCreated": "2019-08-10T21:01:54.2871025",
+                    "dwBlogIx": 391932,
+                    "dwBlogIx_Dst": 45390,
+                    "dwTagIx": null,
+                    "bOrder": null,
+                    "szTagId": null
+                }
+            ],
+            "nTotalRows": 15,
+            "aField": [
+                {
+                    "sName": "dtCreated",
+                    "oMin": "2019-08-10T21:01:54.2871025",
+                    "oMax": "2019-08-11T18:32:33.8841729",
+                    "sType": "DateTime",
+                    "bNumeric": false
+                },
+                {
+                    "sName": "dwBlogIx",
+                    "oMin": 391932,
+                    "oMax": 391932,
+                    "sType": "Int32",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "dwBlogIx_Dst",
+                    "oMin": 35941,
+                    "oMax": 386270,
+                    "sType": "Int32",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "dwTagIx",
+                    "oMin": null,
+                    "oMax": null,
+                    "sType": "Int32",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "bOrder",
+                    "oMin": null,
+                    "oMax": null,
+                    "sType": "Byte",
+                    "bNumeric": true
+                },
+                {
+                    "sName": "szTagId",
+                    "oMin": null,
+                    "oMax": null,
+                    "sType": "String",
+                    "bNumeric": false
+                }
+            ]
+        },
+        {
+            "aRow": [
+                {
+                    "nCount_Blog_Follow": 15
+                }
+            ],
+            "nTotalRows": 1,
+            "aField": [
+                {
+                    "sName": "nCount_Blog_Follow",
+                    "oMin": 15,
+                    "oMax": 15,
+                    "sType": "Int32",
+                    "bNumeric": true
+                }
+            ]
+        },
+        {
+            "aRow": [
+                {
+                    "nCount_Tag_Follow": 17
+                }
+            ],
+            "nTotalRows": 1,
+            "aField": [
+                {
+                    "sName": "nCount_Tag_Follow",
+                    "oMin": 17,
+                    "oMax": 17,
+                    "sType": "Int32",
+                    "bNumeric": true
+                }
+            ]
+        },
+        {
+            "aRow": [
+                {
+                    "nCount_Blog_Hide": 0
+                }
+            ],
+            "nTotalRows": 1,
+            "aField": [
+                {
+                    "sName": "nCount_Blog_Hide",
+                    "oMin": 0,
+                    "oMax": 0,
+                    "sType": "Int32",
+                    "bNumeric": true
+                }
+            ]
+        },
+        {
+            "aRow": [
+                {
+                    "nCount_Tag_Hide": 0
+                }
+            ],
+            "nTotalRows": 1,
+            "aField": [
+                {
+                    "sName": "nCount_Tag_Hide",
+                    "oMin": 0,
+                    "oMax": 0,
+                    "sType": "Int32",
+                    "bNumeric": true
+                }
+            ]
+        }
+    ]
+}

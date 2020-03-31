@@ -1,0 +1,10 @@
+<settings>
+    <category label="General">
+        <setting id="apikey" label="API KEY" values="" default="" type="text" visible="true"/>
+        <setting id="lastsearch" label="Last Search" values="" default="( publica OR biblioteca OR aula OR %22en clase%22 OR escuela OR classroom ) AND ( masturba OR masturbandose OR masturbandose OR batendo OR paja OR pajero ) AND ( novinho OR chavito OR amigo OR chico OR chavo )" type="text" visible="true"/>
+        <setting id="viewmode" label="Set View $INFO[Container.Viewmode]" values="500" default="500" type="number"
+                 visible="true"/>
+        <setting id="downloadpath" label="Download Path" values="" default="" type="folder" visible="true"/>
+        <setting id="freshon" label="FRESHNESS: Past Month Only" values="false" default="false" type="bool" visible="true"/>
+    </category>
+</settings>
