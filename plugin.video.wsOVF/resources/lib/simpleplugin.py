@@ -143,6 +143,7 @@ class Params(dict):
             foo = params['foo']  # Access by key
             bar = params.bar  # Access through property. Both variants are equal
     """
+
     def __getattr__(self, key):
         return self.get(key)
 
@@ -176,6 +177,7 @@ class Storage(MutableMapping):
     .. note:: After exiting :keyword:`with` block a :class:`Storage` instance is invalidated.
         Storage contents are saved to disk only for a new storage or if the contents have been changed.
     """
+
     def __init__(self, storage_dir, filename='storage.pcl'):
         """
         Class constructor
@@ -289,6 +291,7 @@ class MemStorage(MutableMapping):
         will be stored.
     :type window_id: int
     """
+
     def __init__(self, storage_id, window_id=10000):
         """
         :type storage_id: str
@@ -378,6 +381,7 @@ class Addon(object):
     :param id_: addon id, e.g. 'plugin.video.foo' (optional)
     :type id_: str
     """
+
     def __init__(self, id_=''):
         """
         Class constructor
@@ -690,12 +694,15 @@ class Addon(object):
         :type duration: int
         :raises ValueError: if duration is zero or negative
         """
+
         def outer_wrapper(func):
             @wraps(func)
             def inner_wrapper(*args, **kwargs):
                 with self.get_storage('__cache__.pcl') as cache:
                     return self._get_cached_data(cache, func, duration, *args, **kwargs)
+
             return inner_wrapper
+
         return outer_wrapper
 
     def mem_cached(self, duration=10):
@@ -713,12 +720,15 @@ class Addon(object):
         :type duration: int
         :raises ValueError: if duration is zero or negative
         """
+
         def outer_wrapper(func):
             @wraps(func)
             def inner_wrapper(*args, **kwargs):
                 cache = self.get_mem_storage('***cache***')
                 return self._get_cached_data(cache, func, duration, *args, **kwargs)
+
             return inner_wrapper
+
         return outer_wrapper
 
     def gettext(self, ui_string):
@@ -789,7 +799,7 @@ class Addon(object):
             gettext_pcl = '__gettext__.pcl'
             with self.get_storage(gettext_pcl) as ui_strings_map:
                 if (not os.path.exists(os.path.join(self._configdir, gettext_pcl)) or
-                        raw_strings_hash != ui_strings_map['hash']):
+                        raw_strings_hash != ui_strings_map.get('hash', '')):
                     ui_strings = self._parse_po(raw_strings.split('\n'))
                     self._ui_strings_map = {
                         'hash': raw_strings_hash,
@@ -958,6 +968,7 @@ class Plugin(Addon):
     If an action callable performs any actions other than creating a listing or
     resolving a playable URL, it must return ``None``.
     """
+
     def __init__(self, id_=''):
         """
         Class constructor
@@ -1050,6 +1061,7 @@ class Plugin(Addon):
         :type name: str
         :raises SimplePluginError: if the action with such name is already defined.
         """
+
         def wrap(func, name=name):
             if name is None:
                 name = func.__name__
@@ -1057,6 +1069,7 @@ class Plugin(Addon):
                 raise SimplePluginError('Action "{0}" already defined!'.format(name))
             self.actions[name] = func
             return func
+
         return wrap
 
     def run(self, category=None):
@@ -1262,7 +1275,7 @@ class Plugin(Addon):
                 else:
                     raise TypeError(
                         'method parameter must be of int or dict type!')
-                    
+
         xbmcplugin.endOfDirectory(self._handle,
                                   context.succeeded,
                                   context.update_listing,

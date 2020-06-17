@@ -6,11 +6,12 @@
 # License: GPL v.3 https://www.gnu.org/copyleft/gpl.html
 import ssl, re, datetime, time
 import sys, os
+from resources import lib as Lib
+
 path = os.path
 handle = int(sys.argv[1])
 ssl._create_default_https_context = ssl._create_unverified_context
 urlresolver = None
-from resources import lib as Lib
 try:
     import xbmc, xbmcplugin
 except:
@@ -25,6 +26,8 @@ __datadir__ = xbmc.translatePath('special://profile/addon_data/{0}/'.format(plug
 __cookie__ = path.join(__datadir__, 'cookies.lwp')
 __next__ = path.join(xbmc.translatePath('special://home/addons/{0}/resources/'.format(plugin.id)), 'next.png')
 Tv = Lib.wsovf.wsOVF(cookiepath=__cookie__)
+Tv.search.ICONSEARCH = __next__.replace('next', 'search')
+Tv.search.AddonSearchPaths = plugin.path, plugin.get_url(action='show_searchbox'), plugin.get_url(action='show_search', query='-QUERY-')
 
 @plugin.action()
 @plugin.mem_cached(30)
@@ -39,6 +42,8 @@ def root():
              'is_folder': True, 'is_playable': False},
             {'label': lblWsAll, 'url': plugin.get_url(action='latest_ws', page=1), 'thumb': imgWs,
              'is_folder': True, 'is_playable': False},
+            {'label': 'Search History (Broken)', 'url': plugin.get_url(action='show_searchfolder'), 'thumb': Tv.search.ICONSEARCH,
+             'is_playable': False},
             {'label': 'Search', 'url': plugin.get_url(action='show_searchbox', site='ws'), 'thumb': __next__.replace('next', 'search'),
              'is_folder': True, 'is_playable': False}
         ]
@@ -106,7 +111,7 @@ def get_episodelists(url):
         if title.find('-') == -1:
             sepchar = ','
         epname, epseason = title.split(sepchar,1)
-        lbl = "[COLOR white][B]{0}[/B][/COLOR] [COLOR grey]{1}[/COLOR] [COLOR yellow]{2}[/COLOR]".format(epname.strip(), epseason.strip(), date)
+        lbl = "{0} [COLOR grey]{1}[/COLOR] [COLOR yellow]{2}[/COLOR]".format(epname.strip(), epseason.strip(), date)
         item = {'label': title, 'label2': date,'is_folder': True, 'is_playable': False, 'url': plugin.get_url(action='sources_ws', vurl=link)}
         litems.append(item)
     return litems
@@ -124,7 +129,7 @@ def get_seriesepisodelists(url):
         try:
             char = u'&nbsp;'
             epname = title.replace(char, ' ')
-            lbl = "[COLOR white][B]{0}[/B][/COLOR] [COLOR yellow]{1}[/COLOR]".format(epname.strip(), date)
+            lbl = "{0} [COLOR yellow]{1}[/COLOR]".format(epname.strip(), date)
             item = {'label': epname, 'label2': date,'is_folder': True, 'is_playable': False, 'url': plugin.get_url(action='sources_ws', vurl=link)}
             litems.append(item)
         except:
@@ -133,7 +138,7 @@ def get_seriesepisodelists(url):
                 epname = p1 + ' ' + p2[0]
             except:
                 epname = url.rpartition('/')[-1].replace('_', ' ').title()
-            lbl = "[COLOR white][B]{0}[/B][/COLOR] [COLOR yellow]{1}[/COLOR]".format(epname.strip(), date)
+            lbl = "{0} [COLOR yellow]{1}[/COLOR]".format(epname.strip(), date)
             item = {'label': epname, 'label2': date,'is_folder': True, 'is_playable': False, 'url': plugin.get_url(action='sources_ws', vurl=link)}
             litems.append(item)
     return litems
@@ -195,7 +200,7 @@ def get_sourceslist(url):
         if len(epnum) == 0:
             num = id
         playtitle = "{0} @ {1} ({2})".format(epfullname, host, id)
-        lbl = "[B][COLOR green]{0}[/COLOR][/B] [COLOR grey][I]({1})[/I][/COLOR]\n[I][COLOR white]{2} {3}[/COLOR][/I]".format(host, id, showname, epnum)
+        lbl = "{0} [COLOR grey][I]({1})[/I][/COLOR]\n[I][COLOR white]{2} {3}[/COLOR][/I]".format(host, id, showname, epnum)
         lbl2 = "[B]{0}[/B] [I]({1})[/I]\nURL: {2} Video Link: {3}".format(showname, num, url, vurl)
         playpath = 'plugin://plugin.video.resolveurl-tester/?action=play&url={0}&title={1}'.format(quote(vurl), quote(playtitle))
         item = {'label': lbl, 'label2': lbl2, 'thumb': thumb, 'icon': thumb, 'is_folder': False, 'is_playable': True, 'url': playpath, 'info': {'video': {'plot': lbl2}}}
@@ -242,36 +247,38 @@ def show_searchbox(params):
     site = params.site
     searchtxt = ''
     searchtxt = plugin.get_setting('lastsearch')
-    searchtxt = get_input(searchtxt)
-    querytext = searchtxt.replace(' ', '_')
-    plugin.set_setting('lastsearch', searchtxt)
-    searchurl = plugin.get_url(action='show_search', searchterm=querytext)
-    if site == 'ws':
-        return search_ws(query=querytext)
-    else:
-        latestshows = list_searchepisodes(query=querytext)
-        litems = []
-        for show in latestshows:
-            showlink = show.get('url', '')
-            showpath = plugin.get_url(action='get_sources', episode=showlink)
-            item = {
-                'label': show.get('name', ''),
-                'thumb': "DefaultVideo.png",
-                'url': plugin.get_url(action='show_sources', episode=showlink)
-            }
-            litems.append(item)
-        return litems
+    item = Tv.search.search(func_getinput=get_input(searchtxt))
+    litem = plugin.create_list_item(item)
+    querytext = litem.getLabel()
+    plugin.set_setting('lastsearch', querytext)
+    return search_ws(query=querytext)
 
+@plugin.action()
+def show_searchfolder(params):
+    litems = []
+    items = []
+    items = Tv.search.gethistory()
+    newitem = plugin.create_list_item(Tv.search.ListItemNewSearch)
+    clearitem = plugin.create_list_item(Tv.search.ListItemClear)
+    litems.append(newitem)
+    for item in items:
+        litems.append(plugin.create_list_item(item))
+    litems.append(clearitem)
+    return litems
+    #return list_searchepisodes(query=params.searchterm)
 
 @plugin.action()
 def show_search(params):
-    return list_searchepisodes(query=params.searchterm)
+    return list_searchepisodes(query=params.query)
 
+@plugin.action()
+def search_clear(params):
+    Tv.search.clear()
+    return plugin.create_listing([plugin.create_list_item(Tv.search.ListItemNewSearch)])
 
 @plugin.action()
 def show_sources(params):
     return list_sources(episode=params.episode)
-
 
 @plugin.action()
 def show_category():

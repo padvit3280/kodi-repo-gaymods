@@ -1,15 +1,18 @@
-from . import urlquick
+from . import urlquick, kodisearch, simpleplugin
 import os.path as Path
-import re, sys
+import re, sys, json
 try:
-    import simpleplugin
+    import xbmc, xbmcaddon, xbmcplugin
 except:
-    simpleplugin = None
+    try:
+        from kodistubs import xbmc, xbmcplugin, xbmcaddon
+    except:
+        pass
 
 class wsOVF:
 
-    def __init__(self, cookiepath=None):
-        self.plug = None
+    def __init__(self, cookiepath=None, plugin=simpleplugin.Plugin):
+        self.plug = plugin
         self.BASEURL = "https://www1.swatchseries.to"
         self.HOST = self.BASEURL.split('//', 1)[-1]
         self.URL_latest = "/lastest"
@@ -20,6 +23,8 @@ class wsOVF:
         else:
             self.COOKIES = Path.join(self.PATH, 'cookies.dat')
         self.getWeb = urlquick.get
+        self.HISTORYFILE = Path.join(xbmc.translatePath('special://profile/addon_data/'), 'plugin.video.wsOVF', 'history.json')
+        self.search = kodisearch.kodiSearch(history_file=self.HISTORYFILE)
 
     def getsource(self, url):
         resp = self.getWeb(url)
