@@ -171,7 +171,7 @@ provider-name="moedje">
 </addon>
 
 <addon id="plugin.video.newtumbl"
-version="0.9.1"
+version="0.9.2"
 name="NewTumbl"
 provider-name="moedje">
 <requires>
@@ -220,6 +220,42 @@ provider-name="moedje">
   </extension>
 </addon>
 
+<addon id="plugin.video.resolveurl-tester" name="ResolveURL Tester" version="1.1.0" provider-name="Twilight0">
+    <requires>
+        <import addon="xbmc.python" version="2.24.0"/>
+        <import addon="script.module.tulip" version="2.3.6"/>
+        <import addon="script.module.resolveurl" version="5.0.31"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="main.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <reuselanguageinvoker>false</reuselanguageinvoker>
+        <summary lang="en">ResolveURL Tester</summary>
+        <description lang="en_GB">This addon can play and test various video and audio content from various sources supported by ResolveURL library.</description>
+        <disclaimer lang="en_GB">This addon does not provide any content, its sole purpose is to resolve web urls with the help of ResolveURL library</disclaimer>
+        <language>en</language>
+        <license>GNU GPL, version 2</license>
+        <website>https://twitter.com/TwilightZer0</website>
+        <source>https://github.com/Twilight0/plugin.video.resolveurl-tester</source>
+        <size>106257</size>
+        <news>[B]1.1.0[/B] - 29-05-2019
+- Added a setting to force a specific host (useful for testing universal resolvers)
+  > As url you must provide media id only
+
+[B]1.0.1[/B] - 25-05-2019
+- Added "set title and play" context menu item
+- Other minor tweaks
+
+[B]1.0.0[/B] - 16-05-2019
+- Initial version</news>
+        <assets>
+            <icon>icon.png</icon>
+        </assets>
+    </extension>
+</addon>
+
 <addon id="plugin.video.tumblrv" name="TumblrV" provider-name="moedje" version="1.3.0">
   <requires>
     <import addon="xbmc.python" version="2.25.0"/>
@@ -251,22 +287,21 @@ provider-name="moedje">
 </addon>
 
 <addon id="plugin.video.wsOVF"
-version="1.1.1"
-name="WatchSeriesOVF"
+version="1.1.91"
+name="SWatchSeriesTO"
 provider-name="moedje">
 <requires>
   <import addon="xbmc.python" version="2.24.0"/>
-  <import addon="script.module.urlquick" optional="true"/>
-  <import addon="script.module.simpleplugin" version="1.6+" optional="true"/>
   <import addon="script.module.youtube.dl" optional="true"/>
-  <import addon="script.module.resolveurl" version="5.0.00+" optional="true"/>
+  <import addon="script.module.resolveurl" optional="true"/>
 </requires>
 <extension point="xbmc.python.pluginsource" library="main.py">
   <provides>video</provides>
 </extension>
 <extension point="xbmc.addon.metadata">
-  <summary lang="en">WatchSeries.OVF</summary>
-  <description lang="en">[B]V1.1.0[/B]Renamed from old TVSeries4U addon which died long ago. Fixed changes made to watchseries websites that broke addon. Uses the ROMANVM SimplePlugin micro-framework to scrape links from watchseries.ovf</description>
+  <summary lang="en">SWatchSeries.TO/Watchseries.OVF</summary>
+  <description lang="en">[B]V1.2.0[/B] Added new Search History to store previous searches as YouTube addon does. Plan to improve search to recognize Seasons in next update. Currently you can access a specific season by searching for the exxact show name and season number as it appears in the URL after swatchseries.to/serie/[B]show_name/season-2[/B] in the search put: show_name/season-2 to get season 2 episodes. Hope to automate this in future updates but it's a work around. Also Partially renamed to by adding SwatchSeries.TO in the name as it's been the URL for a while now. Actual plugin name still wsOVF. Updated the Simpleplugin Framework to new Python3 version, amazing developer RomanVM many thanks!!
+    V1.1.0 Renamed from old TVSeries4U addon which died long ago. Fixed changes made to watchseries websites that broke addon. Uses the ROMANVM SimplePlugin micro-framework to scrape links from watchseries.ovf</description>
   <disclaimer lang="en">Not to be used for any illegal activities.</disclaimer>
 </extension>
 </addon>
@@ -364,6 +399,27 @@ provider-name="moedje">
 		<description lang="en">Resolve adult video host URL's to be playable in XBMC/Kodi.</description>
 		<platform>all</platform>
 	</extension>
+</addon>
+
+<addon id="script.module.simpleplugin3"
+   name="SimplePlugin 3"
+   version="3.0.0"
+   provider-name="Roman V.M.">
+  <requires>
+    <import addon="xbmc.python" version="2.25.0"/>
+    <import addon="script.module.future" />
+  </requires>
+  <extension point="xbmc.python.module" library="libs" />
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <summary lang="en_GB">SimplePlugin micro-framework</summary>
+    <description lang="en_GB">SimplePlugin micro-framework that simplifies Kodi content plugin programming.</description>
+    <license>GNU GPL v.3</license>
+    <forum></forum>
+    <website>http://romanvm.github.io/script.module.simpleplugin</website>
+    <email>roman1972@gmail.com</email>
+    <source>https://github.com/romanvm/script.module.simpleplugin</source>
+  </extension>
 </addon>
 
 <addon id="script.module.tulip" name="Tulip Routine Libraries" version="2.3.13" provider-name="Twilight0">
