@@ -111,7 +111,7 @@ def get_episodelists(url):
         if title.find('-') == -1:
             sepchar = ','
         epname, epseason = title.split(sepchar,1)
-        lbl = "{0} [COLOR grey]{1}[/COLOR] [COLOR yellow]{2}[/COLOR]".format(epname.strip(), epseason.strip(), date)
+        lbl = "{0} {1} {2}".format(epname.strip(), epseason.strip(), date)
         item = {'label': title, 'label2': date,'is_folder': True, 'is_playable': False, 'url': plugin.get_url(action='sources_ws', vurl=link)}
         litems.append(item)
     return litems
@@ -200,7 +200,7 @@ def get_sourceslist(url):
         if len(epnum) == 0:
             num = id
         playtitle = "{0} @ {1} ({2})".format(epfullname, host, id)
-        lbl = "{0} [COLOR grey][I]({1})[/I][/COLOR]\n[I][COLOR white]{2} {3}[/COLOR][/I]".format(host, id, showname, epnum)
+        lbl = "{0} ({1})\n{2} {3}".format(host, id, showname, epnum)
         lbl2 = "[B]{0}[/B] [I]({1})[/I]\nURL: {2} Video Link: {3}".format(showname, num, url, vurl)
         playpath = 'plugin://plugin.video.resolveurl-tester/?action=play&url={0}&title={1}'.format(quote(vurl), quote(playtitle))
         item = {'label': lbl, 'label2': lbl2, 'thumb': thumb, 'icon': thumb, 'is_folder': False, 'is_playable': True, 'url': playpath, 'info': {'video': {'plot': lbl2}}}
