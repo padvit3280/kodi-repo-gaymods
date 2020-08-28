@@ -3,7 +3,7 @@
 # Author: moedje (Roman V. M. SimplePlugin/example framework)
 # Created on: 27.08.2017
 # License: GPL v.3 https://www.gnu.org/copyleft/gpl.html
-import sys, json, os, re, simpleutils
+import sys, json, os, re #, simpleutils
 import xbmc, xbmcgui
 import urlquick
 from simpleplugin import Plugin, Params
@@ -30,7 +30,7 @@ __period__ = 'ever'
 
 
 VIDEOS = json.load(file(os.path.join(__resources__, 'tags.json')))
-webreq = simpleutils.CachedWebRequest(cookiePath=os.path.join(xbmc.translatePath('special://profile'), 'addon_data/', plugin.id))
+webreq = urlquick.get # simpleutils.CachedWebRequest(cookiePath=os.path.join(xbmc.translatePath('special://profile'), 'addon_data/', plugin.id))
 revidblock = re.compile(ur'<div id="(video_.*?)</p></div>', re.DOTALL)
 reGetvids = re.compile(ur'href="(.+?)".*?data-src="(.+?)".*?title="(.+?)"')
 
@@ -117,12 +117,12 @@ def DL(url):
     resp = None
     html = None
     try:
-        resp = webreq.getSource(url)
-        html = resp.encode('latin-1', 'ignore')
+        resp = webreq(url)
+        html = resp.read() #.encode('latin-1', 'ignore')
     except:
         try:
-            resp = webreq.getSource(url)
-            html = simpleutils.try_coerce_native(resp)
+            resp = webreq(url)
+            html = resp.read().encode('latin-1', 'ignore')
         except:
             html = resp
     return html
